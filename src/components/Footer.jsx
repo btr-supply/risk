@@ -73,7 +73,6 @@ const Footer = () => {
           {/* Left side: BTR Logo + Copyright */}
           <Box sx={{
             display: 'flex',
-            alignItems: 'flex-end',
             gap: 0,
             flexDirection: isMobile ? 'column' : 'row',
             alignItems: isMobile ? 'flex-start' : 'flex-end'
