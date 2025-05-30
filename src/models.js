@@ -28,9 +28,9 @@ export const defaultLiquidityModel = {
 };
 
 export const defaultSlippageModel = {
-  minSlippageBp: 10, // 0.1%
-  maxSlippageBp: 500, // 5%
-  amplificationBp: 5000, // 0.5 (linear)
+  minSlippageBp: 1, // 0.01%
+  maxSlippageBp: 200, // 2%
+  amplificationBp: 3500, // 0.35 (concave curve)
 };
 
 // Validation ranges from LibRisk.sol
@@ -457,4 +457,200 @@ export const generateMaxWeightCurveData = (model, maxComponents = 20) => {
     });
   }
   return data;
+};
+
+/**
+ * Calculate ratioDiff0 based on vault state and user transaction
+ * @param {number} vaultBalance - Total vault balance in USD
+ * @param {number} vaultRatio0 - Current vault ratio0 in BP
+ * @param {number} targetRatio0 - Target vault ratio0 in BP
+ * @param {number} userAmount - User transaction amount in USD
+ * @param {number} userRatio0 - User transaction ratio0 in BP
+ * @param {boolean} isDeposit - true for deposit, false for withdrawal
+ * @returns {number} ratioDiff0 in BP
+ */
+export const calculateRatioDiff0 = (vaultBalance, vaultRatio0, targetRatio0, userAmount, userRatio0, isDeposit) => {
+  // Input validation and safety checks
+  if (!isFinite(vaultBalance) || !isFinite(vaultRatio0) || !isFinite(targetRatio0) || 
+      !isFinite(userAmount) || !isFinite(userRatio0)) {
+    return 0;
+  }
+  
+  if (vaultBalance <= 0 || userAmount <= 0) {
+    return 0;
+  }
+
+  // Clamp ratios to valid ranges
+  vaultRatio0 = Math.max(0, Math.min(BPS, vaultRatio0));
+  targetRatio0 = Math.max(0, Math.min(BPS, targetRatio0));
+  userRatio0 = Math.max(0, Math.min(BPS, userRatio0));
+
+  // Calculate current vault balances
+  const vaultBalance0 = (vaultBalance * vaultRatio0) / BPS;
+  const vaultBalance1 = vaultBalance - vaultBalance0;
+
+  // Calculate user transaction amounts
+  const userAmount0 = (userAmount * userRatio0) / BPS;
+  const userAmount1 = userAmount - userAmount0;
+
+  // Calculate old deviation from target
+  const oldDeviation = Math.abs(vaultRatio0 - targetRatio0);
+
+  // Calculate new balances after transaction
+  let newBalance0, newBalance1;
+  if (isDeposit) {
+    newBalance0 = vaultBalance0 + userAmount0;
+    newBalance1 = vaultBalance1 + userAmount1;
+  } else {
+    newBalance0 = Math.max(0, vaultBalance0 - userAmount0);
+    newBalance1 = Math.max(0, vaultBalance1 - userAmount1);
+  }
+
+  // Calculate new ratio with safety check for division by zero
+  const newTotalBalance = newBalance0 + newBalance1;
+  let newRatio0 = 0;
+  if (newTotalBalance > 0) {
+    newRatio0 = (newBalance0 * BPS) / newTotalBalance;
+    newRatio0 = Math.max(0, Math.min(BPS, newRatio0)); // Clamp to valid range
+  }
+
+  // Calculate new deviation from target
+  const newDeviation = Math.abs(newRatio0 - targetRatio0);
+
+  // Calculate ratioDiff0: positive means improvement, negative means worsening
+  const ratioDiff0 = oldDeviation - newDeviation;
+
+  // Cap to ±BPS and ensure it's finite
+  const result = Math.max(-BPS, Math.min(BPS, ratioDiff0));
+  return isFinite(result) ? result : 0;
+};
+
+/**
+ * Generate data points for ratioDiff0 curve for both deposits and withdrawals
+ * @param {object} params - Simulation parameters
+ * @param {number} points - Number of data points to generate
+ * @returns {object[]} Array of {userRatio0, depositRatioDiff0, withdrawalRatioDiff0} data points
+ */
+export const generateRatioDiff0CurveDataBoth = (params, points = 101) => {
+  const { vaultBalance, vaultRatio0, targetRatio0, userAmount } = params;
+  const data = [];
+
+  for (let i = 0; i <= points; i++) {
+    const userRatio0 = (i / points) * BPS; // 0 to 10000 BP
+    
+    const depositRatioDiff0 = calculateRatioDiff0(
+      vaultBalance,
+      vaultRatio0,
+      targetRatio0,
+      userAmount,
+      userRatio0,
+      true // deposit
+    );
+    
+    const withdrawalRatioDiff0 = calculateRatioDiff0(
+      vaultBalance,
+      vaultRatio0,
+      targetRatio0,
+      userAmount,
+      userRatio0,
+      false // withdrawal
+    );
+
+    data.push({
+      userRatio0: bpToPercent(userRatio0),
+      depositRatioDiff0: bpToPercent(depositRatioDiff0),
+      withdrawalRatioDiff0: bpToPercent(withdrawalRatioDiff0),
+    });
+  }
+
+  return data;
+};
+
+/**
+ * Calculate the user transaction parameters that would result in a specific ratioDiff0
+ * This is used for bidirectional binding between ratioDiff0 simulation and slippage simulation
+ * @param {number} targetRatioDiff0 - Desired ratioDiff0 in BP
+ * @param {object} params - Simulation parameters
+ * @returns {object} Updated parameters that achieve the target ratioDiff0
+ */
+export const calculateUserParamsForRatioDiff0 = (targetRatioDiff0, params) => {
+  const { vaultBalance, vaultRatio0, targetRatio0 } = params;
+  
+  // Safety checks
+  if (!isFinite(targetRatioDiff0) || !isFinite(vaultBalance) || 
+      !isFinite(vaultRatio0) || !isFinite(targetRatio0)) {
+    return {
+      userRatio0: targetRatio0,
+      userAmount: vaultBalance * 0.01,
+    };
+  }
+  
+  // If target is 0, use balanced transaction
+  if (Math.abs(targetRatioDiff0) < 10) {
+    return {
+      userRatio0: targetRatio0,
+      userAmount: vaultBalance * 0.01, // 1% of vault balance
+    };
+  }
+
+  // For positive ratioDiff0 (improvement), use the token that moves ratio toward target
+  // For negative ratioDiff0 (worsening), use the token that moves ratio away from target
+  const needsMoreToken0 = vaultRatio0 < targetRatio0;
+  const shouldImprove = targetRatioDiff0 > 0;
+  
+  let userRatio0;
+  
+  if ((needsMoreToken0 && shouldImprove) || (!needsMoreToken0 && !shouldImprove)) {
+    // Use mostly token0
+    userRatio0 = BPS; // 100% token0
+  } else {
+    // Use mostly token1
+    userRatio0 = 0; // 100% token1
+  }
+
+  // Binary search to find the right user amount with safety limits
+  let minAmount = Math.max(100, vaultBalance * 0.0001); // Minimum 0.01% of vault, at least $100
+  let maxAmount = Math.min(vaultBalance * 0.5, 100000000); // Maximum 50% of vault, capped at $100M
+  let userAmount = minAmount;
+
+  for (let i = 0; i < 15; i++) { // Reduced iterations for safety
+    userAmount = (minAmount + maxAmount) / 2;
+    
+    try {
+      // Use deposit for positive ratioDiff0, withdrawal for negative (if amount allows)
+      const isDeposit = targetRatioDiff0 > 0 || userAmount > vaultBalance * 0.1;
+      
+      const calculatedRatioDiff0 = calculateRatioDiff0(
+        vaultBalance,
+        vaultRatio0,
+        targetRatio0,
+        userAmount,
+        userRatio0,
+        isDeposit
+      );
+
+      if (Math.abs(calculatedRatioDiff0 - targetRatioDiff0) < 100) { // Within 1% tolerance
+        break;
+      }
+
+      if (calculatedRatioDiff0 < targetRatioDiff0) {
+        minAmount = userAmount;
+      } else {
+        maxAmount = userAmount;
+      }
+    } catch (error) {
+      console.warn('Error in binary search:', error);
+      break;
+    }
+    
+    // Safety check to prevent infinite loops
+    if (maxAmount - minAmount < 1) {
+      break;
+    }
+  }
+
+  return {
+    userRatio0,
+    userAmount: Math.max(100, Math.min(userAmount, 100000000)), // Clamp final result
+  };
 };
