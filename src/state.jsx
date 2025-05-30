@@ -1,9 +1,14 @@
-import React, { createContext, useContext, useReducer, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useCallback,
+} from 'react';
 import {
   defaultWeightModel,
   defaultLiquidityModel,
   defaultSlippageModel,
-  validation
+  validation,
 } from './models.js';
 
 // Initial state
@@ -35,7 +40,7 @@ const initialState = {
       userAmount: 100000, // User transaction amount in USD ($100K)
       userRatio0: 7000, // User transaction ratio0 in BP (70%)
       targetRatio0: 7000, // Target ratio0 in BP (70%)
-    }
+    },
   },
 };
 
@@ -168,7 +173,9 @@ const riskModelReducer = (state, action) => {
         ...state,
         simulation: {
           ...state.simulation,
-          pools: state.simulation.pools.filter(pool => pool.id !== action.payload),
+          pools: state.simulation.pools.filter(
+            (pool) => pool.id !== action.payload
+          ),
         },
       };
     }
@@ -178,9 +185,12 @@ const riskModelReducer = (state, action) => {
         ...state,
         simulation: {
           ...state.simulation,
-          pools: state.simulation.pools.map(pool =>
+          pools: state.simulation.pools.map((pool) =>
             pool.id === action.payload.poolId
-              ? { ...pool, cScore: Math.max(0, Math.min(10000, action.payload.cScore)) }
+              ? {
+                  ...pool,
+                  cScore: Math.max(0, Math.min(10000, action.payload.cScore)),
+                }
               : pool
           ),
         },
@@ -254,7 +264,10 @@ export const RiskModelProvider = ({ children }) => {
   }, []);
 
   const updateMaxWeightPoolCount = useCallback((count) => {
-    dispatch({ type: ActionTypes.UPDATE_MAX_WEIGHT_POOL_COUNT, payload: count });
+    dispatch({
+      type: ActionTypes.UPDATE_MAX_WEIGHT_POOL_COUNT,
+      payload: count,
+    });
   }, []);
 
   const updateVaultTvl = useCallback((tvl) => {
@@ -274,7 +287,10 @@ export const RiskModelProvider = ({ children }) => {
   }, []);
 
   const updatePoolScore = useCallback((poolId, cScore) => {
-    dispatch({ type: ActionTypes.UPDATE_POOL_SCORE, payload: { poolId, cScore } });
+    dispatch({
+      type: ActionTypes.UPDATE_POOL_SCORE,
+      payload: { poolId, cScore },
+    });
   }, []);
 
   const updateLiquidityTvl = useCallback((tvl) => {
@@ -282,11 +298,17 @@ export const RiskModelProvider = ({ children }) => {
   }, []);
 
   const updateSlippageRatioDiff0 = useCallback((ratioDiff0) => {
-    dispatch({ type: ActionTypes.UPDATE_SLIPPAGE_RATIO_DIFF0, payload: ratioDiff0 });
+    dispatch({
+      type: ActionTypes.UPDATE_SLIPPAGE_RATIO_DIFF0,
+      payload: ratioDiff0,
+    });
   }, []);
 
   const updateRatioDiff0Simulation = useCallback((updates) => {
-    dispatch({ type: ActionTypes.UPDATE_RATIO_DIFF0_SIMULATION, payload: updates });
+    dispatch({
+      type: ActionTypes.UPDATE_RATIO_DIFF0_SIMULATION,
+      payload: updates,
+    });
   }, []);
 
   const resetToDefaults = useCallback(() => {

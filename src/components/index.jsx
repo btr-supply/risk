@@ -74,7 +74,7 @@ export const MathFormula = ({ formula }) => {
           margin: '0.5em 0',
           overflow: 'visible',
           whiteSpace: 'nowrap',
-        }
+        },
       }}
     >
       <div ref={ref} />
@@ -95,7 +95,7 @@ export const Section = ({ title, children, sx = {}, id }) => (
         textTransform: 'uppercase',
         fontSize: '1.75rem',
         color: 'text.primary',
-        pb: 1.5
+        pb: 1.5,
       }}
     >
       {title}
@@ -106,17 +106,27 @@ export const Section = ({ title, children, sx = {}, id }) => (
 
 // Parameter control card
 export const ParameterCard = ({ title, children, action }) => (
-  <Card elevation={0} sx={{
-    height: '100%',
-    borderRadius: 1,
-    border: '1px solid',
-    borderColor: 'divider',
-    bgcolor: 'background.paper',
-    display: 'flex',
-    flexDirection: 'column'
-  }}>
+  <Card
+    elevation={0}
+    sx={{
+      height: '100%',
+      borderRadius: 1,
+      border: '1px solid',
+      borderColor: 'divider',
+      bgcolor: 'background.paper',
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+  >
     <CardContent sx={{ p: 2.5, flexGrow: 1 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2.5,
+        }}
+      >
         <Typography
           variant="h5"
           sx={{
@@ -126,17 +136,13 @@ export const ParameterCard = ({ title, children, action }) => (
             fontSize: '1.25rem',
             color: 'text.primary',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           {getTitleIcon(title)}
           {title}
         </Typography>
-        {action && (
-          <Box>
-            {action}
-          </Box>
-        )}
+        {action && <Box>{action}</Box>}
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         {children}
@@ -152,7 +158,7 @@ export const DescriptionCard = ({ title, children, formula }) => {
   let legendElement = null;
 
   // Separate legend from other children (descriptive paragraphs)
-  allChildrenArray.forEach(child => {
+  allChildrenArray.forEach((child) => {
     if (React.isValidElement(child) && child.type === FormulaLegend) {
       legendElement = child;
     } else {
@@ -161,15 +167,18 @@ export const DescriptionCard = ({ title, children, formula }) => {
   });
 
   return (
-    <Card elevation={0} sx={{
-      height: '100%',
-      borderRadius: 1,
-      border: '1px solid',
-      borderColor: 'divider',
-      bgcolor: 'background.paper',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
+    <Card
+      elevation={0}
+      sx={{
+        height: '100%',
+        borderRadius: 1,
+        border: '1px solid',
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <CardContent sx={{ p: 2.5, flexGrow: 1 }}>
         <Typography
           variant="h5"
@@ -182,7 +191,7 @@ export const DescriptionCard = ({ title, children, formula }) => {
             fontSize: '1.25rem',
             color: 'text.primary',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           {getTitleIcon(title)}
@@ -193,9 +202,7 @@ export const DescriptionCard = ({ title, children, formula }) => {
           {descriptiveContent}
 
           {/* Then the formula */}
-          {formula && (
-            <MathFormula formula={formula} />
-          )}
+          {formula && <MathFormula formula={formula} />}
 
           {/* Then the legend */}
           {legendElement}
@@ -218,7 +225,7 @@ export const ParameterSlider = ({
   unit = '',
   logarithmic = false,
   marks = [],
-  color = 'primary'
+  color = 'primary',
 }) => {
   const theme = useTheme();
 
@@ -327,29 +334,43 @@ export const ParameterSlider = ({
         color: theme.palette.text.secondary,
         top: '18px',
       },
-    })
+    }),
   };
 
   return (
     <Box>
       {label && (
-        <Typography variant="body1" sx={{ fontWeight: 600, fontSize: '1.125rem', color: 'text.primary', mb: 0.5 }}>
+        <Typography
+          variant="body1"
+          sx={{
+            fontWeight: 600,
+            fontSize: '1.125rem',
+            color: 'text.primary',
+            mb: 0.5,
+          }}
+        >
           {label}
         </Typography>
       )}
       {helperText && (
-        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.95rem', display: 'block', mb: 1 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ fontSize: '0.95rem', display: 'block', mb: 1 }}
+        >
           {helperText}
         </Typography>
       )}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Box sx={{
-          flex: 1,
-          pr: 1,
-          display: 'flex',
-          alignItems: 'center',
-          ...(marks.length > 0 && { mb: 2.5 }) // Only add margin when marks are present
-        }}>
+        <Box
+          sx={{
+            flex: 1,
+            pr: 1,
+            display: 'flex',
+            alignItems: 'center',
+            ...(marks.length > 0 && { mb: 2.5 }), // Only add margin when marks are present
+          }}
+        >
           <Slider
             value={getSliderValue()}
             onChange={handleSliderChange}
@@ -362,18 +383,20 @@ export const ParameterSlider = ({
             marks={marks}
             sx={{
               ...sliderSx,
-              width: '100%'
+              width: '100%',
             }}
           />
         </Box>
-        <Box sx={{ 
-          minWidth: { xs: '65px', sm: '85px' }, 
-          flexShrink: 0, 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          height: '20px' // Fixed height to match slider component height
-        }}>
+        <Box
+          sx={{
+            minWidth: { xs: '65px', sm: '85px' },
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '20px', // Fixed height to match slider component height
+          }}
+        >
           <Chip
             label={`${formatValue(value)}${unit}`}
             size="small"
@@ -392,8 +415,8 @@ export const ParameterSlider = ({
               ...(color !== 'primary' && {
                 borderColor: sliderColor,
                 color: sliderColor,
-                backgroundColor: `${sliderColor}15`
-              })
+                backgroundColor: `${sliderColor}15`,
+              }),
             }}
           />
         </Box>
@@ -411,13 +434,14 @@ export const ParameterTextField = ({
   max,
   helperText,
   unit = '',
-  type = 'number'
+  type = 'number',
 }) => (
   <TextField
     label={label}
     value={value}
     onChange={(e) => {
-      const newValue = type === 'number' ? Number(e.target.value) : e.target.value;
+      const newValue =
+        type === 'number' ? Number(e.target.value) : e.target.value;
       if (min !== undefined && newValue < min) return;
       if (max !== undefined && newValue > max) return;
       onChange(newValue);
@@ -437,7 +461,7 @@ export const ParameterTextField = ({
       '& .MuiInputBase-root': {
         fontFamily: 'monospace',
         borderRadius: 1,
-      }
+      },
     }}
   />
 );
@@ -451,17 +475,29 @@ export const BpDisplay = ({ value, decimals = 2 }) => (
 
 // Simulation control card for interactive charts
 export const SimulationCard = ({ title, children, controls, action }) => (
-  <Card elevation={0} sx={{
-    height: '100%',
-    borderRadius: 1,
-    border: '1px solid',
-    borderColor: 'divider',
-    bgcolor: 'background.paper',
-    display: 'flex',
-    flexDirection: 'column'
-  }}>
-    <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+  <Card
+    elevation={0}
+    sx={{
+      height: '100%',
+      borderRadius: 1,
+      border: '1px solid',
+      borderColor: 'divider',
+      bgcolor: 'background.paper',
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+  >
+    <CardContent
+      sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2.5,
+        }}
+      >
         <Typography
           variant="h5"
           sx={{
@@ -471,26 +507,26 @@ export const SimulationCard = ({ title, children, controls, action }) => (
             fontSize: '1.25rem',
             color: 'text.primary',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           {getTitleIcon(title)}
           {title}
         </Typography>
-        {action && (
-          <Box>
-            {action}
-          </Box>
-        )}
+        {action && <Box>{action}</Box>}
       </Box>
 
-      {controls && (
-        <Box sx={{ mb: 2.5 }}>
-          {controls}
-        </Box>
-      )}
+      {controls && <Box sx={{ mb: 2.5 }}>{controls}</Box>}
 
-      <Box sx={{ width: '100%', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          width: '100%',
+          flexGrow: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {children}
       </Box>
     </CardContent>
@@ -499,47 +535,54 @@ export const SimulationCard = ({ title, children, controls, action }) => (
 
 // Chart container with consistent styling and proper sizing
 export const ChartContainer = ({ children, height = '100%' }) => (
-  <Box sx={{
-    width: '100%',
-    height,
-    minHeight: '300px',
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0px',
-    '& .MuiChartsAxis-root': {
-      '& .MuiChartsAxis-tick': {
-        fontSize: '0.6875rem',
-        fill: 'text.secondary',
-      },
-      '& .MuiChartsAxis-label': {
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        fill: 'text.primary',
-      },
-    },
-    '& .MuiChartsLegend-root': {
-      '& .MuiChartsLegend-label': {
-        fontSize: '0.75rem',
-        fill: 'text.primary',
-      },
-    },
-    '& > div': {
-      width: '100% !important',
-      height: '100% !important',
-    },
-    '& svg': {
+  <Box
+    sx={{
       width: '100%',
-      height: '100%',
-    }
-  }}>
+      height,
+      minHeight: '300px',
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '0px',
+      '& .MuiChartsAxis-root': {
+        '& .MuiChartsAxis-tick': {
+          fontSize: '0.6875rem',
+          fill: 'text.secondary',
+        },
+        '& .MuiChartsAxis-label': {
+          fontSize: '0.75rem',
+          fontWeight: 500,
+          fill: 'text.primary',
+        },
+      },
+      '& .MuiChartsLegend-root': {
+        '& .MuiChartsLegend-label': {
+          fontSize: '0.75rem',
+          fill: 'text.primary',
+        },
+      },
+      '& > div': {
+        width: '100% !important',
+        height: '100% !important',
+      },
+      '& svg': {
+        width: '100%',
+        height: '100%',
+      },
+    }}
+  >
     {children}
   </Box>
 );
 
 // Metric display chip
-export const MetricChip = ({ label, value, color = 'primary', formatValue = (v) => v }) => (
+export const MetricChip = ({
+  label,
+  value,
+  color = 'primary',
+  formatValue = (v) => v,
+}) => (
   <Chip
     label={`${label}: ${formatValue(value)}`}
     color={color}
@@ -563,7 +606,8 @@ export const formatCurrency = (value, decimals = 0) => {
 };
 
 // Format basis points as percentage
-export const formatBp = (bp, decimals = 2) => `${bpToPercent(bp).toFixed(decimals)}%`;
+export const formatBp = (bp, decimals = 2) =>
+  `${bpToPercent(bp).toFixed(decimals)}%`;
 
 // Format number with appropriate suffixes
 export const formatNumber = (value, decimals = 0) => {
@@ -579,7 +623,10 @@ export const FormulaLegend = ({ items }) => {
 
   return (
     <Box sx={{ mt: 1.5 }}>
-      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
+      <Typography
+        variant="caption"
+        sx={{ color: 'text.secondary', display: 'block' }}
+      >
         Where:
       </Typography>
       {items.map((item, index) => (
@@ -601,36 +648,55 @@ export const FormulaLegend = ({ items }) => {
 };
 
 // Consistent simulation result display
-export const SimulationResult = ({ prefix, values, separator = ' | ', highlighted, colors }) => {
+export const SimulationResult = ({
+  prefix,
+  values,
+  separator = ' | ',
+  highlighted,
+  colors,
+}) => {
   const theme = useTheme();
 
   const formatDisplayValue = (item, index) => {
     const isHighlighted = highlighted && highlighted === item.key;
-    const itemColor = colors && colors[item.key] ? colors[item.key] : (isHighlighted ? theme.palette.primary.main : 'text.primary');
-    
+    const itemColor =
+      colors && colors[item.key]
+        ? colors[item.key]
+        : isHighlighted
+          ? theme.palette.primary.main
+          : 'text.primary';
+
     const valueStyle = {
       fontFamily: 'monospace',
       fontWeight: 700,
       fontSize: { xs: '0.65rem', sm: '0.75rem' },
-      color: itemColor
+      color: itemColor,
     };
 
     const labelStyle = {
       fontFamily: 'monospace',
       fontWeight: 400,
       fontSize: { xs: '0.65rem', sm: '0.75rem' },
-      color: 'text.secondary'
+      color: 'text.secondary',
     };
 
     if (item.label) {
       return (
         <span key={index}>
-          <Box component="span" sx={labelStyle}>{item.label}: </Box>
-          <Box component="span" sx={valueStyle}>{item.value}</Box>
+          <Box component="span" sx={labelStyle}>
+            {item.label}:{' '}
+          </Box>
+          <Box component="span" sx={valueStyle}>
+            {item.value}
+          </Box>
         </span>
       );
     } else {
-      return <Box key={index} component="span" sx={valueStyle}>{item.value}</Box>;
+      return (
+        <Box key={index} component="span" sx={valueStyle}>
+          {item.value}
+        </Box>
+      );
     }
   };
 
@@ -657,15 +723,18 @@ export const SimulationResult = ({ prefix, values, separator = ' | ', highlighte
           lineHeight: 1.2,
           color: 'text.primary',
           whiteSpace: 'nowrap',
-          minWidth: 'fit-content'
+          minWidth: 'fit-content',
         }}
       >
         {prefix && (
-          <Box component="span" sx={{
-            fontWeight: 400,
-            color: 'text.secondary',
-            mr: 0.5
-          }}>
+          <Box
+            component="span"
+            sx={{
+              fontWeight: 400,
+              color: 'text.secondary',
+              mr: 0.5,
+            }}
+          >
             {prefix}
           </Box>
         )}
@@ -673,11 +742,14 @@ export const SimulationResult = ({ prefix, values, separator = ' | ', highlighte
           <React.Fragment key={index}>
             {formatDisplayValue(item, index)}
             {index < values.length - 1 && (
-              <Box component="span" sx={{
-                mx: 0.5,
-                color: 'text.secondary',
-                fontWeight: 400
-              }}>
+              <Box
+                component="span"
+                sx={{
+                  mx: 0.5,
+                  color: 'text.secondary',
+                  fontWeight: 400,
+                }}
+              >
                 {separator}
               </Box>
             )}
@@ -695,7 +767,7 @@ export const SmartLink = ({ to, children, sx = {}, ...props }) => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    
+
     // Handle anchor links within the same page
     if (to.startsWith('#')) {
       const element = document.getElementById(to.substring(1));
@@ -704,7 +776,7 @@ export const SmartLink = ({ to, children, sx = {}, ...props }) => {
       }
       return;
     }
-    
+
     // Handle navigation to other pages with optional anchors
     if (to.includes('#')) {
       const [path, anchor] = to.split('#');
@@ -728,19 +800,12 @@ export const SmartLink = ({ to, children, sx = {}, ...props }) => {
     '&:hover': {
       color: theme.colors.functional.linkHover,
     },
-    ...sx
+    ...sx,
   };
 
   return (
-    <Box
-      component="span"
-      onClick={handleClick}
-      sx={linkStyles}
-      {...props}
-    >
+    <Box component="span" onClick={handleClick} sx={linkStyles} {...props}>
       {children}
     </Box>
   );
 };
-
-

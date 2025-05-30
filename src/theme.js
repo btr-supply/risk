@@ -92,7 +92,7 @@ const theme = createTheme({
     // Washed-off colors with 50% transparency for reference lines
     washedOff: {
       green: 'rgba(76, 175, 80, 0.5)', // Green with 50% transparency
-      orange: 'rgba(255, 152, 0, 0.5)', // Orange with 50% transparency  
+      orange: 'rgba(255, 152, 0, 0.5)', // Orange with 50% transparency
       warning: 'rgba(255, 87, 34, 0.5)', // Warning red-orange with 50% transparency
       danger: 'rgba(211, 47, 47, 0.5)', // Danger red with 50% transparency
     },

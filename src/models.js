@@ -79,20 +79,37 @@ export const lnWad = (x) => Math.log(x / WAD) * WAD;
 export const validateWeightModel = (model) => {
   const v = validation.weightModel;
 
-  if (model.scoreAmplifierBp < v.scoreAmplifierBp.min || model.scoreAmplifierBp > v.scoreAmplifierBp.max) {
-    throw new Error(`scoreAmplifierBp must be between ${v.scoreAmplifierBp.min} and ${v.scoreAmplifierBp.max}`);
+  if (
+    model.scoreAmplifierBp < v.scoreAmplifierBp.min ||
+    model.scoreAmplifierBp > v.scoreAmplifierBp.max
+  ) {
+    throw new Error(
+      `scoreAmplifierBp must be between ${v.scoreAmplifierBp.min} and ${v.scoreAmplifierBp.max}`
+    );
   }
   if (model.maxBp < v.maxBp.min || model.maxBp > v.maxBp.max) {
     throw new Error(`maxBp must be between ${v.maxBp.min} and ${v.maxBp.max}`);
   }
   if (model.minMaxBp < v.minMaxBp.min || model.minMaxBp > v.minMaxBp.max) {
-    throw new Error(`minMaxBp must be between ${v.minMaxBp.min} and ${v.minMaxBp.max}`);
+    throw new Error(
+      `minMaxBp must be between ${v.minMaxBp.min} and ${v.minMaxBp.max}`
+    );
   }
-  if (model.diversificationFactorBp < v.diversificationFactorBp.min || model.diversificationFactorBp > v.diversificationFactorBp.max) {
-    throw new Error(`diversificationFactorBp must be between ${v.diversificationFactorBp.min} and ${v.diversificationFactorBp.max}`);
+  if (
+    model.diversificationFactorBp < v.diversificationFactorBp.min ||
+    model.diversificationFactorBp > v.diversificationFactorBp.max
+  ) {
+    throw new Error(
+      `diversificationFactorBp must be between ${v.diversificationFactorBp.min} and ${v.diversificationFactorBp.max}`
+    );
   }
-  if (model.defaultCScore < v.defaultCScore.min || model.defaultCScore > v.defaultCScore.max) {
-    throw new Error(`defaultCScore must be between ${v.defaultCScore.min} and ${v.defaultCScore.max}`);
+  if (
+    model.defaultCScore < v.defaultCScore.min ||
+    model.defaultCScore > v.defaultCScore.max
+  ) {
+    throw new Error(
+      `defaultCScore must be between ${v.defaultCScore.min} and ${v.defaultCScore.max}`
+    );
   }
 };
 
@@ -104,20 +121,45 @@ export const validateWeightModel = (model) => {
 export const validateLiquidityModel = (model) => {
   const v = validation.liquidityModel;
 
-  if (model.minRatioBp < v.minRatioBp.min || model.minRatioBp > v.minRatioBp.max) {
-    throw new Error(`minRatioBp must be between ${v.minRatioBp.min} and ${v.minRatioBp.max}`);
+  if (
+    model.minRatioBp < v.minRatioBp.min ||
+    model.minRatioBp > v.minRatioBp.max
+  ) {
+    throw new Error(
+      `minRatioBp must be between ${v.minRatioBp.min} and ${v.minRatioBp.max}`
+    );
   }
-  if (model.tvlExponentBp < v.tvlExponentBp.min || model.tvlExponentBp > v.tvlExponentBp.max) {
-    throw new Error(`tvlExponentBp must be between ${v.tvlExponentBp.min} and ${v.tvlExponentBp.max}`);
+  if (
+    model.tvlExponentBp < v.tvlExponentBp.min ||
+    model.tvlExponentBp > v.tvlExponentBp.max
+  ) {
+    throw new Error(
+      `tvlExponentBp must be between ${v.tvlExponentBp.min} and ${v.tvlExponentBp.max}`
+    );
   }
-  if (model.tvlFactorBp < v.tvlFactorBp.min || model.tvlFactorBp > v.tvlFactorBp.max) {
-    throw new Error(`tvlFactorBp must be between ${v.tvlFactorBp.min} and ${v.tvlFactorBp.max}`);
+  if (
+    model.tvlFactorBp < v.tvlFactorBp.min ||
+    model.tvlFactorBp > v.tvlFactorBp.max
+  ) {
+    throw new Error(
+      `tvlFactorBp must be between ${v.tvlFactorBp.min} and ${v.tvlFactorBp.max}`
+    );
   }
-  if (model.lowOffsetBp < v.lowOffsetBp.min || model.lowOffsetBp > v.lowOffsetBp.max) {
-    throw new Error(`lowOffsetBp must be between ${v.lowOffsetBp.min} and ${v.lowOffsetBp.max}`);
+  if (
+    model.lowOffsetBp < v.lowOffsetBp.min ||
+    model.lowOffsetBp > v.lowOffsetBp.max
+  ) {
+    throw new Error(
+      `lowOffsetBp must be between ${v.lowOffsetBp.min} and ${v.lowOffsetBp.max}`
+    );
   }
-  if (model.highOffsetBp < v.highOffsetBp.min || model.highOffsetBp > v.highOffsetBp.max) {
-    throw new Error(`highOffsetBp must be between ${v.highOffsetBp.min} and ${v.highOffsetBp.max}`);
+  if (
+    model.highOffsetBp < v.highOffsetBp.min ||
+    model.highOffsetBp > v.highOffsetBp.max
+  ) {
+    throw new Error(
+      `highOffsetBp must be between ${v.highOffsetBp.min} and ${v.highOffsetBp.max}`
+    );
   }
 };
 
@@ -130,19 +172,36 @@ export const validateSlippageModel = (model) => {
   const v = validation.slippageModel;
 
   // Check individual ranges
-  if (model.minSlippageBp < v.minSlippageBp.min || model.minSlippageBp > v.minSlippageBp.max) {
-    throw new Error(`minSlippageBp must be between ${v.minSlippageBp.min} and ${v.minSlippageBp.max}`);
+  if (
+    model.minSlippageBp < v.minSlippageBp.min ||
+    model.minSlippageBp > v.minSlippageBp.max
+  ) {
+    throw new Error(
+      `minSlippageBp must be between ${v.minSlippageBp.min} and ${v.minSlippageBp.max}`
+    );
   }
-  if (model.maxSlippageBp < v.maxSlippageBp.min || model.maxSlippageBp > v.maxSlippageBp.max) {
-    throw new Error(`maxSlippageBp must be between ${v.maxSlippageBp.min} and ${v.maxSlippageBp.max}`);
+  if (
+    model.maxSlippageBp < v.maxSlippageBp.min ||
+    model.maxSlippageBp > v.maxSlippageBp.max
+  ) {
+    throw new Error(
+      `maxSlippageBp must be between ${v.maxSlippageBp.min} and ${v.maxSlippageBp.max}`
+    );
   }
-  if (model.amplificationBp < v.amplificationBp.min || model.amplificationBp > v.amplificationBp.max) {
-    throw new Error(`amplificationBp must be between ${v.amplificationBp.min} and ${v.amplificationBp.max}`);
+  if (
+    model.amplificationBp < v.amplificationBp.min ||
+    model.amplificationBp > v.amplificationBp.max
+  ) {
+    throw new Error(
+      `amplificationBp must be between ${v.amplificationBp.min} and ${v.amplificationBp.max}`
+    );
   }
 
   // Check ordering constraint (matches Solidity: minSlippageBp < maxSlippageBp)
   if (model.minSlippageBp >= model.maxSlippageBp) {
-    throw new Error(`minSlippageBp (${model.minSlippageBp}) must be less than maxSlippageBp (${model.maxSlippageBp})`);
+    throw new Error(
+      `minSlippageBp (${model.minSlippageBp}) must be less than maxSlippageBp (${model.maxSlippageBp})`
+    );
   }
 };
 
@@ -169,7 +228,7 @@ export const calculateCScore = (scores) => {
   if (scores.length === 1) return scores[0];
 
   // Check for zero scores
-  if (scores.some(score => score === 0)) return 0;
+  if (scores.some((score) => score === 0)) return 0;
 
   // Calculate geometric mean
   const product = scores.reduce((acc, score) => acc * (score / BPS), 1);
@@ -186,7 +245,12 @@ export const calculateCScore = (scores) => {
  * @param {number} maxBp - Absolute maximum weight in BP
  * @returns {number} Maximum weight in BP
  */
-export const componentMaxWeightBp = (components, minMaxBp, diversificationFactorBp, maxBp = BPS) => {
+export const componentMaxWeightBp = (
+  components,
+  minMaxBp,
+  diversificationFactorBp,
+  maxBp = BPS
+) => {
   const diversificationFactor = diversificationFactorBp / BPS;
   const decay = Math.exp(-components * diversificationFactor);
   const calculatedMax = minMaxBp + Math.round(decay * BPS);
@@ -201,14 +265,19 @@ export const componentMaxWeightBp = (components, minMaxBp, diversificationFactor
  * @param {number} scoreAmplifierBp - Score amplification factor in BP
  * @returns {number[]} Array of weights in BP
  */
-export const targetWeights = (cScores, maxWeightBp, totalWeightBp, scoreAmplifierBp) => {
+export const targetWeights = (
+  cScores,
+  maxWeightBp,
+  totalWeightBp,
+  scoreAmplifierBp
+) => {
   const n = cScores.length;
   if (n === 0) return [];
 
   const amplifier = scoreAmplifierBp / BPS;
 
   // Calculate raw weights using power function
-  const rawWeights = cScores.map(score => {
+  const rawWeights = cScores.map((score) => {
     if (score === 0) return 0;
     return Math.pow(score / BPS, amplifier);
   });
@@ -217,7 +286,7 @@ export const targetWeights = (cScores, maxWeightBp, totalWeightBp, scoreAmplifie
   if (totalRawWeight === 0) return new Array(n).fill(0);
 
   // Normalize to total weight
-  let weights = rawWeights.map(w => (w / totalRawWeight) * totalWeightBp);
+  let weights = rawWeights.map((w) => (w / totalRawWeight) * totalWeightBp);
 
   // Apply capping with redistribution
   const maxWeight = (maxWeightBp / BPS) * totalWeightBp;
@@ -251,14 +320,14 @@ export const targetWeights = (cScores, maxWeightBp, totalWeightBp, scoreAmplifie
     if (uncappedTotal === 0) break;
 
     // Proportionally redistribute
-    uncappedIndices.forEach(i => {
+    uncappedIndices.forEach((i) => {
       const proportion = weights[i] / uncappedTotal;
       weights[i] += totalExcess * proportion;
     });
   }
 
   // Round and ensure sum equals totalWeightBp
-  weights = weights.map(w => Math.round(w));
+  weights = weights.map((w) => Math.round(w));
   const sum = weights.reduce((s, w) => s + w, 0);
   const diff = totalWeightBp - sum;
 
@@ -279,9 +348,14 @@ export const targetWeights = (cScores, maxWeightBp, totalWeightBp, scoreAmplifie
  * @param {number} scoreAmplifierBp - Score amplification factor in BP
  * @returns {number[]} Array of allocations
  */
-export const targetAllocations = (cScores, amount, maxWeightBp, scoreAmplifierBp) => {
+export const targetAllocations = (
+  cScores,
+  amount,
+  maxWeightBp,
+  scoreAmplifierBp
+) => {
   const weights = targetWeights(cScores, maxWeightBp, BPS, scoreAmplifierBp);
-  return weights.map(weight => (amount * weight) / BPS);
+  return weights.map((weight) => (amount * weight) / BPS);
 };
 
 // LIQUIDITY MODEL FUNCTIONS
@@ -294,7 +368,12 @@ export const targetAllocations = (cScores, amount, maxWeightBp, scoreAmplifierBp
  * @param {number} tvlExponentBp - TVL exponent in BP
  * @returns {number} Target liquidity ratio in BP
  */
-export const targetLiquidityRatioBp = (tvlUsd, minRatioBp, tvlFactorBp, tvlExponentBp) => {
+export const targetLiquidityRatioBp = (
+  tvlUsd,
+  minRatioBp,
+  tvlFactorBp,
+  tvlExponentBp
+) => {
   if (minRatioBp >= BPS) return BPS;
 
   const minRatio = minRatioBp / BPS;
@@ -304,7 +383,7 @@ export const targetLiquidityRatioBp = (tvlUsd, minRatioBp, tvlFactorBp, tvlExpon
   // Use TVL directly without normalization, but scale it appropriately
   // Assuming TVL factor is meant to work with TVL in millions for reasonable values
   const scaledTvl = tvlUsd; // Convert to millions for factor calculation
-  const decay = Math.pow(1 + scaledTvl * tvlFactor, -tvlExponent)
+  const decay = Math.pow(1 + scaledTvl * tvlFactor, -tvlExponent);
   const ratio = minRatio + (1 - minRatio) * decay;
   return Math.round(ratio * BPS);
 };
@@ -317,8 +396,18 @@ export const targetLiquidityRatioBp = (tvlUsd, minRatioBp, tvlFactorBp, tvlExpon
  * @param {number} tvlExponentBp - TVL exponent in BP
  * @returns {number} Target liquidity amount
  */
-export const targetLiquidityUsd = (tvlUsd, minRatioBp, tvlFactorBp, tvlExponentBp) => {
-  const ratio = targetLiquidityRatioBp(tvlUsd, minRatioBp, tvlFactorBp, tvlExponentBp);
+export const targetLiquidityUsd = (
+  tvlUsd,
+  minRatioBp,
+  tvlFactorBp,
+  tvlExponentBp
+) => {
+  const ratio = targetLiquidityRatioBp(
+    tvlUsd,
+    minRatioBp,
+    tvlFactorBp,
+    tvlExponentBp
+  );
   return (tvlUsd * ratio) / BPS;
 };
 
@@ -349,7 +438,12 @@ export const liquidityTriggers = (targetRatioBp, lowOffsetBp, highOffsetBp) => {
  * @param {number} amplificationBp - Amplification factor in BP (0-10000)
  * @returns {number} Slippage in BP
  */
-export const calculateSlippage = (ratioDiff0Bp, minSlippageBp, maxSlippageBp, amplificationBp) => {
+export const calculateSlippage = (
+  ratioDiff0Bp,
+  minSlippageBp,
+  maxSlippageBp,
+  amplificationBp
+) => {
   // Normalize ratio difference to [0, 1] range
   const normalizedRatio = (ratioDiff0Bp + BPS) / (2 * BPS);
 
@@ -371,7 +465,8 @@ export const calculateSlippage = (ratioDiff0Bp, minSlippageBp, maxSlippageBp, am
   transformed = Math.max(0, Math.min(1, transformed));
 
   // Map to slippage range
-  const slippage = maxSlippageBp + (minSlippageBp - maxSlippageBp) * transformed;
+  const slippage =
+    maxSlippageBp + (minSlippageBp - maxSlippageBp) * transformed;
 
   // Bound result
   const minBound = Math.min(minSlippageBp, maxSlippageBp);
@@ -390,7 +485,12 @@ export const calculateSlippage = (ratioDiff0Bp, minSlippageBp, maxSlippageBp, am
  * @param {boolean} useLogScale - Whether to use logarithmic scale (affects starting point)
  * @returns {object[]} Array of {tvl, target, low, high} data points
  */
-export const generateLiquidityCurveData = (model, maxTvl = 100000000, points = 100, useLogScale = false) => {
+export const generateLiquidityCurveData = (
+  model,
+  maxTvl = 100000000,
+  points = 100,
+  useLogScale = false
+) => {
   const data = [];
   const minTvl = useLogScale ? 1000 : 0; // Start from $1 for log scale, $0 for linear
 
@@ -408,8 +508,17 @@ export const generateLiquidityCurveData = (model, maxTvl = 100000000, points = 1
       tvl = minTvl + (i / points) * (maxTvl - minTvl);
     }
 
-    const target = targetLiquidityRatioBp(tvl, model.minRatioBp, model.tvlFactorBp, model.tvlExponentBp);
-    const triggers = liquidityTriggers(target, model.lowOffsetBp, model.highOffsetBp);
+    const target = targetLiquidityRatioBp(
+      tvl,
+      model.minRatioBp,
+      model.tvlFactorBp,
+      model.tvlExponentBp
+    );
+    const triggers = liquidityTriggers(
+      target,
+      model.lowOffsetBp,
+      model.highOffsetBp
+    );
 
     data.push({
       tvl,
@@ -431,7 +540,12 @@ export const generateSlippageCurveData = (model, points = 200) => {
   const data = [];
   for (let i = 0; i <= points; i++) {
     const ratioDiff0Bp = -BPS + (i / points) * (2 * BPS);
-    const slippage = calculateSlippage(ratioDiff0Bp, model.minSlippageBp, model.maxSlippageBp, model.amplificationBp);
+    const slippage = calculateSlippage(
+      ratioDiff0Bp,
+      model.minSlippageBp,
+      model.maxSlippageBp,
+      model.amplificationBp
+    );
 
     data.push({
       ratioDiff0: bpToPercent(ratioDiff0Bp),
@@ -450,7 +564,12 @@ export const generateSlippageCurveData = (model, points = 200) => {
 export const generateMaxWeightCurveData = (model, maxComponents = 20) => {
   const data = [];
   for (let components = 1; components <= maxComponents; components++) {
-    const maxWeight = componentMaxWeightBp(components, model.minMaxBp, model.diversificationFactorBp, model.maxBp);
+    const maxWeight = componentMaxWeightBp(
+      components,
+      model.minMaxBp,
+      model.diversificationFactorBp,
+      model.maxBp
+    );
     data.push({
       components,
       maxWeight: bpToPercent(maxWeight),
@@ -469,13 +588,25 @@ export const generateMaxWeightCurveData = (model, maxComponents = 20) => {
  * @param {boolean} isDeposit - true for deposit, false for withdrawal
  * @returns {number} ratioDiff0 in BP
  */
-export const calculateRatioDiff0 = (vaultBalance, vaultRatio0, targetRatio0, userAmount, userRatio0, isDeposit) => {
+export const calculateRatioDiff0 = (
+  vaultBalance,
+  vaultRatio0,
+  targetRatio0,
+  userAmount,
+  userRatio0,
+  isDeposit
+) => {
   // Input validation and safety checks
-  if (!isFinite(vaultBalance) || !isFinite(vaultRatio0) || !isFinite(targetRatio0) || 
-      !isFinite(userAmount) || !isFinite(userRatio0)) {
+  if (
+    !isFinite(vaultBalance) ||
+    !isFinite(vaultRatio0) ||
+    !isFinite(targetRatio0) ||
+    !isFinite(userAmount) ||
+    !isFinite(userRatio0)
+  ) {
     return 0;
   }
-  
+
   if (vaultBalance <= 0 || userAmount <= 0) {
     return 0;
   }
@@ -537,7 +668,7 @@ export const generateRatioDiff0CurveDataBoth = (params, points = 101) => {
 
   for (let i = 0; i <= points; i++) {
     const userRatio0 = (i / points) * BPS; // 0 to 10000 BP
-    
+
     const depositRatioDiff0 = calculateRatioDiff0(
       vaultBalance,
       vaultRatio0,
@@ -546,7 +677,7 @@ export const generateRatioDiff0CurveDataBoth = (params, points = 101) => {
       userRatio0,
       true // deposit
     );
-    
+
     const withdrawalRatioDiff0 = calculateRatioDiff0(
       vaultBalance,
       vaultRatio0,
@@ -575,16 +706,20 @@ export const generateRatioDiff0CurveDataBoth = (params, points = 101) => {
  */
 export const calculateUserParamsForRatioDiff0 = (targetRatioDiff0, params) => {
   const { vaultBalance, vaultRatio0, targetRatio0 } = params;
-  
+
   // Safety checks
-  if (!isFinite(targetRatioDiff0) || !isFinite(vaultBalance) || 
-      !isFinite(vaultRatio0) || !isFinite(targetRatio0)) {
+  if (
+    !isFinite(targetRatioDiff0) ||
+    !isFinite(vaultBalance) ||
+    !isFinite(vaultRatio0) ||
+    !isFinite(targetRatio0)
+  ) {
     return {
       userRatio0: targetRatio0,
       userAmount: vaultBalance * 0.01,
     };
   }
-  
+
   // If target is 0, use balanced transaction
   if (Math.abs(targetRatioDiff0) < 10) {
     return {
@@ -597,10 +732,13 @@ export const calculateUserParamsForRatioDiff0 = (targetRatioDiff0, params) => {
   // For negative ratioDiff0 (worsening), use the token that moves ratio away from target
   const needsMoreToken0 = vaultRatio0 < targetRatio0;
   const shouldImprove = targetRatioDiff0 > 0;
-  
+
   let userRatio0;
-  
-  if ((needsMoreToken0 && shouldImprove) || (!needsMoreToken0 && !shouldImprove)) {
+
+  if (
+    (needsMoreToken0 && shouldImprove) ||
+    (!needsMoreToken0 && !shouldImprove)
+  ) {
     // Use mostly token0
     userRatio0 = BPS; // 100% token0
   } else {
@@ -613,13 +751,14 @@ export const calculateUserParamsForRatioDiff0 = (targetRatioDiff0, params) => {
   let maxAmount = Math.min(vaultBalance * 0.5, 100000000); // Maximum 50% of vault, capped at $100M
   let userAmount = minAmount;
 
-  for (let i = 0; i < 15; i++) { // Reduced iterations for safety
+  for (let i = 0; i < 15; i++) {
+    // Reduced iterations for safety
     userAmount = (minAmount + maxAmount) / 2;
-    
+
     try {
       // Use deposit for positive ratioDiff0, withdrawal for negative (if amount allows)
       const isDeposit = targetRatioDiff0 > 0 || userAmount > vaultBalance * 0.1;
-      
+
       const calculatedRatioDiff0 = calculateRatioDiff0(
         vaultBalance,
         vaultRatio0,
@@ -629,7 +768,8 @@ export const calculateUserParamsForRatioDiff0 = (targetRatioDiff0, params) => {
         isDeposit
       );
 
-      if (Math.abs(calculatedRatioDiff0 - targetRatioDiff0) < 100) { // Within 1% tolerance
+      if (Math.abs(calculatedRatioDiff0 - targetRatioDiff0) < 100) {
+        // Within 1% tolerance
         break;
       }
 
@@ -642,7 +782,7 @@ export const calculateUserParamsForRatioDiff0 = (targetRatioDiff0, params) => {
       console.warn('Error in binary search:', error);
       break;
     }
-    
+
     // Safety check to prevent infinite loops
     if (maxAmount - minAmount < 1) {
       break;

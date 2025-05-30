@@ -1,5 +1,12 @@
 import React from 'react';
-import { Box, Typography, Button, Card, CardContent, Link } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  Link,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import DataUsageIcon from '@mui/icons-material/DataUsage';
@@ -10,10 +17,10 @@ import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 const ModelCard = ({ title, description, icon, route, color }) => {
   const navigate = useNavigate();
-  
+
   return (
-    <Card 
-      sx={{ 
+    <Card
+      sx={{
         height: { xs: 'auto', lg: '15rem' },
         display: 'flex',
         flexDirection: 'column',
@@ -35,53 +42,63 @@ const ModelCard = ({ title, description, icon, route, color }) => {
       onClick={() => navigate(route)}
     >
       {/* Arrow in top right */}
-      <Box sx={{
-        position: 'absolute',
-        top: 16,
-        right: 16,
-        transition: 'color 0.3s ease'
-      }}
-      className="arrow-icon"
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 16,
+          right: 16,
+          transition: 'color 0.3s ease',
+        }}
+        className="arrow-icon"
       >
         <ArrowOutwardIcon sx={{ fontSize: 24, color: 'text.secondary' }} />
       </Box>
 
-      <CardContent sx={{ 
-        flex: 1, 
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        p: 3,
-      }}>
-        {/* Icon */}
-        <Box sx={{ 
-          color: 'text.secondary',
-          mb: 1,
-          ml: -0.9,
-          transition: 'color 0.3s ease',
-          flexShrink: 0
+      <CardContent
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          p: 3,
         }}
-        className="model-icon"
+      >
+        {/* Icon */}
+        <Box
+          sx={{
+            color: 'text.secondary',
+            mb: 1,
+            ml: -0.9,
+            transition: 'color 0.3s ease',
+            flexShrink: 0,
+          }}
+          className="model-icon"
         >
           {icon}
         </Box>
-        
+
         {/* Content */}
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h5" sx={{ 
-            fontWeight: 600, 
-            mb: 1,
-            color: 'text.primary',
-            fontSize: { xs: '1.5rem', lg: '1.25rem' }
-          }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600,
+              mb: 1,
+              color: 'text.primary',
+              fontSize: { xs: '1.5rem', lg: '1.25rem' },
+            }}
+          >
             {title}
           </Typography>
-          
-          <Typography variant="body2" sx={{ 
-            color: 'text.secondary',
-            lineHeight: 1.5,
-            fontSize: '0.9rem'
-          }}>
+
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              lineHeight: 1.5,
+              fontSize: '0.9rem',
+            }}
+          >
             {description}
           </Typography>
         </Box>
@@ -96,21 +113,24 @@ export const HomePage = () => {
   const modelCards = [
     {
       title: 'Allocation Model',
-      description: 'Quantitative vault optimization framework combining modern portfolio theory principles including Kelly Criterion, Black-Litterman model, and Risk Parity methodologies.',
+      description:
+        'Quantitative TVL allocation optimization framework across liquidity pools from multiple DEXs (Uniswap V3, V4). Combines modern portfolio theory principles including Kelly Criterion, Black-Litterman model, and Risk Parity methodologies adapted for decentralized liquidity management.',
       icon: <DataUsageIcon sx={{ fontSize: 48 }} />,
       route: '/allocation',
       color: theme.colors.chart[0], // Blue
     },
     {
       title: 'Liquidity Model',
-      description: 'Dynamic liquidity buffer system implementing Basel III banking regulations and optimal cash holdings theory for institutional treasury management.',
+      description:
+        'Dynamic cash reserves system implementing Basel III banking regulations and optimal cash holdings theory. Maintains unallocated protocol reserves for gas optimization at scale and security buffers against major liquidation events.',
       icon: <WaterDropIcon sx={{ fontSize: 48 }} />,
       route: '/liquidity',
       color: theme.colors.chart[1], // Green
     },
     {
       title: 'Slippage Model',
-      description: 'Dynamic slippage mechanism implementing optimal mechanism design theory and MEV protection research for transaction cost optimization.',
+      description:
+        'Dynamic slippage mechanism implementing optimal mechanism design theory and MEV protection research for transaction cost optimization.',
       icon: <ExpandIcon sx={{ fontSize: 48 }} />,
       route: '/slippage',
       color: theme.colors.chart[2], // Orange
@@ -120,55 +140,70 @@ export const HomePage = () => {
   return (
     <Box sx={{ pb: 4 }}>
       {/* Overview Section */}
-      <Typography variant="h4" sx={{ fontWeight: 600, mb: 3, color: 'text.primary' }}>
+      <Typography
+        variant="h4"
+        sx={{ fontWeight: 600, mb: 3, color: 'text.primary' }}
+      >
         Overview
       </Typography>
-      
+
       <Card sx={{ mb: 6, bgcolor: 'background.paper' }}>
         <CardContent sx={{ p: 3 }}>
-          <Typography variant="body2" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.7 }}>
-            This site is an extension of <strong>BTR's documentation</strong>, dedicated to protocol risk models 
-            methodologies and visualization. The interactive tools presented here reflect the <strong>V1 implementation 
-            of LibRisk</strong> on-chain smart contract, providing comprehensive analysis and simulation capabilities 
-            for BTR's sophisticated risk management framework.
+          <Typography
+            variant="body2"
+            paragraph
+            sx={{ fontSize: '1.1rem', lineHeight: 1.7 }}
+          >
+            This site is an extension of <strong>BTR's documentation</strong>,
+            dedicated to protocol risk models methodologies and visualization.
+            The interactive tools presented here reflect the{' '}
+            <strong>V1 implementation of LibRisk</strong> on-chain smart
+            contract, providing comprehensive analysis and simulation
+            capabilities for BTR's sophisticated risk management framework.
           </Typography>
-          <Typography variant="body2" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.7 }}>
-            Each model implements cutting-edge financial theory and quantitative methodologies, from modern portfolio 
-            optimization to MEV protection mechanisms, enabling users to understand and experiment with the mathematical 
-            foundations underlying BTR's protocol design. These models represent the mathematical foundations of BTR's 
-            V1 protocol implementation.
+          <Typography
+            variant="body2"
+            paragraph
+            sx={{ fontSize: '1.1rem', lineHeight: 1.7 }}
+          >
+            Each model implements cutting-edge financial theory and quantitative
+            methodologies, from modern portfolio optimization to MEV protection
+            mechanisms, enabling users to understand and experiment with the
+            mathematical foundations underlying BTR's protocol design. These
+            models represent the mathematical foundations of BTR's V1 protocol
+            implementation.
           </Typography>
-          
+
           {/* External Links */}
           <Box sx={{ mt: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <Link 
-              href="https://btr.supply/docs" 
-              target="_blank" 
+            <Link
+              href="https://btr.supply/docs"
+              target="_blank"
               rel="noopener noreferrer"
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
                 gap: 0.5,
                 color: theme.colors.functional.link,
                 textDecoration: 'none',
                 fontWeight: 500,
-                '&:hover': { textDecoration: 'underline' }
+                '&:hover': { textDecoration: 'underline' },
               }}
             >
               Full Documentation <LaunchIcon fontSize="small" />
             </Link>
-            <Link 
-              href="https://github.com/btr-supply/contracts/blob/main/evm/src/libraries/LibRisk.sol" 
-              target="_blank" 
+            <Link
+              href="https://github.com/btr-supply/contracts/blob/main/evm/src/libraries/LibRisk.sol"
+              target="_blank"
               rel="noopener noreferrer"
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
                 gap: 0.5,
                 color: theme.colors.functional.link,
                 textDecoration: 'none',
                 fontWeight: 500,
-                '&:hover': { textDecoration: 'underline' }
+                '&:hover': { textDecoration: 'underline' },
               }}
             >
               Smart Contract Code <LaunchIcon fontSize="small" />
@@ -178,16 +213,21 @@ export const HomePage = () => {
       </Card>
 
       {/* Model Navigation Cards */}
-      <Typography variant="h4" sx={{ fontWeight: 600, mb: 4, color: 'text.primary' }}>
+      <Typography
+        variant="h4"
+        sx={{ fontWeight: 600, mb: 4, color: 'text.primary' }}
+      >
         Explore Risk Models
       </Typography>
-      
-      <Box sx={{ 
-        display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
-        gap: 3,
-        justifyContent: 'space-between'
-      }}>
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: 3,
+          justifyContent: 'space-between',
+        }}
+      >
         {modelCards.map((model, index) => (
           <Box key={index} sx={{ flex: { xs: 'none', md: '1' } }}>
             <ModelCard {...model} />
@@ -198,4 +238,4 @@ export const HomePage = () => {
   );
 };
 
-export default HomePage; 
+export default HomePage;
