@@ -9,10 +9,28 @@ import {
   Paper,
   Chip,
 } from '@mui/material';
+import SchoolIcon from '@mui/icons-material/School';
+import SettingsIcon from '@mui/icons-material/Settings';
+import GamepadIcon from '@mui/icons-material/Gamepad';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { bpToPercent } from '../models.js';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+
+// Helper function to get icon based on title
+const getTitleIcon = (title) => {
+  switch (title) {
+    case 'Methodology':
+      return <SchoolIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
+    case 'Parameters':
+      return <SettingsIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
+    case 'Simulation':
+      return <GamepadIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
+    default:
+      return null;
+  }
+};
 
 // KaTeX component for rendering formulas
 export const MathFormula = ({ formula }) => {
@@ -65,8 +83,8 @@ export const MathFormula = ({ formula }) => {
 };
 
 // Section layout component with flexbox
-export const Section = ({ title, children, sx = {} }) => (
-  <Box sx={{ mb: 5, ...sx }}>
+export const Section = ({ title, children, sx = {}, id }) => (
+  <Box sx={{ mb: 5, ...sx }} id={id}>
     <Typography
       variant="h4"
       gutterBottom
@@ -106,9 +124,12 @@ export const ParameterCard = ({ title, children, action }) => (
             fontStyle: 'italic',
             textTransform: 'uppercase',
             fontSize: '1.25rem',
-            color: 'text.primary'
+            color: 'text.primary',
+            display: 'flex',
+            alignItems: 'center'
           }}
         >
+          {getTitleIcon(title)}
           {title}
         </Typography>
         {action && (
@@ -159,9 +180,12 @@ export const DescriptionCard = ({ title, children, formula }) => {
             fontStyle: 'italic',
             textTransform: 'uppercase',
             fontSize: '1.25rem',
-            color: 'text.primary'
+            color: 'text.primary',
+            display: 'flex',
+            alignItems: 'center'
           }}
         >
+          {getTitleIcon(title)}
           {title}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -322,6 +346,8 @@ export const ParameterSlider = ({
         <Box sx={{
           flex: 1,
           pr: 1,
+          display: 'flex',
+          alignItems: 'center',
           ...(marks.length > 0 && { mb: 2.5 }) // Only add margin when marks are present
         }}>
           <Slider
@@ -334,10 +360,20 @@ export const ParameterSlider = ({
             valueLabelFormat={getValueLabelFormat}
             size="small"
             marks={marks}
-            sx={sliderSx}
+            sx={{
+              ...sliderSx,
+              width: '100%'
+            }}
           />
         </Box>
-        <Box sx={{ minWidth: '85px', flexShrink: 0, display: 'flex', alignItems: 'center', height: '32px' }}>
+        <Box sx={{ 
+          minWidth: { xs: '65px', sm: '85px' }, 
+          flexShrink: 0, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          height: '20px' // Fixed height to match slider component height
+        }}>
           <Chip
             label={`${formatValue(value)}${unit}`}
             size="small"
@@ -347,7 +383,12 @@ export const ParameterSlider = ({
               fontWeight: 600,
               fontSize: '0.875rem',
               width: '100%',
-              height: '24px',
+              height: { xs: '18px', sm: '20px' },
+              '& .MuiChip-label': {
+                px: { xs: 0.25, sm: 1 },
+                py: { xs: 0, sm: 0.25 },
+                fontSize: { xs: '0.7rem', sm: '0.875rem' },
+              },
               ...(color !== 'primary' && {
                 borderColor: sliderColor,
                 color: sliderColor,
@@ -428,9 +469,12 @@ export const SimulationCard = ({ title, children, controls, action }) => (
             fontStyle: 'italic',
             textTransform: 'uppercase',
             fontSize: '1.25rem',
-            color: 'text.primary'
+            color: 'text.primary',
+            display: 'flex',
+            alignItems: 'center'
           }}
         >
+          {getTitleIcon(title)}
           {title}
         </Typography>
         {action && (
@@ -557,22 +601,24 @@ export const FormulaLegend = ({ items }) => {
 };
 
 // Consistent simulation result display
-export const SimulationResult = ({ prefix, values, separator = ' | ', highlighted }) => {
+export const SimulationResult = ({ prefix, values, separator = ' | ', highlighted, colors }) => {
   const theme = useTheme();
 
   const formatDisplayValue = (item, index) => {
     const isHighlighted = highlighted && highlighted === item.key;
+    const itemColor = colors && colors[item.key] ? colors[item.key] : (isHighlighted ? theme.palette.primary.main : 'text.primary');
+    
     const valueStyle = {
       fontFamily: 'monospace',
       fontWeight: 700,
-      fontSize: { xs: '0.7rem', sm: '0.8rem' },
-      color: isHighlighted ? theme.palette.primary.main : 'text.primary'
+      fontSize: { xs: '0.65rem', sm: '0.75rem' },
+      color: itemColor
     };
 
     const labelStyle = {
       fontFamily: 'monospace',
       fontWeight: 400,
-      fontSize: { xs: '0.7rem', sm: '0.8rem' },
+      fontSize: { xs: '0.65rem', sm: '0.75rem' },
       color: 'text.secondary'
     };
 
@@ -592,23 +638,26 @@ export const SimulationResult = ({ prefix, values, separator = ' | ', highlighte
     <Paper
       elevation={0}
       sx={{
-        p: { xs: 1, sm: 1.25 },
+        p: { xs: 0.75, sm: 1 },
         mt: 1,
         backgroundColor: 'background.paper',
         borderRadius: 1,
         border: '1px solid',
         borderColor: 'divider',
-        textAlign: 'center'
+        textAlign: 'center',
+        overflowX: 'auto',
+        overflowY: 'visible',
       }}
     >
       <Typography
         variant="body2"
         sx={{
           fontFamily: 'monospace',
-          fontSize: { xs: '0.7rem', sm: '0.8rem' },
+          fontSize: { xs: '0.65rem', sm: '0.75rem' },
           lineHeight: 1.2,
           color: 'text.primary',
-          whiteSpace: 'nowrap'
+          whiteSpace: 'nowrap',
+          minWidth: 'fit-content'
         }}
       >
         {prefix && (
@@ -636,6 +685,61 @@ export const SimulationResult = ({ prefix, values, separator = ' | ', highlighte
         ))}
       </Typography>
     </Paper>
+  );
+};
+
+// Smart Link component for internal navigation and anchors
+export const SmartLink = ({ to, children, sx = {}, ...props }) => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    
+    // Handle anchor links within the same page
+    if (to.startsWith('#')) {
+      const element = document.getElementById(to.substring(1));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+    
+    // Handle navigation to other pages with optional anchors
+    if (to.includes('#')) {
+      const [path, anchor] = to.split('#');
+      navigate(path);
+      // Wait for navigation to complete, then scroll to anchor
+      setTimeout(() => {
+        const element = document.getElementById(anchor);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      navigate(to);
+    }
+  };
+
+  const linkStyles = {
+    color: theme.colors.functional.link,
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    '&:hover': {
+      color: theme.colors.functional.linkHover,
+    },
+    ...sx
+  };
+
+  return (
+    <Box
+      component="span"
+      onClick={handleClick}
+      sx={linkStyles}
+      {...props}
+    >
+      {children}
+    </Box>
   );
 };
 
