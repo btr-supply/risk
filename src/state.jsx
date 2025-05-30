@@ -28,6 +28,14 @@ const initialState = {
     ],
     liquidityTvl: 50000000, // $50M
     slippageRatioDiff0: 0, // Current ratioDiff0
+    // RatioDiff0 simulation parameters
+    ratioDiff0Simulation: {
+      vaultBalance: 200000, // Total vault balance in USD ($200K)
+      vaultRatio0: 1500, // Current vault ratio0 in BP (15%)
+      userAmount: 100000, // User transaction amount in USD ($100K)
+      userRatio0: 7000, // User transaction ratio0 in BP (70%)
+      targetRatio0: 7000, // Target ratio0 in BP (70%)
+    }
   },
 };
 
@@ -45,6 +53,7 @@ const ActionTypes = {
   UPDATE_POOL_SCORE: 'UPDATE_POOL_SCORE',
   UPDATE_LIQUIDITY_TVL: 'UPDATE_LIQUIDITY_TVL',
   UPDATE_SLIPPAGE_RATIO_DIFF0: 'UPDATE_SLIPPAGE_RATIO_DIFF0',
+  UPDATE_RATIO_DIFF0_SIMULATION: 'UPDATE_RATIO_DIFF0_SIMULATION',
   RESET_TO_DEFAULTS: 'RESET_TO_DEFAULTS',
 };
 
@@ -195,6 +204,18 @@ const riskModelReducer = (state, action) => {
         },
       };
 
+    case ActionTypes.UPDATE_RATIO_DIFF0_SIMULATION:
+      return {
+        ...state,
+        simulation: {
+          ...state.simulation,
+          ratioDiff0Simulation: {
+            ...state.simulation.ratioDiff0Simulation,
+            ...action.payload,
+          },
+        },
+      };
+
     case ActionTypes.RESET_TO_DEFAULTS:
       return {
         ...initialState,
@@ -264,6 +285,10 @@ export const RiskModelProvider = ({ children }) => {
     dispatch({ type: ActionTypes.UPDATE_SLIPPAGE_RATIO_DIFF0, payload: ratioDiff0 });
   }, []);
 
+  const updateRatioDiff0Simulation = useCallback((updates) => {
+    dispatch({ type: ActionTypes.UPDATE_RATIO_DIFF0_SIMULATION, payload: updates });
+  }, []);
+
   const resetToDefaults = useCallback(() => {
     dispatch({ type: ActionTypes.RESET_TO_DEFAULTS });
   }, []);
@@ -285,6 +310,7 @@ export const RiskModelProvider = ({ children }) => {
     updatePoolScore,
     updateLiquidityTvl,
     updateSlippageRatioDiff0,
+    updateRatioDiff0Simulation,
     resetToDefaults,
   };
 
