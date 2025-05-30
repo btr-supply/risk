@@ -185,7 +185,7 @@ export const LiquidityModel = () => {
 
   const liquidityBufferDescription = (
     <DescriptionCard
-      title="Operational Benefits"
+      title="Methodology"
       formula={String.raw`T_l = r \cdot (1-o_l) \quad \text{where} \quad T_h = r \cdot (1+o_h)`}
     >
       <Typography variant="body2" paragraph>
