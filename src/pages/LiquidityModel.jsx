@@ -3,6 +3,7 @@ import { Box, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { LineChart } from '@mui/x-charts';
+import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { useRiskModel } from '../state';
 import {
   BPS,
@@ -24,6 +25,7 @@ import {
   ParameterTextField,
   FormulaLegend,
   SimulationResult,
+  SmartLink,
 } from '../components/index.jsx';
 
 export const LiquidityModel = () => {
@@ -58,7 +60,7 @@ export const LiquidityModel = () => {
         max={validation.liquidityModel.minRatioBp.max}
         step={100}
         formatValue={formatBp}
-        helperText="Asymptotic minimum liquidity ratio (0-100%)"
+        helperText="Asymptotic minimum liquidity ratio floor that larger vaults approach as TVL increases. Based on Basel III banking regulations and optimal cash holdings theory for institutional treasury management."
       />
       <ParameterSlider
         label="TVL Factor"
@@ -68,7 +70,7 @@ export const LiquidityModel = () => {
         max={validation.liquidityModel.tvlFactorBp.max}
         step={100}
         formatValue={(v) => `${(v / BPS).toFixed(2)}`}
-        helperText="Linear TVL scaling sensitivity (0.05-2.0)"
+        helperText="Linear TVL scaling sensitivity in the exponential decay formula. Higher values make vault size more influential in determining liquidity requirements, implementing scale economies from corporate finance theory."
       />
       <ParameterSlider
         label="TVL Exponent"
@@ -78,7 +80,7 @@ export const LiquidityModel = () => {
         max={validation.liquidityModel.tvlExponentBp.max}
         step={50} // 0.005 in BPS
         formatValue={(v) => `${(v / BPS).toFixed(3)}`}
-        helperText="Exponential decay strength (0.005-0.2)"
+        helperText="Exponential decay strength controlling how aggressively liquidity requirements decrease with vault scale. Based on Baumol-Tobin optimal cash holdings model where larger entities achieve better operational efficiency."
       />
       <ParameterSlider
         label="Low Offset"
@@ -88,7 +90,7 @@ export const LiquidityModel = () => {
         max={validation.liquidityModel.lowOffsetBp.max}
         step={100}
         formatValue={formatBp}
-        helperText="Low liquidity trigger offset (≥5%)"
+        helperText="Low liquidity trigger offset percentage below target ratio. When current ratio falls below this threshold, protocol automatically unwinds LP positions to restore liquidity buffer levels."
       />
       <ParameterSlider
         label="High Offset"
@@ -98,7 +100,7 @@ export const LiquidityModel = () => {
         max={validation.liquidityModel.highOffsetBp.max}
         step={100}
         formatValue={formatBp}
-        helperText="High liquidity trigger offset (≥5%)"
+        helperText="High liquidity trigger offset percentage above target ratio. When current ratio exceeds this threshold, protocol automatically deploys excess liquidity into LP positions for yield generation."
       />
     </ParameterCard>
   );
@@ -109,10 +111,10 @@ export const LiquidityModel = () => {
         <strong>Theoretical foundation</strong>: Implements <strong>optimal cash holdings theory</strong> from corporate finance and <strong>inventory management models</strong> from operations research. The exponential decay function follows <strong>Baumol-Tobin model</strong> principles, where transaction costs and liquidity needs don't scale linearly with vault size, creating economies of scale.
       </Typography>
       <Typography variant="body2" paragraph>
-        <strong>Core methodology</strong>: Dynamic liquidity buffer system using exponential decay based on vault TVL. Larger vaults operate with proportionally lower buffer ratios, while smaller vaults maintain higher ratios for operational stability. The formula balances <strong>capital efficiency</strong> against <strong>operational requirements</strong> through mathematically proven scaling relationships.
+        <strong>Core methodology</strong>: Dynamic liquidity buffer system using exponential decay based on vault TVL. Larger vaults operate with proportionally lower buffer ratios, while smaller vaults maintain higher ratios for operational stability. The formula balances <strong>capital efficiency</strong> against <strong>operational requirements</strong> through mathematically proven scaling relationships. Buffer allocation integrates with <SmartLink to="/allocation">BTR's Allocation Model</SmartLink> for optimal capital deployment.
       </Typography>
       <Typography variant="body2" paragraph>
-        <strong>Practical advantages</strong>: Enables batch processing of DEX interactions, flow netting to reduce rebalancing frequency, and asynchronous market making across diverse protocols. Users interact only with vault contracts avoiding direct DEX gas costs, while protocol routines handle batch liquidity operations creating 90%+ gas savings per user transaction.
+        <strong>Practical advantages</strong>: Enables batch processing of DEX interactions, flow netting to reduce rebalancing frequency, and asynchronous market making across diverse protocols. Users interact only with vault contracts avoiding direct DEX gas costs, while protocol routines handle batch liquidity operations creating 90%+ gas savings per user transaction. Transaction timing optimization uses <SmartLink to="/slippage">BTR's Slippage Model</SmartLink> to minimize market impact.
       </Typography>
       <Typography variant="body2">
         <strong>Mathematical implementation</strong>: Exponential decay function with configurable minimum ratio, TVL scaling factor, and decay exponent. Buffer liquidity generates yield through Cash Strategy integration with money markets (AAVE, Compound) while maintaining instant redemption capability, eliminating traditional cash drag.
@@ -188,18 +190,23 @@ export const LiquidityModel = () => {
             min={1000}
             max={1000000000}
             formatValue={(v) => formatCurrency(v, 0)}
-            helperText="Total value locked in vault (logarithmic scale)"
+            helperText="Total value locked in vault determining liquidity buffer requirements through exponential decay formula. Demonstrates how larger vaults achieve operational efficiency with proportionally lower buffer ratios."
             logarithmic={true}
             color="green"
           />
           <SimulationResult
             prefix={`For TVL = ${formatCurrency(simulation.liquidityTvl)}:`}
             values={[
-              { key: 'target', label: 'Target', value: formatBp(currentTargetRatio) },
               { key: 'low', label: 'Low', value: formatBp(currentTriggers.lowTrigger) },
+              { key: 'target', label: 'Target', value: formatBp(currentTargetRatio) },
               { key: 'high', label: 'High', value: formatBp(currentTriggers.highTrigger) }
             ]}
             highlighted="target"
+            colors={{
+              low: theme.palette.secondary.main,
+              target: theme.palette.primary.main,
+              high: theme.palette.success.main
+            }}
           />
         </Box>
       }
@@ -224,7 +231,7 @@ export const LiquidityModel = () => {
             {
               data: liquidityCurveData.map(d => d.high),
               label: 'High Trigger (%)',
-              color: theme.palette.success.main,
+              color: theme.palette.secondary.main,
               curve: 'monotoneX',
               showMark: ({ index }) => Math.abs(liquidityCurveData[index].tvl - simulation.liquidityTvl) < (simulation.liquidityTvl * 0.1),
             },
@@ -235,18 +242,32 @@ export const LiquidityModel = () => {
             scaleType: 'log',
             valueFormatter: (value) => formatCurrency(value,0)
           }]}
-          yAxis={[{ min:0, max:60, display: false }]}
+          yAxis={[{ min: 0, max: 50, display: false }]}
           slotProps={{ legend: { position: { vertical: 'top', horizontal: 'middle' } } }}
           tooltip={{ trigger: 'axis' }}
           height={650}
-        />
+          margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
+        >
+          <ChartsReferenceLine 
+            x={simulation.liquidityTvl} 
+            label={`${formatCurrency(simulation.liquidityTvl)}`}
+            lineStyle={{ 
+              stroke: theme.palette.success.main, 
+              strokeDasharray: '4 3',
+            }}
+            labelStyle={{ 
+              fontSize: '12px', 
+              fill: theme.palette.success.main
+            }}
+          />
+        </LineChart>
       </ChartContainer>
     </SimulationCard>
   );
 
   return (
     <Box>
-      <Section title="Liquidity Model">
+      <Section title="Liquidity Model" id="liquidity-model-section">
         <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
           <Box sx={{ flex: '1 1 45%', minWidth: '300px' }}>
             {liquidityModelDescription}
