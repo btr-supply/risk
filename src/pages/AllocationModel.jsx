@@ -5,6 +5,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { BarChart, LineChart, PieChart } from '@mui/x-charts';
+import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { useRiskModel } from '../state';
 import {
   BPS,
@@ -29,6 +30,7 @@ import {
   ParameterTextField,
   FormulaLegend,
   SimulationResult,
+  SmartLink,
 } from '../components/index.jsx';
 
 export const AllocationModel = () => {
@@ -68,7 +70,7 @@ export const AllocationModel = () => {
         max={validation.weightModel.defaultCScore.max}
         step={100}
         formatValue={(v) => formatBp(v, 0)}
-        helperText="Default pool C-Score (0-100%)"
+        helperText="Default composite score for pools when individual Trust, Liquidity, and Performance scores are not available. Acts as prior belief in Black-Litterman model framework for portfolio optimization."
       />
       <ParameterSlider
         label="Score Amplifier"
@@ -78,7 +80,7 @@ export const AllocationModel = () => {
         max={validation.weightModel.scoreAmplifierBp.max}
         step={100}
         formatValue={(v) => `${(v / BPS).toFixed(2)}x`}
-        helperText="Score exponentiation factor (0.75x-2.5x)"
+        helperText="Power function exponent controlling risk preference and allocation concentration. Values <1.0 create risk-averse flattened distributions, >1.0 create risk-seeking concentrated allocations to top-performing pools."
       />
       <ParameterSlider
         label="Min Max Weight"
@@ -88,7 +90,7 @@ export const AllocationModel = () => {
         max={weightModel.maxBp} // Dynamic max based on maxBp
         step={100}
         formatValue={(v) => formatBp(v,0)}
-        helperText="Minimum maximum dynamic weight (0-100%)"
+        helperText="Asymptotic minimum for dynamic maximum weight calculation. As vault pool count increases exponentially, individual pool maximum weight approaches this floor value, ensuring minimum diversification."
       />
       <ParameterSlider
         label="Absolute Max Weight"
@@ -103,7 +105,7 @@ export const AllocationModel = () => {
         max={validation.weightModel.maxBp.max}
         step={100}
         formatValue={(v) => formatBp(v,0)}
-        helperText="Absolute maximum weight per pool (10-100%)"
+        helperText="Hard upper limit for any single pool allocation regardless of vault composition or pool count. Provides risk management ceiling that prevents over-concentration in any individual liquidity pool."
       />
       <ParameterSlider
         label="Diversification Factor"
@@ -113,7 +115,7 @@ export const AllocationModel = () => {
         max={validation.weightModel.diversificationFactorBp.max}
         step={100}
         formatValue={(v) => `${(v / BPS).toFixed(2)}`}
-        helperText="Exponential decay for max weight (0.05-2.0)"
+        helperText="Exponential decay rate controlling how aggressively maximum weights decrease as pool count increases. Higher values enforce stronger diversification requirements, implementing diminishing marginal utility from modern portfolio theory."
       />
     </ParameterCard>
   );
@@ -133,7 +135,7 @@ export const AllocationModel = () => {
         <strong>Practical advantages</strong>: Conservative amplification (0.75-1.0x) creates flat, diversified distributions ideal for risk-averse strategies. Aggressive amplification (2.0-2.5x) concentrates allocations in top-performing pools for alpha-seeking approaches. The iterative capping algorithm prevents over-concentration while maintaining optimal capital deployment efficiency.
       </Typography>
       <Typography variant="body2">
-        <strong>Mathematical implementation</strong>: Four-stage process: 1) Composite scoring via geometric mean, 2) Exponential amplification using power functions, 3) Normalization to 100% weight distribution, 4) Dynamic capping with iterative redistribution. See <a href="#vault-allocation-section" style={{color: theme.colors.functional.link, textDecoration: 'underline'}}>Target Allocation below</a> for interactive examples.
+        <strong>Mathematical implementation</strong>: Four-stage process: 1) Composite scoring via geometric mean, 2) Exponential amplification using power functions, 3) Normalization to 100% weight distribution, 4) Dynamic capping with iterative redistribution. See <SmartLink to="#vault-allocation-section">Target Allocation below</SmartLink> for interactive examples.
       </Typography>
       <FormulaLegend items={[
         { symbol: '<em>T</em>', text: 'total vault TVL' },
@@ -162,10 +164,10 @@ export const AllocationModel = () => {
         <strong>Core methodology</strong>: Each pool receives <strong>Trust</strong> (audits, team reputation, protocol track record), <strong>Liquidity</strong> (TVL depth, trading volume), and <strong>Performance</strong> (fee efficiency, IL profile) scores. The geometric mean composition creates <strong>balanced risk contribution</strong> requirements and zero-sensitivity property for comprehensive quality assessment.
       </Typography>
       <Typography variant="body2" paragraph>
-        <strong>Practical advantages</strong>: Any dimension scoring zero eliminates pool allocation (c-score = 0), preventing investment in unbalanced opportunities. Strong performance in one area cannot compensate for complete failure in another, implementing <strong>minimum competency thresholds</strong> across all risk dimensions while rewarding balanced excellence.
+        <strong>Practical advantages</strong>: Any dimension scoring zero eliminates pool allocation (c-score = 0), preventing investment in unbalanced opportunities. Strong performance in one area cannot compensate for complete failure in another, implementing <strong>minimum competency thresholds</strong> across all risk dimensions while rewarding balanced excellence. Pool liquidity management integrates with <SmartLink to="/liquidity">BTR's Liquidity Model</SmartLink> for optimal capital deployment.
       </Typography>
       <Typography variant="body2">
-        <strong>Mathematical implementation</strong>: Three-dimensional geometric mean calculation ensures equal weighting of Trust, Liquidity, and Performance factors. Adjust sliders above to see how individual scores combine into final composite scores that drive <a href="#vault-allocation-section" style={{color: theme.colors.functional.link, textDecoration: 'underline'}}>allocation weights below</a>.
+        <strong>Mathematical implementation</strong>: Three-dimensional geometric mean calculation ensures equal weighting of Trust, Liquidity, and Performance factors. Adjust sliders above to see how individual scores combine into final composite scores that drive <SmartLink to="#vault-allocation-section">allocation weights below</SmartLink>.
       </Typography>
       <FormulaLegend items={[
         { symbol: '<em>c</em>', text: 'composite score (BP)' },
@@ -197,7 +199,7 @@ export const AllocationModel = () => {
             onChange={(v) => updateCScores({ trust: v })}
             min={0} max={BPS} step={100}
             formatValue={formatBp}
-            helperText="Audits, team reputation and activity, protocol track record"
+            helperText="Protocol security assessment including smart contract audits, team reputation and track record, governance decentralization, and historical reliability metrics for institutional trust evaluation."
           />
           <ParameterSlider
             label="Liquidity Score"
@@ -205,7 +207,7 @@ export const AllocationModel = () => {
             onChange={(v) => updateCScores({ liquidity: v })}
             min={0} max={BPS} step={100}
             formatValue={formatBp}
-            helperText="TVL (pool depth), trading volume"
+            helperText="Market liquidity depth assessment including total value locked (TVL), daily trading volume, bid-ask spreads, and capital efficiency metrics that determine transaction cost impact."
           />
           <ParameterSlider
             label="Performance Score"
@@ -213,7 +215,7 @@ export const AllocationModel = () => {
             onChange={(v) => updateCScores({ performance: v })}
             min={0} max={BPS} step={100}
             formatValue={formatBp}
-            helperText="Fees/TVL, incentives/TVL"
+            helperText="Economic performance assessment including fee generation efficiency, impermanent loss profiles, historical yield consistency, and LP profitability metrics relative to comparable market opportunities."
           />
 
           {/* Read-only C-Score Display */}
@@ -288,8 +290,8 @@ export const AllocationModel = () => {
                 scaleType: 'band',
               }]}
               yAxis={[{ min: 0, max: 100 }]}
-              margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
               height={440}
+              margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
               slotProps={{
                 legend: { hidden: true }
               }}
@@ -310,8 +312,8 @@ export const AllocationModel = () => {
                 scaleType: 'band',
               }]}
               yAxis={[{ min: 0, max: 100, display: false }]}
-              margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
               height={440}
+              margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
               slotProps={{
                 legend: { hidden: true }
               }}
@@ -346,7 +348,7 @@ export const AllocationModel = () => {
         <strong>Practical examples</strong>: 1 pool → 99.3% max allocation (near-total concentration); 8 pools → 35.2% max (moderate diversification); 16 pools → 27.7% approaching asymptotic floor. Higher diversification factors create stronger decay, while lower factors allow concentration even with many pools.
       </Typography>
       <Typography variant="body2">
-        <strong>Mathematical implementation</strong>: Exponential decay function with configurable diversification factor controls decay aggressiveness. Adjust Number of Pools above to see curve changes. This feeds into the <a href="#vault-allocation-section" style={{color: theme.colors.functional.link, textDecoration: 'underline'}}>allocation capping algorithm below</a>.
+        <strong>Mathematical implementation</strong>: Exponential decay function with configurable diversification factor controls decay aggressiveness. Adjust Number of Pools above to see curve changes. This feeds into the <SmartLink to="#vault-allocation-section">allocation capping algorithm below</SmartLink>.
       </Typography>
       <FormulaLegend items={[
         { symbol: '<em>w<sub>m</sub></em>', text: 'dynamic maximum weight (BP)' },
@@ -386,7 +388,7 @@ export const AllocationModel = () => {
             max={weightModel.maxBp}
             step={100}
             formatValue={(v) => formatBp(v,0)}
-            helperText="Minimum maximum dynamic weight (0-100%)"
+            helperText="Asymptotic minimum for dynamic maximum weight calculation. As vault pool count increases exponentially, individual pool maximum weight approaches this floor value, ensuring minimum diversification."
           />
           <ParameterSlider
             label="Absolute Max Weight"
@@ -401,7 +403,7 @@ export const AllocationModel = () => {
             max={validation.weightModel.maxBp.max}
             step={100}
             formatValue={(v) => formatBp(v,0)}
-            helperText="Absolute maximum weight per pool (10-100%)"
+            helperText="Hard upper limit for any single pool allocation regardless of vault composition or pool count. Provides risk management ceiling that prevents over-concentration in any individual liquidity pool."
           />
           <ParameterSlider
             label="Diversification Factor"
@@ -411,19 +413,19 @@ export const AllocationModel = () => {
             max={validation.weightModel.diversificationFactorBp.max}
             step={100}
             formatValue={(v) => `${(v / BPS).toFixed(2)}`}
-            helperText="Exponential decay for max weight (0.05-2.0)"
+            helperText="Exponential decay rate controlling how aggressively maximum weights decrease as pool count increases. Higher values enforce stronger diversification requirements, implementing diminishing marginal utility from modern portfolio theory."
           />
           <ParameterSlider
             label="Number of Pools in Vault"
             value={simulation.maxWeightPoolCount}
             onChange={updateMaxWeightPoolCount}
             min={1} max={20} step={1}
-            helperText="Simulate vault with different pool counts"
+            helperText="Simulates vault composition with varying pool counts to demonstrate dynamic maximum weight calculations. Shows how diversification requirements automatically adjust based on portfolio complexity and scale."
             color="green"
           />
           <Box sx={{ mt: 1 }}>
             <SimulationResult
-              prefix={`Current Max Weight for ${simulation.maxWeightPoolCount} pools:`}
+              prefix={`${simulation.maxWeightPoolCount} pools → Max Weight:`}
               values={[
                 { key: 'maxWeight', value: formatBp(currentMaxWeightForPoolCount) }
               ]}
@@ -438,7 +440,7 @@ export const AllocationModel = () => {
           series={[{
             data: maxWeightData.map(d => d.maxWeight),
             label: 'Max Weight (%)',
-            color: theme.colors.chart[0],
+            color: theme.palette.primary.main, // Primary blue
             showMark: ({ index }) => maxWeightData[index].components === simulation.maxWeightPoolCount,
           }]}
           xAxis={[{
@@ -447,10 +449,25 @@ export const AllocationModel = () => {
             scaleType: 'point',
           }]}
           yAxis={[{ min: 0, max: 100 }]}
-          margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
           height={370}
+          margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
           slotProps={{ legend: { hidden: true } }}
-        />
+        >
+          {/* Current level reference line */}
+          <ChartsReferenceLine 
+            x={simulation.maxWeightPoolCount} 
+            label={`${simulation.maxWeightPoolCount} pools`}
+            lineStyle={{ 
+              stroke: theme.colors.chart[1], // Green 
+              strokeDasharray: '4 3',
+              strokeWidth: 2
+            }}
+            labelStyle={{ 
+              fontSize: '12px', 
+              fill: theme.colors.chart[1]
+            }}
+          />
+        </LineChart>
       </ChartContainer>
     </SimulationCard>
   );
@@ -493,7 +510,7 @@ export const AllocationModel = () => {
         <strong>Practical examples</strong>: Conservative amplification (0.75-1.0x) creates flat distributions ideal for risk-averse strategies. Aggressive amplification (2.0-2.5x) concentrates allocations in top pools for alpha-seeking approaches. The capping algorithm typically converges in 2-3 iterations, ensuring computational efficiency.
       </Typography>
       <Typography variant="body2">
-        <strong>Mathematical implementation</strong>: Power function scaling followed by iterative constraint satisfaction. System continuously monitors pool quality metrics and triggers rebalancing when weight divergence exceeds thresholds through optimized swap sequences across multiple DEXs.
+        <strong>Mathematical implementation</strong>: Power function scaling followed by iterative constraint satisfaction. System continuously monitors pool quality metrics and triggers rebalancing when weight divergence exceeds thresholds through optimized swap sequences across multiple DEXs. Transaction costs are dynamically managed using <SmartLink to="/slippage">BTR's Slippage Model</SmartLink> to minimize execution impact.
       </Typography>
       <FormulaLegend items={[
         { symbol: '<em>w<sub>i</sub></em>', text: 'normalized weight (BP)' },
@@ -545,7 +562,7 @@ export const AllocationModel = () => {
             max={validation.weightModel.scoreAmplifierBp.max}
             step={100}
             formatValue={(v) => `${(v / BPS).toFixed(2)}x`}
-            helperText="Score exponentiation factor (0.75x-2.5x)"
+            helperText="Power function exponent controlling risk preference and allocation concentration. Values <1.0 create risk-averse flattened distributions, >1.0 create risk-seeking concentrated allocations to top-performing pools."
           />
           <ParameterSlider
             label="Diversification Factor"
@@ -555,7 +572,7 @@ export const AllocationModel = () => {
             max={validation.weightModel.diversificationFactorBp.max}
             step={100}
             formatValue={(v) => `${(v / BPS).toFixed(2)}`}
-            helperText="Exponential decay for max weight (0.05-2.0)"
+            helperText="Exponential decay rate controlling how aggressively maximum weights decrease as pool count increases. Higher values enforce stronger diversification requirements, implementing diminishing marginal utility from modern portfolio theory."
           />
           <ParameterSlider
             label="Vault TVL (USD)"
@@ -564,7 +581,7 @@ export const AllocationModel = () => {
             min={1000}
             max={1000000000}
             formatValue={formatCurrency}
-            helperText="Total value locked in vault (logarithmic scale)"
+            helperText="Total value locked in vault determining absolute allocation amounts for each pool. Demonstrates how percentage weights translate to actual dollar allocations across portfolio components."
             logarithmic={true}
             color="green"
           />
@@ -593,7 +610,7 @@ export const AllocationModel = () => {
                         Pool {pool.id}
                       </Typography>
                     </TableCell>
-                    <TableCell sx={{ minWidth: '120px' }}>
+                    <TableCell sx={{ minWidth: { xs: '140px', sm: '160px' } }}>
                       <Box sx={{ width: '100%' }}>
                         <ParameterSlider
                           label=""
@@ -662,14 +679,19 @@ export const AllocationModel = () => {
                 label: `Pool ${simulation.pools[index].id}`,
                 color: theme.chartColors[index % theme.chartColors.length]
               })),
-              innerRadius: 60,
-              outerRadius: 140,
+              innerRadius: 70,
+              outerRadius: 130,
               paddingAngle: 2,
               cornerRadius: 3,
             }]}
-            margin={{ top: 40, bottom: 40, left: 40, right: 40 }}
             slotProps={{ legend: { hidden: true } }}
             height={300}
+            margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
+            sx={{
+              '& .MuiChartsLegend-root': {
+                display: 'none'
+              }
+            }}
           />
         </ChartContainer>
       ) : (
@@ -680,7 +702,7 @@ export const AllocationModel = () => {
 
   return (
     <Box>
-      <Section title="Allocation Model">
+      <Section title="Allocation Model" id="allocation-model-section">
         <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
           <Box sx={{ flex: '1 1 45%', minWidth: '300px' }}>
             {allocationModelDescription}
@@ -702,7 +724,7 @@ export const AllocationModel = () => {
         </Box>
       </Section>
 
-      <Section title="Max Single Weight">
+      <Section title="Max Single Weight" id="max-weight-section">
         <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
           <Box sx={{ flex: '1 1 45%', minWidth: '300px' }}>
             {maxWeightDescription}
