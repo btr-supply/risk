@@ -42,7 +42,7 @@ const theme = createTheme({
     },
     text: {
       primary: '#FFFFFF', // Pure white
-      secondary: '#8E8E93', // Apple secondary text
+      secondary: '#B0B0B5', // Lighter grey (was '#8E8E93')
       tertiary: '#555555', // Apple separator
     },
     grey: {
@@ -88,6 +88,14 @@ const theme = createTheme({
       '#32D74B', // Apple lime
       '#FFD60A', // Apple gold
     ],
+
+    // Washed-off colors with 50% transparency for reference lines
+    washedOff: {
+      green: 'rgba(76, 175, 80, 0.5)', // Green with 50% transparency
+      orange: 'rgba(255, 152, 0, 0.5)', // Orange with 50% transparency  
+      warning: 'rgba(255, 87, 34, 0.5)', // Warning red-orange with 50% transparency
+      danger: 'rgba(211, 47, 47, 0.5)', // Danger red with 50% transparency
+    },
 
     // Functional colors
     functional: {
@@ -227,13 +235,15 @@ const theme = createTheme({
     },
     body1: {
       fontSize: '1.125rem',
+      fontWeight: 300,
       lineHeight: 1.6,
       color: '#FFFFFF',
     },
     body2: {
       fontSize: '1rem',
+      fontWeight: 300,
       lineHeight: 1.6,
-      color: '#8E8E93',
+      color: '#D0D0D5',
     },
     button: {
       textTransform: 'none',
@@ -242,8 +252,9 @@ const theme = createTheme({
     },
     caption: {
       fontSize: '0.6875rem',
+      fontWeight: 300,
       lineHeight: 1.4,
-      color: '#8E8E93',
+      color: '#D0D0D5',
     },
   },
   shape: {
@@ -410,12 +421,10 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           minHeight: 48,
-          borderBottom: '1px solid #3A3A3C',
+          borderBottom: 'none',
         },
         indicator: {
-          height: 3,
-          borderRadius: 1.5,
-          backgroundColor: '#007AFF',
+          display: 'none',
         },
       },
     },
