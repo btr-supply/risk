@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ThemeProvider,
   CssBaseline,
@@ -13,14 +13,19 @@ import {
   Menu,
   MenuItem,
   useMediaQuery,
-  useTheme,
   Card,
   Dialog,
-  Slide
+  Slide,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom';
 import theme from './theme';
 import { RiskModelProvider } from './state';
 import Footer, { SocialLinks } from './components/Footer';
@@ -33,32 +38,40 @@ import SlippageModel from './pages/SlippageModel';
 
 // BTR Logo component
 const BTRLogo = ({ onClick }) => (
-  <Box 
-    sx={{ 
-      display: 'flex', 
-      alignItems: 'center', 
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
       mr: { xs: 1, sm: 3 },
       cursor: 'pointer',
-      '&:hover': { opacity: 0.8 }
+      '&:hover': { opacity: 0.8 },
     }}
     onClick={onClick}
   >
-    <Typography variant="h6" component="div" sx={{
-      ml: 2.5,
-      fontWeight: 800,
-      fontSize: { xs: '2rem', sm: '2.9rem' },
-      fontStyle: 'italic',
-      color: 'text.primary'
-    }}>
+    <Typography
+      variant="h6"
+      component="div"
+      sx={{
+        ml: 2.5,
+        fontWeight: 800,
+        fontSize: { xs: '2rem', sm: '2.9rem' },
+        fontStyle: 'italic',
+        color: 'text.primary',
+      }}
+    >
       BTR
     </Typography>
-    <Typography variant="h6" component="div" sx={{
-      ml: 1,
-      fontWeight: 400,
-      fontSize: { xs: '2rem', sm: '2.9rem' },
-      fontStyle: 'italic',
-      color: 'text.tertiary'
-    }}>
+    <Typography
+      variant="h6"
+      component="div"
+      sx={{
+        ml: 1,
+        fontWeight: 400,
+        fontSize: { xs: '2rem', sm: '2.9rem' },
+        fontStyle: 'italic',
+        color: 'text.tertiary',
+      }}
+    >
       RISK
     </Typography>
   </Box>
@@ -72,7 +85,6 @@ function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
-  const theme = useTheme();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Map paths to tab indices
@@ -80,11 +92,14 @@ function AppContent() {
     '/': -1, // Homepage has no active tab
     '/allocation': 0,
     '/liquidity': 1,
-    '/slippage': 2
+    '/slippage': 2,
   };
 
   const tabToPaths = ['/allocation', '/liquidity', '/slippage'];
-  const activeTab = pathToTab[location.pathname] !== undefined ? pathToTab[location.pathname] : -1;
+  const activeTab =
+    pathToTab[location.pathname] !== undefined
+      ? pathToTab[location.pathname]
+      : -1;
 
   const handleTabChange = (event, newValue) => {
     navigate(tabToPaths[newValue]);
@@ -106,8 +121,6 @@ function AppContent() {
     setAnchorEl(null);
   };
 
-  const tabLabels = ['Allocation', 'Liquidity', 'Slippage'];
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Header with Paper styling to match other sections */}
@@ -117,20 +130,25 @@ function AppContent() {
           position: 'sticky',
           top: 0,
           zIndex: (theme) => theme.zIndex.appBar,
-          py: 1
+          py: 1,
         }}
       >
-        <Card elevation={0} sx={{
-          borderRadius: 1,
-          border: '1px solid',
-          borderColor: 'divider',
-          bgcolor: 'background.paper'
-        }}>
-          <Toolbar sx={{
-            minHeight: '56px !important',
-            px: 3,
-            borderBottom: 0
-          }}>
+        <Card
+          elevation={0}
+          sx={{
+            borderRadius: 1,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          }}
+        >
+          <Toolbar
+            sx={{
+              minHeight: '56px !important',
+              px: 3,
+              borderBottom: 0,
+            }}
+          >
             <BTRLogo onClick={() => navigate('/')} />
             <Box sx={{ flexGrow: 1 }} />
 
@@ -144,12 +162,12 @@ function AppContent() {
                   onClick={handleMenuOpen}
                   sx={{
                     mr: 1,
-                    p: 1
+                    p: 1,
                   }}
                 >
                   <MenuIcon sx={{ fontSize: '2rem' }} />
                 </IconButton>
-                
+
                 {/* Full Screen Mobile Navigation Overlay */}
                 <Dialog
                   fullScreen
@@ -161,19 +179,21 @@ function AppContent() {
                       bgcolor: 'background.default',
                       display: 'flex',
                       flexDirection: 'column',
-                    }
+                    },
                   }}
                 >
                   {/* Close button */}
-                  <Box sx={{ 
-                    position: 'absolute', 
-                    top: 16, 
-                    right: 16, 
-                    zIndex: 1 
-                  }}>
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 16,
+                      right: 16,
+                      zIndex: 1,
+                    }}
+                  >
                     <IconButton
                       onClick={handleMenuClose}
-                      sx={{ 
+                      sx={{
                         color: 'text.primary',
                         bgcolor: 'background.paper',
                         border: '1px solid',
@@ -181,8 +201,8 @@ function AppContent() {
                         p: 1,
                         '&:hover': {
                           bgcolor: 'background.paper',
-                          borderColor: 'primary.main'
-                        }
+                          borderColor: 'primary.main',
+                        },
                       }}
                     >
                       <CloseIcon sx={{ fontSize: '2rem' }} />
@@ -190,15 +210,17 @@ function AppContent() {
                   </Box>
 
                   {/* Navigation Items */}
-                  <Box sx={{ 
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: 4,
-                    px: 4
-                  }}>
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: 4,
+                      px: 4,
+                    }}
+                  >
                     <Typography
                       variant="h2"
                       onClick={() => {
@@ -214,13 +236,13 @@ function AppContent() {
                         cursor: 'pointer',
                         transition: 'color 0.3s ease',
                         '&:hover': {
-                          color: 'primary.main'
-                        }
+                          color: 'primary.main',
+                        },
                       }}
                     >
                       Home
                     </Typography>
-                    
+
                     <Typography
                       variant="h2"
                       onClick={() => handleMobileTabSelect(0)}
@@ -233,13 +255,13 @@ function AppContent() {
                         cursor: 'pointer',
                         transition: 'color 0.3s ease',
                         '&:hover': {
-                          color: 'primary.main'
-                        }
+                          color: 'primary.main',
+                        },
                       }}
                     >
                       Allocation
                     </Typography>
-                    
+
                     <Typography
                       variant="h2"
                       onClick={() => handleMobileTabSelect(1)}
@@ -252,13 +274,13 @@ function AppContent() {
                         cursor: 'pointer',
                         transition: 'color 0.3s ease',
                         '&:hover': {
-                          color: 'primary.main'
-                        }
+                          color: 'primary.main',
+                        },
                       }}
                     >
                       Liquidity
                     </Typography>
-                    
+
                     <Typography
                       variant="h2"
                       onClick={() => handleMobileTabSelect(2)}
@@ -271,8 +293,8 @@ function AppContent() {
                         cursor: 'pointer',
                         transition: 'color 0.3s ease',
                         '&:hover': {
-                          color: 'primary.main'
-                        }
+                          color: 'primary.main',
+                        },
                       }}
                     >
                       Slippage
@@ -280,13 +302,15 @@ function AppContent() {
                   </Box>
 
                   {/* Social Links at Bottom */}
-                  <Box sx={{ 
-                    pb: 6,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}>
-                    <SocialLinks 
+                  <Box
+                    sx={{
+                      pb: 6,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <SocialLinks
                       orientation="horizontal"
                       size="xlarge"
                       spacing={2}
@@ -302,8 +326,8 @@ function AppContent() {
                 textColor="inherit"
                 TabIndicatorProps={{
                   sx: {
-                    display: 'none'
-                  }
+                    display: 'none',
+                  },
                 }}
                 sx={{
                   '& .MuiTab-root': {
@@ -315,9 +339,9 @@ function AppContent() {
                     m: 0,
                     letterSpacing: '0.02em',
                     '&.Mui-selected': {
-                      color: 'primary.main'
-                    }
-                  }
+                      color: 'primary.main',
+                    },
+                  },
                 }}
               >
                 <Tab label="Allocation" />

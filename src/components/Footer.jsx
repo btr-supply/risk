@@ -6,34 +6,36 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import XIcon from '@mui/icons-material/X';
 
 // Reusable Social Links component
-export const SocialLinks = ({ orientation = 'horizontal', size = 'medium', spacing = 0.5 }) => {
+export const SocialLinks = ({
+  orientation = 'horizontal',
+  size = 'medium',
+  spacing = 0.5,
+}) => {
   const getIconSize = () => {
     switch (size) {
       case 'xlarge':
-        return { 
-          github: '2.5rem', 
-          x: '2.5rem', 
-          telegram: '2.7rem' 
+        return {
+          github: '2.5rem',
+          x: '2.5rem',
+          telegram: '2.7rem',
         };
       case 'large':
-        return { 
-          github: '2rem', 
-          x: '2rem', 
-          telegram: '2.2rem' 
+        return {
+          github: '2rem',
+          x: '2rem',
+          telegram: '2.2rem',
         };
       default:
-        return { 
-          github: '1.6rem', 
-          x: '1.6rem', 
-          telegram: '1.8rem' 
+        return {
+          github: '1.6rem',
+          x: '1.6rem',
+          telegram: '1.8rem',
         };
     }
   };
@@ -74,7 +76,9 @@ export const SocialLinks = ({ orientation = 'horizontal', size = 'medium', spaci
           href={social.url}
           target="_blank"
           rel="noopener noreferrer"
-          size={size === 'xlarge' ? 'large' : size === 'large' ? 'large' : 'small'}
+          size={
+            size === 'xlarge' ? 'large' : size === 'large' ? 'large' : 'small'
+          }
           sx={{
             color: 'text.secondary',
             '&:hover': {
@@ -95,20 +99,22 @@ export const SocialLinks = ({ orientation = 'horizontal', size = 'medium', spaci
 // BTR Logo component (same as header)
 const BTRLogo = () => (
   <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
-    <Typography variant="h6" component="div" sx={{
-      fontWeight: 800,
-      fontSize: { xs: '1.5rem', sm: '1.75rem' },
-      fontStyle: 'italic',
-      color: 'text.primary'
-    }}>
+    <Typography
+      variant="h6"
+      component="div"
+      sx={{
+        fontWeight: 800,
+        fontSize: { xs: '1.5rem', sm: '1.75rem' },
+        fontStyle: 'italic',
+        color: 'text.primary',
+      }}
+    >
       BTR
     </Typography>
   </Box>
 );
 
 const Footer = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery('(max-width: 768px)');
   const currentYear = new Date().getFullYear();
 
   return (
@@ -132,12 +138,14 @@ const Footer = () => {
           }}
         >
           {/* Left side: BTR Logo + Copyright */}
-          <Box sx={{
-            display: 'flex',
-            gap: 0,
-            flexDirection: 'row',
-            alignItems: 'flex-end'
-          }}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 0,
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+            }}
+          >
             <BTRLogo />
             <Typography
               variant="body2"
