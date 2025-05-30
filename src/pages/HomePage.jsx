@@ -167,11 +167,11 @@ export const HomePage = () => {
             sx={{ fontSize: '1.1rem', lineHeight: 1.7 }}
           >
             Each model implements cutting-edge financial theory and quantitative
-            methodologies, from TVL allocation optimization across liquidity pools to MEV protection
-            mechanisms, enabling users to understand and experiment with the
-            mathematical foundations underlying BTR's protocol design. These
-            models represent the mathematical foundations of BTR's V1 protocol
-            implementation.
+            methodologies, from TVL allocation optimization across liquidity
+            pools to MEV protection mechanisms, enabling users to understand and
+            experiment with the mathematical foundations underlying BTR's
+            protocol design. These models represent the mathematical foundations
+            of BTR's V1 protocol implementation.
           </Typography>
 
           {/* External Links */}
