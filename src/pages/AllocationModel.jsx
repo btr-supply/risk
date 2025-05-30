@@ -794,7 +794,7 @@ export const AllocationModel = () => {
             min={1000}
             max={1000000000}
             formatValue={formatCurrency}
-            helperText="Total value locked in vault determining absolute allocation amounts for each pool. Demonstrates how percentage weights translate to actual dollar allocations across portfolio components."
+            helperText="Total value locked in vault determining absolute allocation amounts for each pool. Demonstrates how percentage weights translate to actual dollar allocations across liquidity pool components."
             logarithmic={true}
             color="green"
           />
