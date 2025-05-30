@@ -114,7 +114,7 @@ export const HomePage = () => {
     {
       title: 'Allocation Model',
       description:
-        'Quantitative TVL allocation optimization framework across liquidity pools from multiple DEXs (Uniswap V3, V4). Combines modern portfolio theory principles including Kelly Criterion, Black-Litterman model, and Risk Parity methodologies adapted for decentralized liquidity management.',
+        'Optimize TVL allocation across multiple DEX liquidity pools using modern portfolio theory, Kelly Criterion, and Risk Parity methodologies.',
       icon: <DataUsageIcon sx={{ fontSize: 48 }} />,
       route: '/allocation',
       color: theme.colors.chart[0], // Blue
@@ -122,7 +122,7 @@ export const HomePage = () => {
     {
       title: 'Liquidity Model',
       description:
-        'Dynamic cash reserves system implementing Basel III banking regulations and optimal cash holdings theory. Maintains unallocated protocol reserves for gas optimization at scale and security buffers against major liquidation events.',
+        'Manage protocol cash reserves and security buffers using Basel III regulations and optimal cash holdings theory.',
       icon: <WaterDropIcon sx={{ fontSize: 48 }} />,
       route: '/liquidity',
       color: theme.colors.chart[1], // Green
@@ -130,7 +130,7 @@ export const HomePage = () => {
     {
       title: 'Slippage Model',
       description:
-        'Dynamic slippage mechanism implementing optimal mechanism design theory and MEV protection research for transaction cost optimization.',
+        'Optimize transaction costs and protect against MEV using dynamic slippage mechanisms and optimal design theory.',
       icon: <ExpandIcon sx={{ fontSize: 48 }} />,
       route: '/slippage',
       color: theme.colors.chart[2], // Orange
@@ -167,7 +167,7 @@ export const HomePage = () => {
             sx={{ fontSize: '1.1rem', lineHeight: 1.7 }}
           >
             Each model implements cutting-edge financial theory and quantitative
-            methodologies, from modern portfolio optimization to MEV protection
+            methodologies, from TVL allocation optimization across liquidity pools to MEV protection
             mechanisms, enabling users to understand and experiment with the
             mathematical foundations underlying BTR's protocol design. These
             models represent the mathematical foundations of BTR's V1 protocol
@@ -217,7 +217,7 @@ export const HomePage = () => {
         variant="h4"
         sx={{ fontWeight: 600, mb: 4, color: 'text.primary' }}
       >
-        Explore Risk Models
+        Explore Models
       </Typography>
 
       <Box
