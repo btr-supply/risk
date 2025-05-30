@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ThemeProvider,
   CssBaseline,
@@ -14,25 +14,35 @@ import {
   MenuItem,
   useMediaQuery,
   useTheme,
-  Card
+  Card,
+  Dialog,
+  Slide
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import theme from './theme';
 import { RiskModelProvider } from './state';
-import Footer from './components/Footer';
+import Footer, { SocialLinks } from './components/Footer';
 
 // Import pages
+import HomePage from './pages/HomePage';
 import AllocationModel from './pages/AllocationModel';
 import LiquidityModel from './pages/LiquidityModel';
 import SlippageModel from './pages/SlippageModel';
 
 // BTR Logo component
-const BTRLogo = () => (
-  <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, sm: 3 } }}>
-    {/* <svg width="64" height="64" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path fill="currentColor" d="m14.947 166.918 12.956-77.759H61.74q8.916 0 14.594 2.392 5.715 2.393 8.078 6.759 2.4 4.367 1.41 10.289a19.05 19.05 0 0 1-3.277 7.784q-2.477 3.493-6.287 5.923-3.773 2.391-8.421 3.303l-.153.759q5.03.153 8.764 2.506 3.735 2.316 5.488 6.455 1.752 4.1.838 9.568-1.067 6.378-5.22 11.352-4.154 4.974-10.784 7.822t-15.09 2.847zm24.082-16.858h9.908q5.258 0 8.268-2.012 3.05-2.012 3.62-5.885.458-2.733-.457-4.632t-3.086-2.886-5.45-.987H41.62zm4.878-29.463h8.688q2.743 0 5.03-.873 2.286-.873 3.772-2.544 1.486-1.67 1.867-4.025.572-3.645-1.753-5.543-2.286-1.899-6.173-1.898h-8.993zm50.641-14.428 2.896-17.01h67.827l-2.896 17.01h-23.472l-10.06 60.749h-20.882l10.06-60.749zM30.246 79.245h213.106L247 60H33.895zM9 196h213.106l3.648-19.245H12.648z"/>
-      <path fill="currentColor" fillRule="evenodd" d="m160.289 166.918 12.956-77.759h33.685q8.688 0 14.67 3.152 5.982 3.151 8.612 9.074t1.257 14.2q-1.371 8.353-6.058 14.087-4.34 5.316-10.907 8.251l11.021 28.995H202.51l-9.427-25.666h-7.304l-4.303 25.666zm42.221-42.98q-2.82.912-6.555.912h-7.425l3.158-18.833h7.468q3.659 0 6.135 1.025 2.477.988 3.544 3.114 1.067 2.088.533 5.429-.532 3.342-2.286 5.392-1.753 2.012-4.572 2.961" clipRule="evenodd"/>
-    </svg> */}
+const BTRLogo = ({ onClick }) => (
+  <Box 
+    sx={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      mr: { xs: 1, sm: 3 },
+      cursor: 'pointer',
+      '&:hover': { opacity: 0.8 }
+    }}
+    onClick={onClick}
+  >
     <Typography variant="h6" component="div" sx={{
       ml: 2.5,
       fontWeight: 800,
@@ -54,36 +64,32 @@ const BTRLogo = () => (
   </Box>
 );
 
-// TabPanel component
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`risk-model-tabpanel-${index}`}
-      aria-labelledby={`risk-model-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
 
 function AppContent() {
-  const [activeTab, setActiveTab] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
   const theme = useTheme();
-  const isMobile = useMediaQuery('(max-width: 768px)'); // More explicit breakpoint
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  // Map paths to tab indices
+  const pathToTab = {
+    '/': -1, // Homepage has no active tab
+    '/allocation': 0,
+    '/liquidity': 1,
+    '/slippage': 2
+  };
+
+  const tabToPaths = ['/allocation', '/liquidity', '/slippage'];
+  const activeTab = pathToTab[location.pathname] !== undefined ? pathToTab[location.pathname] : -1;
 
   const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
+    navigate(tabToPaths[newValue]);
     if (anchorEl) {
-      setAnchorEl(null); // Close mobile menu if open
+      setAnchorEl(null);
     }
   };
 
@@ -96,8 +102,8 @@ function AppContent() {
   };
 
   const handleMobileTabSelect = (tabIndex) => {
-    setActiveTab(tabIndex);
-    setAnchorEl(null); // Close the menu
+    navigate(tabToPaths[tabIndex]);
+    setAnchorEl(null);
   };
 
   const tabLabels = ['Allocation', 'Liquidity', 'Slippage'];
@@ -125,7 +131,7 @@ function AppContent() {
             px: 3,
             borderBottom: 0
           }}>
-            <BTRLogo />
+            <BTRLogo onClick={() => navigate('/')} />
             <Box sx={{ flexGrow: 1 }} />
 
             {/* Mobile Navigation */}
@@ -136,53 +142,181 @@ function AppContent() {
                   color="inherit"
                   aria-label="menu"
                   onClick={handleMenuOpen}
+                  sx={{
+                    mr: 1,
+                    p: 1
+                  }}
                 >
-                  <MenuIcon />
+                  <MenuIcon sx={{ fontSize: '2rem' }} />
                 </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
+                
+                {/* Full Screen Mobile Navigation Overlay */}
+                <Dialog
+                  fullScreen
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
-                  PaperProps={{
-                    sx: {
-                      mt: 1,
-                      minWidth: 200
+                  TransitionComponent={Transition}
+                  sx={{
+                    '& .MuiDialog-paper': {
+                      bgcolor: 'background.default',
+                      display: 'flex',
+                      flexDirection: 'column',
                     }
                   }}
                 >
-                  <MenuItem onClick={() => handleMobileTabSelect(0)}>
-                    Allocation
-                  </MenuItem>
-                  <MenuItem onClick={() => handleMobileTabSelect(1)}>
-                    Liquidity
-                  </MenuItem>
-                  <MenuItem onClick={() => handleMobileTabSelect(2)}>
-                    Slippage
-                  </MenuItem>
-                </Menu>
+                  {/* Close button */}
+                  <Box sx={{ 
+                    position: 'absolute', 
+                    top: 16, 
+                    right: 16, 
+                    zIndex: 1 
+                  }}>
+                    <IconButton
+                      onClick={handleMenuClose}
+                      sx={{ 
+                        color: 'text.primary',
+                        bgcolor: 'background.paper',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        p: 1,
+                        '&:hover': {
+                          bgcolor: 'background.paper',
+                          borderColor: 'primary.main'
+                        }
+                      }}
+                    >
+                      <CloseIcon sx={{ fontSize: '2rem' }} />
+                    </IconButton>
+                  </Box>
+
+                  {/* Navigation Items */}
+                  <Box sx={{ 
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: 4,
+                    px: 4
+                  }}>
+                    <Typography
+                      variant="h2"
+                      onClick={() => {
+                        navigate('/');
+                        handleMenuClose();
+                      }}
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: '3rem',
+                        fontStyle: 'italic',
+                        textTransform: 'uppercase',
+                        color: 'text.primary',
+                        cursor: 'pointer',
+                        transition: 'color 0.3s ease',
+                        '&:hover': {
+                          color: 'primary.main'
+                        }
+                      }}
+                    >
+                      Home
+                    </Typography>
+                    
+                    <Typography
+                      variant="h2"
+                      onClick={() => handleMobileTabSelect(0)}
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: '3rem',
+                        fontStyle: 'italic',
+                        textTransform: 'uppercase',
+                        color: 'text.primary',
+                        cursor: 'pointer',
+                        transition: 'color 0.3s ease',
+                        '&:hover': {
+                          color: 'primary.main'
+                        }
+                      }}
+                    >
+                      Allocation
+                    </Typography>
+                    
+                    <Typography
+                      variant="h2"
+                      onClick={() => handleMobileTabSelect(1)}
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: '3rem',
+                        fontStyle: 'italic',
+                        textTransform: 'uppercase',
+                        color: 'text.primary',
+                        cursor: 'pointer',
+                        transition: 'color 0.3s ease',
+                        '&:hover': {
+                          color: 'primary.main'
+                        }
+                      }}
+                    >
+                      Liquidity
+                    </Typography>
+                    
+                    <Typography
+                      variant="h2"
+                      onClick={() => handleMobileTabSelect(2)}
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: '3rem',
+                        fontStyle: 'italic',
+                        textTransform: 'uppercase',
+                        color: 'text.primary',
+                        cursor: 'pointer',
+                        transition: 'color 0.3s ease',
+                        '&:hover': {
+                          color: 'primary.main'
+                        }
+                      }}
+                    >
+                      Slippage
+                    </Typography>
+                  </Box>
+
+                  {/* Social Links at Bottom */}
+                  <Box sx={{ 
+                    pb: 6,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <SocialLinks 
+                      orientation="horizontal"
+                      size="xlarge"
+                      spacing={2}
+                    />
+                  </Box>
+                </Dialog>
               </>
             ) : (
               /* Desktop Navigation */
               <Tabs
-                value={activeTab}
+                value={activeTab >= 0 ? activeTab : false}
                 onChange={handleTabChange}
                 textColor="inherit"
                 TabIndicatorProps={{
                   sx: {
-                    backgroundColor: 'primary.main',
-                    height: 3,
-                    bottom: -1,
-                    borderRadius: '2px 2px 0 0'
+                    display: 'none'
                   }
                 }}
                 sx={{
                   '& .MuiTab-root': {
                     textTransform: 'uppercase',
-                    fontSize: '1rem',
-                    fontWeight: 600,
+                    fontSize: '1.3rem',
+                    fontWeight: 700,
                     minWidth: 'auto',
-                    px: { xs: 2, sm: 3 },
-                    letterSpacing: '0.02em'
+                    px: 2,
+                    m: 0,
+                    letterSpacing: '0.02em',
+                    '&.Mui-selected': {
+                      color: 'primary.main'
+                    }
                   }
                 }}
               >
@@ -197,15 +331,12 @@ function AppContent() {
 
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ py: 4, flexGrow: 1 }}>
-        <TabPanel value={activeTab} index={0}>
-          <AllocationModel />
-        </TabPanel>
-        <TabPanel value={activeTab} index={1}>
-          <LiquidityModel />
-        </TabPanel>
-        <TabPanel value={activeTab} index={2}>
-          <SlippageModel />
-        </TabPanel>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/allocation" element={<AllocationModel />} />
+          <Route path="/liquidity" element={<LiquidityModel />} />
+          <Route path="/slippage" element={<SlippageModel />} />
+        </Routes>
       </Container>
 
       <Footer />
@@ -218,7 +349,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <RiskModelProvider>
-        <AppContent />
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
       </RiskModelProvider>
     </ThemeProvider>
   );
