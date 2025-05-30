@@ -21,15 +21,18 @@ BTR Risk is built with modern web technologies:
 Before contributing, ensure you have the following installed:
 
 ### Required
+
 - **Node.js**: Version 18.x or higher (LTS recommended)
 - **npm**: Comes with Node.js (or **Bun** as an alternative package manager)
 - **Git**: For version control
 
 ### Recommended
+
 - **VS Code** or similar editor with TypeScript/React support
 - **React Developer Tools** browser extension for debugging
 
 ### Verification
+
 ```bash
 # Check your versions
 node --version    # Should be 18.x or higher
@@ -44,6 +47,7 @@ git --version     # Any recent version
 1. **Fork the repository** to your GitHub account.
 
 2. **Clone your fork** locally:
+
    ```bash
    # Replace <your-username> with your actual GitHub username
    git clone https://github.com/<your-username>/risk.git
@@ -51,10 +55,11 @@ git --version     # Any recent version
    ```
 
 3. **Install dependencies**:
+
    ```bash
    # Using npm (recommended)
    npm install
-   
+
    # Or using Bun (alternative)
    bun install
    ```
@@ -74,12 +79,16 @@ git --version     # Any recent version
 - **`npm run build`** - Build for production (outputs to `dist/`)
 - **`npm run preview`** - Preview the production build locally
 - **`npm run lint`** - Run ESLint to check code quality
+- **`npm run lint:fix`** - Run ESLint and automatically fix issues
+- **`npm run format`** - Format all files using Prettier
+- **`npm run format:check`** - Check if files are properly formatted
 
 ### Logical Commits
 
 **IMPORTANT**: Never commit all changes at once. Always break down your work into logical, atomic commits where each commit represents a single feature, fix, or improvement.
 
 #### Best Practices:
+
 - **One feature per commit**: Each commit should contain only related changes for a single feature or fix
 - **Examine changes first**: Use `git diff` to review what you're committing
 - **Stage selectively**: Use `git add <specific-files>` instead of `git add .`
@@ -87,6 +96,7 @@ git --version     # Any recent version
 - **Meaningful commit messages**: Each commit should have a clear, descriptive message
 
 #### Example of Good Commit Sequence:
+
 ```bash
 # Instead of one large commit:
 git add .
@@ -119,8 +129,13 @@ main     ← production-ready, automatically deployed to risk.btr.supply
 
 1. Create a new branch from `dev` with the appropriate prefix (see [Naming Conventions](#naming-conventions)).
 2. Make your changes and test locally with `npm run dev`.
-3. Ensure code quality by running `npm run lint` and `npm run build`.
-4. Commit your changes (see [Naming Conventions](#naming-conventions)).
+3. **Before committing**: Ensure code quality and formatting:
+   ```bash
+   npm run format        # Format code with Prettier
+   npm run lint:fix      # Fix linting issues automatically
+   npm run build         # Verify build works
+   ```
+4. Commit your changes in logical units (see [Logical Commits](#logical-commits) and [Naming Conventions](#naming-conventions)).
 5. Create a pull request to merge your changes into the `dev` branch.
 6. After review and approval, your changes will be merged into `dev`.
 7. Periodically, the `dev` branch is merged into `main` for releases.
@@ -136,6 +151,7 @@ The project uses **Cloudflare Pages** for automated deployment:
 - **Environment**: Node.js runtime with npm package installation
 
 ### Deployment Process
+
 1. Code merged to `main` → Cloudflare Pages webhook triggered
 2. Cloudflare runs `npm install` → `npm run build`
 3. Built files deployed from `dist/` to CDN
@@ -144,11 +160,13 @@ The project uses **Cloudflare Pages** for automated deployment:
 ## Branch Structure
 
 - **`main`** - Production branch
+
   - Contains stable, released code
   - Automatically deployed to `risk.btr.supply` via Cloudflare Pages
   - Protected branch requiring pull request reviews
 
 - **`dev`** - Development branch
+
   - Active development happens here
   - Features and fixes are merged into this branch via Pull Requests
   - Periodically merged into `main` for releases
@@ -163,14 +181,14 @@ The project uses **Cloudflare Pages** for automated deployment:
 
 All branches and commits must use specific prefixes for consistency:
 
-| Type      | Description                 | Branch Example              | Commit Example                           |
-| --------- | --------------------------- | --------------------------- | ---------------------------------------- |
-| **feat**  | New features, improvements  | `feat/risk-dashboard`       | `[feat] Add interactive risk dashboard`  |
-| **fix**   | Bug fixes, issues           | `fix/chart-responsiveness`  | `[fix] Resolve chart mobile rendering`   |
-| **refac** | Code refactoring, cleanup   | `refac/component-structure` | `[refac] Restructure chart components`   |
-| **style** | UI/UX improvements, styling | `style/material-ui-theme`   | `[style] Update MUI theme colors`        |
-| **docs**  | Documentation, README       | `docs/api-integration`      | `[docs] Document risk calculation API`   |
-| **chore** | Dependencies, config        | `chore/update-deps`         | `[chore] Update React to v19.1.0`        |
+| Type      | Description                 | Branch Example              | Commit Example                          |
+| --------- | --------------------------- | --------------------------- | --------------------------------------- |
+| **feat**  | New features, improvements  | `feat/risk-dashboard`       | `[feat] Add interactive risk dashboard` |
+| **fix**   | Bug fixes, issues           | `fix/chart-responsiveness`  | `[fix] Resolve chart mobile rendering`  |
+| **refac** | Code refactoring, cleanup   | `refac/component-structure` | `[refac] Restructure chart components`  |
+| **style** | UI/UX improvements, styling | `style/material-ui-theme`   | `[style] Update MUI theme colors`       |
+| **docs**  | Documentation, README       | `docs/api-integration`      | `[docs] Document risk calculation API`  |
+| **chore** | Dependencies, config        | `chore/update-deps`         | `[chore] Update React to v19.1.0`       |
 
 #### Important Notes:
 
@@ -182,15 +200,18 @@ All branches and commits must use specific prefixes for consistency:
 ## Pull Request Process
 
 1. **Quality Checks**: Ensure the following pass locally:
+
    ```bash
-   npm run lint     # No linting errors
-   npm run build    # Builds successfully
-   npm run preview  # Preview works as expected
+   npm run format:check # Verify code formatting
+   npm run lint         # No linting errors
+   npm run build        # Builds successfully
+   npm run preview      # Preview works as expected
    ```
 
 2. **Testing**: Verify your changes work in development mode (`npm run dev`)
 
 3. **Pull Request**:
+
    - Title should follow commit format (e.g., `[feat] Add risk metrics visualization`)
    - Provide clear description of changes and rationale
    - Reference related issues (e.g., "Closes #123", "Fixes #456")
@@ -200,6 +221,41 @@ All branches and commits must use specific prefixes for consistency:
    - Wait for review from project maintainers
    - Address any feedback promptly
    - Ensure CI checks pass (linting, build)
+
+## Code Formatting
+
+This project uses **Prettier** for consistent code formatting and **ESLint** for code quality. All code must be formatted before committing.
+
+### Configuration Files:
+
+- **`.prettierrc`** - Prettier configuration with project formatting rules
+- **`.prettierignore`** - Files to exclude from formatting
+- **`eslint.config.js`** - ESLint configuration with Prettier integration
+
+### Formatting Rules:
+
+- **Single quotes** for JavaScript strings, **double quotes** for JSX attributes
+- **Semicolons** at the end of statements
+- **2 spaces** for indentation (no tabs)
+- **80 character** line length limit
+- **Trailing commas** in ES5-compatible locations
+- **LF line endings** for cross-platform compatibility
+
+### Pre-commit Workflow:
+
+```bash
+# Format your code before committing
+npm run format
+
+# Verify everything is formatted correctly
+npm run format:check
+
+# Fix any linting issues
+npm run lint:fix
+
+# Final verification
+npm run lint && npm run build
+```
 
 ## Code Style Guidelines
 
