@@ -3,18 +3,18 @@ compatibility_date = "2024-01-15"
 
 # Cloudflare Pages configuration
 pages_build_output_dir = "./dist"
+pages_build_command = "bun install && bun run build"
 
-[build]
-command = "bun install && bun run build"
-cwd = "."
-
-[build.environment_variables]
+[env.production]
+name = "btr-risk"
+[env.production.vars]
 NODE_VERSION = "20.10.0"
 BUN_VERSION = "1.2.16"
 NEXT_TELEMETRY_DISABLED = "1"
 
-[env.production]
-name = "btr-risk"
-
 [env.preview]
-name = "btr-risk-preview" 
+name = "btr-risk-preview"
+[env.preview.vars]
+NODE_VERSION = "20.10.0"
+BUN_VERSION = "1.2.16"
+NEXT_TELEMETRY_DISABLED = "1" 
