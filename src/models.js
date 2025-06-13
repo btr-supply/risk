@@ -283,7 +283,7 @@ export const targetWeights = (
   });
 
   const totalRawWeight = rawWeights.reduce((sum, w) => sum + w, 0);
-  if (totalRawWeight === 0) return new Array(n).fill(0);
+  if (totalRawWeight === 0) return Array.from({ length: n }, () => 0);
 
   // Normalize to total weight
   let weights = rawWeights.map((w) => (w / totalRawWeight) * totalWeightBp);
@@ -293,7 +293,7 @@ export const targetWeights = (
 
   for (let iteration = 0; iteration < 10; iteration++) {
     let totalExcess = 0;
-    let cappedIndices = [];
+    const cappedIndices = [];
 
     // Find excess and cap weights
     weights.forEach((weight, i) => {
@@ -778,8 +778,9 @@ export const calculateUserParamsForRatioDiff0 = (targetRatioDiff0, params) => {
       } else {
         maxAmount = userAmount;
       }
-    } catch (error) {
-      console.warn('Error in binary search:', error);
+    } catch {
+      // Log error for debugging
+      console.error('Error in binary search for ratioDiff0 calculation');
       break;
     }
 

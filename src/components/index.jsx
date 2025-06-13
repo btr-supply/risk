@@ -16,7 +16,7 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { bpToPercent } from '../models.js';
 import { useTheme } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 // Helper function to get icon based on title
 const getTitleIcon = (title) => {
@@ -49,7 +49,7 @@ export const MathFormula = ({ formula }) => {
           fleqn: false,
         });
       } catch (err) {
-        console.error('KaTeX rendering error:', err);
+        // KaTeX rendering error - display fallback content
         ref.current.innerHTML = `<div style="color: ${theme.colors.alert.error.text}; font-family: monospace; padding: 10px; border: 1px solid ${theme.colors.alert.error.border}; border-radius: 4px;">Formula rendering error: ${err.message}<br><br>Formula: ${formula}</div>`;
       }
     }
@@ -763,7 +763,7 @@ export const SimulationResult = ({
 // Smart Link component for internal navigation and anchors
 export const SmartLink = ({ to, children, sx = {}, ...props }) => {
   const theme = useTheme();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -780,7 +780,7 @@ export const SmartLink = ({ to, children, sx = {}, ...props }) => {
     // Handle navigation to other pages with optional anchors
     if (to.includes('#')) {
       const [path, anchor] = to.split('#');
-      navigate(path);
+      router.push(path);
       // Wait for navigation to complete, then scroll to anchor
       setTimeout(() => {
         const element = document.getElementById(anchor);
@@ -789,7 +789,7 @@ export const SmartLink = ({ to, children, sx = {}, ...props }) => {
         }
       }, 100);
     } else {
-      navigate(to);
+      router.push(to);
     }
   };
 

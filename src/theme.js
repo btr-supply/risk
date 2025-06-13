@@ -170,17 +170,7 @@ const theme = createTheme({
   ],
 
   typography: {
-    fontFamily: [
-      'Inter Variable',
-      'Inter',
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      '"Noto Sans"',
-      'Helvetica',
-      'Arial',
-      'sans-serif',
-    ].join(','),
+    fontFamily: 'var(--font-inter)',
     h1: {
       fontSize: '3rem',
       fontWeight: 700,
@@ -263,8 +253,58 @@ const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        html: {
+          // Always show vertical scrollbar to prevent layout shifts
+          overflowY: 'scroll',
+          // No padding on html to avoid double padding with containers
+        },
         body: {
           fontFeatureSettings: '"kern"',
+          // Prevent horizontal scrollbar and layout shifts
+          overflowX: 'hidden',
+          // Ensure body takes full width minus the reserved scrollbar space
+          margin: '0',
+          // Custom scrollbar styling for dark theme
+          '&::-webkit-scrollbar': {
+            width: '8px',
+            height: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: '#1C1C1E',
+            borderRadius: '4px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: '#3A3A3C',
+            borderRadius: '4px',
+            '&:hover': {
+              background: '#48484A',
+            },
+          },
+          '&::-webkit-scrollbar-corner': {
+            background: '#1C1C1E',
+          },
+          // Firefox scrollbar styling
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#3A3A3C #1C1C1E',
+        },
+        // Apply scrollbar styling to all scrollable elements
+        '*::-webkit-scrollbar': {
+          width: '8px',
+          height: '8px',
+        },
+        '*::-webkit-scrollbar-track': {
+          background: '#1C1C1E',
+          borderRadius: '4px',
+        },
+        '*::-webkit-scrollbar-thumb': {
+          background: '#3A3A3C',
+          borderRadius: '4px',
+          '&:hover': {
+            background: '#48484A',
+          },
+        },
+        '*::-webkit-scrollbar-corner': {
+          background: '#1C1C1E',
         },
       },
     },
@@ -469,6 +509,15 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           maxWidth: '1200px !important', // Centered, not full width
+          // Ensure containers don't shift when scrollbar appears/disappears
+          // Use default MUI padding but make sure it's consistent
+          paddingLeft: '16px !important',
+          paddingRight: '16px !important',
+          // Container should maintain its center position
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          // Ensure consistent width calculation
+          boxSizing: 'border-box',
         },
       },
     },
