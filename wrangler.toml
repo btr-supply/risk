@@ -1,20 +1,25 @@
 name = "btr-risk"
 compatibility_date = "2024-01-15"
 
-# Cloudflare Pages configuration
+# Pages-specific top-level field (required)
 pages_build_output_dir = "./dist"
-pages_build_command = "bun install && bun run build"
 
+# Build table (accepted by the Pages schema)
+[build]
+command = "bun install && bun run build"
+cwd = "."
+
+# -------- environments --------
 [env.production]
 name = "btr-risk"
 [env.production.vars]
 NODE_VERSION = "20.10.0"
-BUN_VERSION = "1.2.16"
+BUN_VERSION  = "1.2.16"
 NEXT_TELEMETRY_DISABLED = "1"
 
 [env.preview]
 name = "btr-risk-preview"
 [env.preview.vars]
 NODE_VERSION = "20.10.0"
-BUN_VERSION = "1.2.16"
+BUN_VERSION  = "1.2.16"
 NEXT_TELEMETRY_DISABLED = "1"
