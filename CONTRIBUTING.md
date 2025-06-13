@@ -8,34 +8,34 @@ BTR Risk is built with modern web technologies optimized for performance and dev
 
 ### Core Technologies
 
-- **Frontend Framework**: React 19.1.0 with React DOM
-- **Build Tool**: Vite 6.3.5 for fast development and optimized builds with code splitting
-- **Language**: JavaScript with React components
-- **State Management**: Context API with useReducer for centralized state
-- **Routing**: React Router DOM v7.6.1 with lazy loading support
+- **Frontend Framework**: React >v19 with React DOM  
+- **Build Tool**: Next.js >v15 for fast development and optimized static exports with code splitting
+- **Language**: JavaScript with React JSX components
+- **State Management**: Context API with useReducer for centralized state, Zustand for client state
+- **Routing**: Next.js App Router with lazy loading and static export support
 
 ### UI & Styling
 
-- **UI Components**: Material-UI (MUI) v7.1.0 with comprehensive component library
+- **UI Components**: Material-UI (MUI) >v7 with comprehensive component library
   - `@mui/material`: Core components (Box, Typography, Card, etc.)
-  - `@mui/icons-material`: Icon library with 2000+ icons
+  - `@mui/icons-material`: MD Icon library with 2000+ icons
   - `@mui/x-charts`: Advanced charting components (BarChart, LineChart, PieChart)
 - **Styling System**: Emotion (CSS-in-JS) for styled components and theme support
 - **Math Rendering**: KaTeX v0.16.22 for mathematical expressions and formulas
 
 ### Development Tools
 
-- **Linting**: ESLint v9.25.0 with React-specific plugins and Prettier integration
-- **Formatting**: Prettier v3.5.3 for consistent code style
+- **Linting**: ESLint >v8.50 with Next.js configuration and Oxlint >v1.1.0 for fast linting
+- **Formatting**: Prettier >v3.5 for consistent code style
 - **Type System**: Pure JavaScript with JSDoc comments for type hints where beneficial
-- **Hot Reload**: Vite HMR for instant development feedback
+- **Hot Reload**: Next.js Fast Refresh with Turbopack for instant development feedback
 
 ### Performance Optimizations
 
-- **Code Splitting**: Lazy loading for route-based components
-- **Bundle Analysis**: Manual chunk splitting for optimal caching
+- **Code Splitting**: Next.js automatic code splitting and lazy loading for route-based components
+- **Bundle Analysis**: Custom webpack configuration for manual chunk splitting and optimal caching
 - **Memoization**: React.memo and useMemo for component optimization
-- **Asset Optimization**: Terser minification and tree-shaking
+- **Asset Optimization**: Next.js built-in Terser minification, tree-shaking, and static export optimization
 
 ## Prerequisites
 
@@ -182,16 +182,17 @@ The project uses **Cloudflare Pages** for automated deployment:
 
 - **Production**: Pushes to the `main` branch automatically trigger deployment to `risk.btr.supply`
 - **Preview**: Pull requests may generate preview deployments for testing
-- **Build Command**: `bun run build` (Cloudflare Pages runs this automatically)
-- **Output Directory**: `dist/` (Vite's default build output)
-- **Environment**: Bun package manager
+- **Build Command**: `bun install && bun run build` (configured in `wrangler.toml`)
+- **Output Directory**: `dist/` (Next.js static export output)
+- **Environment**: Bun package manager with Node.js >=20.0.0 requirement
 
 ### Deployment Process
 
 1. Code merged to `main` → Cloudflare Pages webhook triggered
-2. Cloudflare runs `bun install` → `bun run build`
-3. Built files deployed from `dist/` to CDN
-4. Site live at `risk.btr.supply` within minutes
+2. Cloudflare uses `wrangler.toml` configuration for Node.js 20+ and Bun environment
+3. Cloudflare runs `bun install` → `bun run build` (Next.js static export)
+4. Built files deployed from `dist/` to CDN with optimized headers and redirects
+5. Site live at `risk.btr.supply` within minutes
 
 ## Branch Structure
 
