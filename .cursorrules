@@ -1,0 +1,162 @@
+# BTR Risk - Cursor IDE Rules
+
+## Project Context
+BTR Risk is a React 19.1.0 financial risk modeling application built with Material-UI v7.1.0, focusing on performance optimization and component reusability.
+
+## Tech Stack Rules
+
+### Framework & Core
+- React+Next.js with functional, reusable components and hooks
+- **Bun** as the primary package manager and runtime (**REQUIRED** - never use npm/yarn)
+- Zustand for state management / stores
+- Tanstack for lazy querying
+- Context API + useReducer for state management
+
+### Package Management
+- **ALWAYS use Bun commands**: `bun install`, `bun run dev`, `bun run build`, etc.
+- **NEVER use npm or yarn**: This project is Bun-exclusive
+- All scripts must be run with `bun run <script>`
+
+### UI & Styling
+- Material-UI v7.1.0 as primary component library
+- Use selective imports: `import { Box, Typography } from '@mui/material'`
+- Emotion for CSS-in-JS styling
+- KaTeX v0.16.22 for mathematical formula rendering
+
+### Code Quality
+- Oxlint for linting
+- Prettier for formatting
+- JavaScript only - no TypeScript
+
+## Development Rules
+
+### Performance Optimization
+- ALWAYS use React.memo() for components with stable props
+- Use useMemo() for expensive calculations (mathematical models, chart data)
+- Use useCallback() for event handlers passed to child components
+- Implement lazy loading with React.lazy() for route components
+- Throttle rapid state updates (sliders, form inputs) with 100ms delay
+
+### Component Reusability
+- Create custom UI abstractions in `src/components/ui/`
+- Use BaseCard instead of repetitive Card configurations
+- Implement memoized chart components in `src/components/charts/`
+- Create theme utilities and cached selectors in `src/theme/`
+
+### State Management
+- Use centralized Context API with useReducer
+- Memoize calculated values (weights, allocations, chart data)
+- Implement throttled update functions for performance
+- Use stable callbacks with useCallback for actions
+
+### Import Organization
+```javascript
+// 1. React and core libraries
+import React, { memo, useMemo, useCallback } from 'react';
+
+// 2. Third-party libraries (selective MUI imports)
+import { Box, Typography, Card } from '@mui/material';
+import { LineChart } from '@mui/x-charts';
+
+// 3. Internal utilities and hooks
+import { useThemeColors, useFormatters } from '../theme';
+import { useCalculatedWeights } from '../hooks/useOptimizedState';
+
+// 4. Local components
+import { BaseCard, MemoizedChartContainer } from './ui';
+```
+
+### Component Structure Guidelines
+- Keep components under 200 lines when possible
+- Extract complex logic into custom hooks
+- Use component composition over large monolithic components
+- Implement loading fallbacks for lazy-loaded routes
+
+### Styling Best Practices
+- Use theme utilities: `useThemeColors()`, `useTypographyStyles()`
+- Create reusable style factories: `createCardSx()`, `createChartSx()`
+- Avoid inline styles for complex objects
+- Use consistent MUI sx prop patterns
+
+### Chart Optimization
+- Wrap all chart components with React.memo
+- Memoize chart data transformations
+- Use consistent chart containers with proper styling
+- Cache chart colors using useChartColors() hook
+
+### Bundle Optimization
+- Use React.lazy() for route-based code splitting
+- Implement manual chunk splitting in Vite config
+- Tree-shake MUI imports (avoid barrel imports)
+- Separate vendor libraries in build configuration
+
+## File Naming & Organization
+- Components: PascalCase (e.g., `OptimizedParameterCard.jsx`)
+- Hooks: camelCase starting with 'use' (e.g., `useOptimizedState.js`)
+- Utilities: camelCase (e.g., `themeUtils.js`)
+- Pages: PascalCase (e.g., `AllocationModel.jsx`)
+
+## Code Examples to Follow
+
+### Memoized Component
+```javascript
+export const OptimizedParameterCard = memo(({ title, children, action }) => {
+  const titleIcon = useMemo(() => getTitleIcon(title), [title]);
+  
+  return (
+    <BaseCard sx={{ height: '100%' }}>
+      <CardContent sx={{ p: 2.5 }}>
+        <CardTitle icon={titleIcon}>{title}</CardTitle>
+        {children}
+      </CardContent>
+    </BaseCard>
+  );
+});
+```
+
+### Performance Hook
+```javascript
+export const useCalculatedWeights = () => {
+  const { weightModel, simulation } = useRiskModel();
+  
+  return useMemo(() => {
+    const cScores = simulation.pools.map(pool => pool.cScore);
+    return targetWeights(cScores, maxWeight, BPS, amplifier);
+  }, [weightModel, simulation.pools]);
+};
+```
+
+### Lazy Route Loading
+```javascript
+const LazyAllocationModel = lazy(() => import('./AllocationModel'));
+
+// In router
+<Suspense fallback={<LoadingFallback />}>
+  <Route path="/allocation" element={<LazyAllocationModel />} />
+</Suspense>
+```
+
+## Anti-Patterns to Avoid
+- Direct MUI barrel imports: `import * as MUI from '@mui/material'`
+- Inline complex style objects without memoization
+- Recreating functions/objects on every render
+- Missing memo/useMemo for expensive operations
+- Large monolithic components (>300 lines)
+- Repeated Card/Box configurations without abstractions
+
+## Performance Monitoring
+- Monitor bundle size with `npm run build`
+- Use React DevTools Profiler for component performance
+- Check for unnecessary re-renders in development
+- Validate lazy loading with network tab
+- Ensure proper memoization with React DevTools
+
+## Mathematical/Financial Context
+This is a financial risk modeling application dealing with:
+- Allocation models and portfolio optimization
+- Liquidity calculations and slippage models
+- Mathematical formulas rendered with KaTeX
+- Interactive charts and real-time calculations
+- Complex state interactions between models
+
+When working with financial calculations, always memoize expensive computations and use appropriate number formatting utilities. 
