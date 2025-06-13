@@ -1,23 +1,96 @@
-/*
+/*                       # GLOBAL SECURITY HEADERS
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Opener-Policy: same-origin
 
-# Cache static assets
-/_next/static/*
+Content-Security-Policy:
+  default-src 'self';
+  base-uri     'none';
+  object-src   'none';
+  frame-ancestors 'self';
+
+  connect-src
+    'self'
+    https://astrolab.fi https://*.astrolab.fi
+    https://btr.markets  https://*.btr.markets
+    https://btr.supply   https://*.btr.supply
+    https://llamarpc.com https://*.llamarpc.com
+    https://blastapi.io  https://*.blastapi.io
+    https://omniatech.io https://*.omniatech.io
+    https://blockpi.network https://*.blockpi.network
+    https://drpc.org     https://*.drpc.org
+    https://1rpc.io      https://*.1rpc.io
+    https://sui.io       https://*.sui.io
+    https://solana.com   https://*.solana.com
+    https://zcx.com      https://*.zcx.com
+    https://rocketx.exchange https://*.rocketx.exchange
+    https://1inch.dev    https://*.1inch.dev
+    https://rango.exchange   https://*.rango.exchange
+    https://squidrouter.com  https://*.squidrouter.com
+    https://li.quest     https://*.li.quest
+    https://socket.tech  https://*.socket.tech
+    https://odos.xyz     https://*.odos.xyz
+    https://coingecko.com    https://*.coingecko.com
+    https://kyberswap.com    https://*.kyberswap.com
+    https://paraswap.io  https://*.paraswap.io
+    https://debridge.io  https://*.debridge.io
+    https://bebop.xyz    https://*.bebop.xyz
+    https://cow.fi       https://*.cow.fi
+    https://0x.org       https://*.0x.org
+    https://hashflow.com https://*.hashflow.com
+    https://openocean.finance https://*.openocean.finance;
+
+  # OPTIONAL hardening flags
+  require-trusted-types-for 'script';
+  upgrade-insecure-requests;
+
+/_next/static/*          # Next.js static chunk hashes
   Cache-Control: public, max-age=31536000, immutable
 
-# Cache images
-/images/*
+/images/*                # Image folder (if you output to /images)
   Cache-Control: public, max-age=31536000, immutable
 
-# Cache other static files
-*.css
+/*.css                   # Hashed CSS outside /_next
+  Cache-Control: public, max-age=31536000, immutable
+/*.js                    # Hashed JS (e.g. analytics snippet)
+  Cache-Control: public, max-age=31536000, immutable
+/*.svg
   Cache-Control: public, max-age=31536000, immutable
 
-*.js
+# ---- Extra image formats ----
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+/*.avif
+  Cache-Control: public, max-age=31536000, immutable
+/*.gif
   Cache-Control: public, max-age=31536000, immutable
 
-*.svg
-  Cache-Control: public, max-age=31536000, immutable 
+# ---- Video formats ----
+/*.mp4
+  Cache-Control: public, max-age=31536000, immutable
+/*.webm
+  Cache-Control: public, max-age=31536000, immutable
+/*.mov
+  Cache-Control: public, max-age=31536000, immutable
+
+# ---- Lottie animations ----
+/*.json                  # Lottie files are plain JSON
+  Cache-Control: public, max-age=31536000, immutable
+/*.lottie                # If you serve new .lottie ZIP archive format
+  Cache-Control: public, max-age=31536000, immutable
+
+# ---- Misc performance helpers ----
+/service-worker.js
+  Cache-Control: public, max-age=0, must-revalidate
+/*.map                   # Source-maps – don’t cache forever
+  Cache-Control: public, max-age=604800            # 7 days

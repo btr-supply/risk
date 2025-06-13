@@ -1,5 +1,5 @@
 # Next.js static export routing for Cloudflare Pages
 # Handle client-side routing for single page application
 
-# Redirect all non-file requests to index.html for client-side routing
-/*    /index.html   200 
+# Redirect all non-file requests to index.html for Next.js PWA client-side routing
+/*    /index.html   200

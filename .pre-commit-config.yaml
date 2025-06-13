@@ -1,0 +1,59 @@
+# Pre-commit configuration for BTR Risk
+# See https://pre-commit.com for more information
+repos:
+  # Standard pre-commit hooks for general file maintenance
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+        exclude: \.md$
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  # Local hooks for project-specific tools using Bun
+  - repo: local
+    hooks:
+      # Oxlint - Fast JavaScript linter
+      - id: oxlint
+        name: Oxlint
+        entry: bun run lint:fix
+        language: system
+        files: \.(js|jsx)$
+        pass_filenames: false
+        always_run: false
+
+      # Next.js ESLint
+      - id: next-lint
+        name: Next.js ESLint
+        entry: bash -c 'bunx next lint --fix'
+        language: system
+        files: \.(js|jsx)$
+        pass_filenames: false
+        always_run: false
+
+      # Prettier formatting
+      - id: prettier
+        name: Prettier
+        entry: bun run format
+        language: system
+        files: \.(js|jsx|json|yaml|yml|md)$
+        pass_filenames: false
+        always_run: false
+
+      # Build verification - ensure project builds successfully
+      - id: build-check
+        name: Build Check
+        entry: bun run build
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
+# Global configuration
+fail_fast: false
+default_stages: [pre-commit]

@@ -8,7 +8,7 @@ BTR Risk is built with modern web technologies optimized for performance and dev
 
 ### Core Technologies
 
-- **Frontend Framework**: React >v19 with React DOM  
+- **Frontend Framework**: React >v19 with React DOM
 - **Build Tool**: Next.js >v15 for fast development and optimized static exports with code splitting
 - **Language**: JavaScript with React JSX components
 - **State Management**: Context API with useReducer for centralized state, Zustand for client state
@@ -45,6 +45,8 @@ Before contributing, ensure you have the following installed:
 
 - **Bun**: Primary package manager and runtime (recommended)
 - **Git**: For version control
+- **Python 3**: For pre-commit hooks (usually pre-installed on macOS/Linux)
+- **UV**: Fast Python package installer (recommended for pre-commit)
 
 ### Installation
 
@@ -61,6 +63,16 @@ powershell -c "irm bun.sh/install.ps1 | iex"
 npm install -g bun
 ```
 
+Install UV for pre-commit (if not already installed):
+
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
 ### Recommended
 
 - **VS Code** or similar editor with JavaScript/React support
@@ -72,6 +84,8 @@ npm install -g bun
 # Check your versions
 bun --version     # Should be 1.x or higher (primary)
 git --version     # Any recent version
+python3 --version # Should be 3.8 or higher
+uv --version      # Should be latest version
 ```
 
 ## Getting Started
@@ -98,7 +112,19 @@ git --version     # Any recent version
    npm install
    ```
 
-4. **Start the development server**:
+4. **Set up pre-commit hooks**:
+
+   ```bash
+   # Install pre-commit hooks (one-time setup)
+   bun run pre-commit:install
+
+   # Or manually install:
+   uv tool install pre-commit
+   uv tool run pre-commit install
+   uv tool run pre-commit install --hook-type pre-push
+   ```
+
+5. **Start the development server**:
    ```bash
    bun run dev
    # Or: npm run dev
@@ -116,8 +142,36 @@ git --version     # Any recent version
 - **`bun run lint:fix`** - Run ESLint and automatically fix issues
 - **`bun run format`** - Format all files using Prettier
 - **`bun run format:check`** - Check if files are properly formatted
+- **`bun run pre-commit`** - Run all pre-commit hooks manually on all files
+- **`bun run pre-commit:install`** - Install pre-commit hooks (one-time setup)
 
 _Note: All scripts can also be run with `npm run <script>` if using npm instead of Bun._
+
+### Pre-commit Hooks
+
+This project uses **pre-commit** hooks to ensure code quality and consistency. The hooks automatically run on every commit and include:
+
+- **Oxlint**: Fast JavaScript/TypeScript linting with automatic fixes
+- **Next.js ESLint**: Next.js-specific linting rules
+- **Prettier**: Code formatting for consistent style
+- **Build Check**: Ensures the project builds successfully (runs on pre-push)
+- **File maintenance**: Trims whitespace, fixes line endings, checks YAML/JSON syntax
+
+#### Manual Hook Execution
+
+```bash
+# Run all hooks on all files
+bun run pre-commit
+
+# Run hooks on staged files only (simulates commit)
+uv tool run pre-commit run
+
+# Run a specific hook
+uv tool run pre-commit run oxlint
+
+# Skip hooks for a commit (use sparingly)
+git commit -m "your message" --no-verify
+```
 
 ### Logical Commits
 
@@ -225,7 +279,7 @@ All branches and commits must use specific prefixes for consistency:
 | **refac** | Code refactoring, cleanup   | `refac/component-structure` | `[refac] Restructure chart components`  |
 | **style** | UI/UX improvements, styling | `style/material-ui-theme`   | `[style] Update MUI theme colors`       |
 | **docs**  | Documentation, README       | `docs/api-integration`      | `[docs] Document risk calculation API`  |
-| **ops**   | Config, scripts, CI/CD      | `ops/update-deps`           | `[ops] Update React to v19.1.0`       |
+| **ops**   | Config, scripts, CI/CD      | `ops/update-deps`           | `[ops] Update React to v19.1.0`         |
 
 #### Important Notes:
 
@@ -243,7 +297,10 @@ All branches and commits must use specific prefixes for consistency:
    bun run lint         # No linting errors
    bun run build        # Builds successfully
    bun run preview      # Preview works as expected
+   bun run pre-commit   # Run all pre-commit hooks
    ```
+
+   _Note: Pre-commit hooks will run automatically on commit, but running them manually first can catch issues early._
 
 2. **Testing**: Verify your changes work in development mode (`bun run dev`)
 

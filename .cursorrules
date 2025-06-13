@@ -102,7 +102,7 @@ import { BaseCard, MemoizedChartContainer } from './ui';
 ```javascript
 export const OptimizedParameterCard = memo(({ title, children, action }) => {
   const titleIcon = useMemo(() => getTitleIcon(title), [title]);
-  
+
   return (
     <BaseCard sx={{ height: '100%' }}>
       <CardContent sx={{ p: 2.5 }}>
@@ -118,7 +118,7 @@ export const OptimizedParameterCard = memo(({ title, children, action }) => {
 ```javascript
 export const useCalculatedWeights = () => {
   const { weightModel, simulation } = useRiskModel();
-  
+
   return useMemo(() => {
     const cScores = simulation.pools.map(pool => pool.cScore);
     return targetWeights(cScores, maxWeight, BPS, amplifier);
@@ -159,4 +159,4 @@ This is a financial risk modeling application dealing with:
 - Interactive charts and real-time calculations
 - Complex state interactions between models
 
-When working with financial calculations, always memoize expensive computations and use appropriate number formatting utilities. 
+When working with financial calculations, always memoize expensive computations and use appropriate number formatting utilities.

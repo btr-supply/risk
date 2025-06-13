@@ -16,7 +16,10 @@
     "lint": "oxlint . --format=unix && next lint",
     "lint:fix": "oxlint --fix",
     "format": "prettier --write .",
-    "check:all": "bun run lint && bun run format"
+    "format:check": "prettier --check .",
+    "check:all": "bun run lint && bun run format",
+    "pre-commit": "uv tool run pre-commit run --all-files",
+    "pre-commit:install": "uv tool run pre-commit install && uv tool run pre-commit install --hook-type pre-push"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
