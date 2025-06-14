@@ -2,77 +2,18 @@ import { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import { PERFORMANCE } from '../constants';
 
 // Enhanced performance hooks to complement useOptimizedState.js
+// For input debouncing, use the centralized useDebounce hook from hooks/useDebounce.js
 
-// Stable callbacks hook to prevent recreation of functions on every render
+// Simplified stable callbacks - just return the actions directly since they should already be stable
 export const useStableCallbacks = (actions) => {
-  return useMemo(() => {
-    const stableActions = {};
-    Object.entries(actions).forEach(([key, action]) => {
-      stableActions[key] = action;
-    });
-    return stableActions;
-  }, [actions]);
-};
-
-// Throttled state hook for high-frequency updates (sliders, inputs)
-export const useThrottledState = (
-  initialValue,
-  delay = PERFORMANCE.THROTTLE_DELAY
-) => {
-  const [value, setValue] = useState(initialValue);
-  const [debouncedValue, setDebouncedValue] = useState(initialValue);
-  const timeoutRef = useRef(null);
-
-  const throttledSetValue = useCallback(
-    (newValue) => {
-      setValue(newValue);
-
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        setDebouncedValue(newValue);
-      }, delay);
-    },
-    [delay]
-  );
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  return [value, debouncedValue, throttledSetValue];
-};
-
-// Debounced value hook for search inputs and validation
-export const useDebouncedValue = (
-  value,
-  delay = PERFORMANCE.DEBOUNCE_DELAY
-) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
+  // If actions are already stable from store/context, no need for additional memoization
+  return actions;
 };
 
 // Chart data optimization hook to limit data points for performance
 export const useOptimizedChartData = (
   rawData,
-  maxDataPoints = PERFORMANCE.CHART_DATA_LIMIT
+  maxDataPoints = 500 // Default limit for chart performance
 ) => {
   return useMemo(() => {
     if (!Array.isArray(rawData) || rawData.length <= maxDataPoints) {
@@ -83,19 +24,6 @@ export const useOptimizedChartData = (
     const step = Math.ceil(rawData.length / maxDataPoints);
     return rawData.filter((_, index) => index % step === 0);
   }, [rawData, maxDataPoints]);
-};
-
-// Memoized computation hook with dependency optimization
-export const useComputedValue = (
-  computeFunction,
-  dependencies,
-  enabled = true
-) => {
-  return useMemo(() => {
-    if (!enabled) return null;
-    return computeFunction();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, computeFunction, ...dependencies]);
 };
 
 // Virtualization helper for large lists
@@ -118,10 +46,14 @@ export const useVirtualization = (items, containerHeight, itemHeight = 50) => {
     setScrollTop(event.target.scrollTop);
   }, []);
 
+  // Only enable virtualization if items exceed threshold
+  const shouldVirtualize = items.length > PERFORMANCE.VIRTUALIZATION_THRESHOLD;
+
   return {
     ...visibleRange,
     handleScroll,
     totalHeight: items.length * itemHeight,
+    shouldVirtualize,
   };
 };
 
@@ -210,7 +142,10 @@ export const useIdleCallback = (callback, dependencies) => {
 };
 
 // Memory usage optimization hook
-export const useMemoryOptimization = (data, maxCacheSize = 100) => {
+export const useMemoryOptimization = (
+  data,
+  maxCacheSize = PERFORMANCE.MEMOIZATION_CACHE_SIZE
+) => {
   const cacheRef = useRef(new Map());
 
   return useMemo(() => {
@@ -238,10 +173,7 @@ export const useMemoryOptimization = (data, maxCacheSize = 100) => {
 // Export all performance hooks
 export const performanceHooks = {
   useStableCallbacks,
-  useThrottledState,
-  useDebouncedValue,
   useOptimizedChartData,
-  useComputedValue,
   useVirtualization,
   useIntersectionObserver,
   useResizeObserver,

@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import { useRiskModel } from '../store';
 import {
   calculateCScore,
@@ -9,6 +9,7 @@ import {
   generateSlippageCurveData,
   generateRatioDiff0CurveDataBoth,
 } from '../models';
+import { toDollarsAuto, toPercent, toFloatAuto } from '../utils/format';
 
 // Memoized calculation hooks to prevent unnecessary recalculations
 export const useCalculatedCScore = () => {
@@ -130,80 +131,13 @@ export const useRatioDiff0CurveData = () => {
   );
 };
 
-// Throttled update functions to prevent excessive re-renders
-export const useThrottledUpdates = () => {
-  const {
-    updateWeightModel,
-    updateLiquidityModel,
-    updateSlippageModel,
-    updateCScores,
-    updateRatioDiff0Simulation,
-  } = useRiskModel();
-
-  const throttledUpdateWeightModel = useCallback(
-    (...args) => throttle(updateWeightModel, 100)(...args),
-    [updateWeightModel]
-  );
-
-  const throttledUpdateLiquidityModel = useCallback(
-    (...args) => throttle(updateLiquidityModel, 100)(...args),
-    [updateLiquidityModel]
-  );
-
-  const throttledUpdateSlippageModel = useCallback(
-    (...args) => throttle(updateSlippageModel, 100)(...args),
-    [updateSlippageModel]
-  );
-
-  const throttledUpdateCScores = useCallback(
-    (...args) => throttle(updateCScores, 100)(...args),
-    [updateCScores]
-  );
-
-  const throttledUpdateRatioDiff0Simulation = useCallback(
-    (...args) => throttle(updateRatioDiff0Simulation, 100)(...args),
-    [updateRatioDiff0Simulation]
-  );
-
-  return {
-    throttledUpdateWeightModel,
-    throttledUpdateLiquidityModel,
-    throttledUpdateSlippageModel,
-    throttledUpdateCScores,
-    throttledUpdateRatioDiff0Simulation,
-  };
-};
-
-// Utility function for throttling
-function throttle(func, limit) {
-  let inThrottle;
-  return function (...args) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  };
-}
-
-// Memoized formatters to prevent recreation on every render
+// Simple formatters using existing auto formatters - no memoization needed
 export const useFormatters = () => {
-  return useMemo(
-    () => ({
-      currency: (value, decimals = 0) => {
-        if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`;
-        if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
-        if (value >= 1e3) return `$${(value / 1e3).toFixed(1)}K`;
-        return `$${value.toFixed(decimals)}`;
-      },
-      percentage: (bp, decimals = 2) => `${(bp / 100).toFixed(decimals)}%`,
-      number: (value, decimals = 0) => {
-        if (Math.abs(value) >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
-        if (Math.abs(value) >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
-        if (Math.abs(value) >= 1e3) return `${(value / 1e3).toFixed(1)}K`;
-        return value.toFixed(decimals);
-      },
-    }),
-    []
-  );
+  // Return static formatter functions using the sophisticated auto formatters
+  return {
+    currency: toDollarsAuto,
+    percentage: (bp, decimals = 2) => toPercent(bp / 10000, decimals), // Convert BP to percentage
+    number: toFloatAuto,
+    basisPoints: (bp) => `${bp} bp`,
+  };
 };
