@@ -331,28 +331,11 @@ export const getCachedFormatter = (type) => {
   return formatter;
 };
 
-// Memoized formatters for heavy usage
-export const createMemoizedFormatter = (formatterFn) => {
-  const cache = new Map();
-  return (value, ...args) => {
-    const key = JSON.stringify([value, ...args]);
-    if (cache.has(key)) {
-      return cache.get(key);
-    }
-    const result = formatterFn(value, ...args);
-    cache.set(key, result);
-    return result;
-  };
-};
-
-// Pre-memoized common formatters using the efficient BTR utilities
-export const memoizedCurrencyFormatter = createMemoizedFormatter(toDollarsAuto);
-export const memoizedPercentFormatter = createMemoizedFormatter(toPercent);
-export const memoizedFloatFormatter = createMemoizedFormatter(toFloatAuto);
-
 // ===== LEGACY COMPATIBILITY =====
 
 // Legacy compatibility - these should be gradually replaced with the auto formatters
 export const formatCurrency = toDollarsAuto;
 export const formatNumber = toFloatAuto;
 export const formatPercentage = toPercent;
+
+// Theme colors are now directly accessible in the consolidated theme structure

@@ -6,8 +6,10 @@
 // - Validation constraints (validateWeightModel, validateLiquidityModel, validateSlippageModel)
 // - Key constraint: minSlippageBp < maxSlippageBp and maxSlippageBp <= 1000 BP
 
+import { FINANCIAL } from './constants';
+
 // Constants
-export const BPS = 10000; // 100% in basis points
+export const BPS = FINANCIAL.BPS; // Re-export for convenience
 export const WAD = 1e18;
 
 // Default model configurations from LibRisk.sol
