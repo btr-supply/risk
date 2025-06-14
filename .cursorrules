@@ -14,13 +14,22 @@ BTR Risk is a React 19.1.0 financial risk modeling application built with Materi
 
 ### Package Management
 - **ALWAYS use Bun commands**: `bun install`, `bun run dev`, `bun run build`, etc.
-- **NEVER use npm or yarn**: This project is Bun-exclusive
+- **NEVER use npm, yarn, or node**: This project is Bun-exclusive for both package management AND runtime
+- **NEVER use `node` command**: Always use `bun` to run JavaScript files
 - All scripts must be run with `bun run <script>`
+- All JavaScript execution must use `bun <script.js>` not `node <script.js>`
+
+### Development Server Rules
+- **HOT RELOAD ACTIVE**: If dev server is running (port 3000), DO NOT run `bun run build`
+- **Use `bun lint` for code validation** instead of building when server is active
+- Only build when explicitly requested or when no dev server is running
+- Hot reload handles all code changes automatically - trust the process!
 
 ### UI & Styling
 - Material-UI v7.1.0 as primary component library
 - Use selective imports: `import { Box, Typography } from '@mui/material'`
 - Emotion for CSS-in-JS styling
+- Chart.js v4 with react-chartjs-2 for all charting needs
 - KaTeX v0.16.22 for mathematical formula rendering
 
 ### Code Quality
@@ -56,7 +65,7 @@ import React, { memo, useMemo, useCallback } from 'react';
 
 // 2. Third-party libraries (selective MUI imports)
 import { Box, Typography, Card } from '@mui/material';
-import { LineChart } from '@mui/x-charts';
+import { Line, Bar, Pie } from 'react-chartjs-2';
 
 // 3. Internal utilities and hooks
 import { useThemeColors, useFormatters } from '../theme';
@@ -145,7 +154,7 @@ const LazyAllocationModel = lazy(() => import('./AllocationModel'));
 - Repeated Card/Box configurations without abstractions
 
 ## Performance Monitoring
-- Monitor bundle size with `npm run build`
+- Monitor bundle size with `bun run build`
 - Use React DevTools Profiler for component performance
 - Check for unnecessary re-renders in development
 - Validate lazy loading with network tab
