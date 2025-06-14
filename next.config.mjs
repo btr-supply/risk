@@ -7,48 +7,79 @@ const nextConfig = {
 
   // Optimize bundle splitting
   webpack: (config, { dev, isServer }) => {
-    // Optimize chunk splitting for better caching
+    // Bundle analyzer
+    if (process.env.ANALYZE === 'true') {
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          openAnalyzer: true,
+          reportFilename: `${isServer ? 'server' : 'client'}.html`,
+        })
+      );
+    }
+
+    // Enable source maps in webpack for production
     if (!dev && !isServer) {
+      config.devtool = 'source-map';
+    }
+
+    // Optimize for production builds
+    if (!dev && !isServer) {
+      // Bundle splitting for better caching
       config.optimization.splitChunks = {
         chunks: 'all',
+        minSize: 20000,
+        maxSize: 244000,
         cacheGroups: {
           // React and core dependencies
           react: {
             name: 'react',
-            test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            priority: 30,
+            chunks: 'all',
+          },
+          // Chart.js components
+          'chart-js': {
+            name: 'chart-js',
+            test: /[\\/]node_modules[\\/](chart\.js|react-chartjs-2)[\\/]/,
             priority: 20,
+            chunks: 'all',
           },
           // MUI core components
           'mui-core': {
             name: 'mui-core',
             test: /[\\/]node_modules[\\/](@mui\/material|@emotion\/(react|styled))[\\/]/,
             priority: 15,
+            chunks: 'all',
           },
-          // MUI icons and charts (heavy components)
+          // MUI icons (separate for better caching)
           'mui-icons': {
             name: 'mui-icons',
             test: /[\\/]node_modules[\\/]@mui\/icons-material[\\/]/,
             priority: 10,
+            chunks: 'all',
           },
-          'mui-charts': {
-            name: 'mui-charts',
-            test: /[\\/]node_modules[\\/]@mui\/x-charts[\\/]/,
-            priority: 10,
-          },
-          // Math rendering
-          katex: {
-            name: 'katex',
-            test: /[\\/]node_modules[\\/]katex[\\/]/,
-            priority: 10,
-          },
-          // Default vendor chunk
+          // Default vendor chunk (smaller libraries)
           vendor: {
             name: 'vendor',
             test: /[\\/]node_modules[\\/]/,
             priority: 5,
+            minChunks: 2,
+            maxSize: 200000,
           },
         },
       };
+
+      // Tree shaking optimizations
+      config.optimization.usedExports = true;
+      config.optimization.sideEffects = false;
+
+      // Mark packages as side-effect free for better tree shaking
+      config.module.rules.push({
+        test: /[\\/]node_modules[\\/](@mui)[\\/]/,
+        sideEffects: false,
+      });
     }
     return config;
   },
@@ -63,7 +94,8 @@ const nextConfig = {
     optimizePackageImports: [
       '@mui/material',
       '@mui/icons-material',
-      '@mui/x-charts',
+      'chart.js',
+      'react-chartjs-2',
     ],
     // Reduce aggressive preloading to prevent console warnings
     optimisticClientCache: false,
