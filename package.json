@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
     "start": "next start",
     "export": "next build",
     "lint": "oxlint . --format=unix && next lint",
@@ -18,6 +19,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:all": "bun run lint && bun run format",
+    "bundle:size": "bun scripts/bundle-size.js",
+    "verify:sourcemaps": "bun scripts/verify-sourcemaps.js",
+    "build:verify": "bun run build && bun run verify:sourcemaps",
     "pre-commit": "uv tool run pre-commit run --all-files",
     "pre-commit:install": "uv tool run pre-commit install && uv tool run pre-commit install --hook-type pre-push"
   },
@@ -26,11 +30,12 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
-    "@mui/x-charts": "^8.5.2",
+    "asciimath2ml": "^1.0.7",
+    "chart.js": "^4.4.9",
     "immer": "^10.1.1",
-    "katex": "^0.16.22",
     "next": "^15.3.3",
     "react": "^19.1.0",
+    "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.0",
     "zustand": "^5.0.5"
   },
@@ -39,6 +44,7 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.3.3",
     "oxlint": "^1.1.0",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }
