@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, useEffect } from 'react';
 import {
   ThemeProvider,
   CssBaseline,
@@ -8,10 +8,11 @@ import {
   Container,
   Card,
 } from '@mui/material';
-import { useRouter } from 'next/navigation';
-import theme from './theme';
+import { useRouter, usePathname } from 'next/navigation';
+import { theme } from './constants';
 import Footer from './components/Footer';
 import { Navigation } from './components/Navigation';
+import { RouteLoadingOverlay } from './components/Loader';
 
 // BTR Logo component
 const BTRLogo = ({ onClick }) => (
@@ -56,9 +57,30 @@ const BTRLogo = ({ onClick }) => (
 
 function AppContent({ children }) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Reset scroll position on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    // Force document height recalculation
+    document.body.style.height = 'auto';
+    document.documentElement.style.height = 'auto';
+  }, [pathname]);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        // Ensure each page calculates its own height
+        height: 'auto',
+        // Reset scroll context for each page
+        position: 'relative',
+        overflow: 'auto',
+      }}
+      key={pathname} // Force re-render on route change
+    >
       {/* Header with Paper styling to match other sections */}
       <Box
         sx={{
@@ -106,9 +128,25 @@ function AppContent({ children }) {
           flexGrow: 1,
           position: 'relative',
           minHeight: '50vh',
+          // Ensure content area adapts to page size
+          height: 'auto',
+          // Clear any inherited height constraints
+          maxHeight: 'none',
         }}
       >
-        {children}
+        <Suspense fallback={<RouteLoadingOverlay />}>
+          <Box
+            key={`content-${pathname}`}
+            sx={{
+              height: 'auto',
+              minHeight: 'auto',
+              // Ensure content doesn't inherit fixed heights
+              flex: 'none',
+            }}
+          >
+            {children}
+          </Box>
+        </Suspense>
       </Container>
 
       {/* Footer - normal positioning at bottom of content */}

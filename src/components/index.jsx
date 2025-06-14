@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import {
   Card,
   CardContent,
@@ -9,53 +9,48 @@ import {
   Paper,
   Chip,
 } from '@mui/material';
-import SchoolIcon from '@mui/icons-material/School';
-import SettingsIcon from '@mui/icons-material/Settings';
-import GamepadIcon from '@mui/icons-material/Gamepad';
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
+// KaTeX removed - using native MathML instead
 import { bpToPercent } from '../models.js';
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
+import {
+  BarChart,
+  LineChart,
+  PieChart,
+  DoughnutChart,
+  ChartsReferenceLine,
+} from './ui/ChartComponents';
+import { useSliderDebounce } from '../hooks/useDebounce';
+import { getTitleIcon } from '../utils/componentUtils';
+// No need for COLORS import anymore since we use theme directly
 
-// Helper function to get icon based on title
-const getTitleIcon = (title) => {
-  switch (title) {
-    case 'Methodology':
-      return <SchoolIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
-    case 'Parameters':
-      return <SettingsIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
-    case 'Simulation':
-      return <GamepadIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
-    default:
-      return null;
-  }
+// Utility function to safely get chart colors
+const getChartColors = (theme) => {
+  return theme.colors?.chart || theme.chartColors || [];
 };
 
-// KaTeX component for rendering formulas
-export const MathFormula = ({ formula }) => {
-  const ref = useRef();
-  const theme = useTheme();
+// Server-side AsciiMath to MathML component
+export const MathFormula = ({ children, inline = false }) => {
+  if (!children) return null;
 
-  useEffect(() => {
-    if (formula && ref.current) {
-      try {
-        katex.render(formula, ref.current, {
-          displayMode: true,
-          throwOnError: true,
-          errorColor: theme.colors.alert.error.text,
-          strict: 'warn',
-          trust: true,
-          fleqn: false,
-        });
-      } catch (err) {
-        // KaTeX rendering error - display fallback content
-        ref.current.innerHTML = `<div style="color: ${theme.colors.alert.error.text}; font-family: monospace; padding: 10px; border: 1px solid ${theme.colors.alert.error.border}; border-radius: 4px;">Formula rendering error: ${err.message}<br><br>Formula: ${formula}</div>`;
-      }
-    }
-  }, [formula, theme]);
+  let mathML = '';
+  try {
+    // Import asciimath2ml synchronously for server-side rendering
+    const { asciiToMathML } = require('asciimath2ml');
+    mathML = asciiToMathML(children, inline);
+  } catch (error) {
+    console.error('Error converting math:', error);
+    mathML = `<span style="color: red;">Error: ${children}</span>`;
+  }
 
-  if (!formula) return null;
+  if (inline) {
+    return (
+      <span
+        dangerouslySetInnerHTML={{ __html: mathML }}
+        style={{ fontFamily: 'var(--font-stix-two-math), Times, serif' }}
+      />
+    );
+  }
 
   return (
     <Paper
@@ -63,21 +58,21 @@ export const MathFormula = ({ formula }) => {
       sx={{
         p: 2,
         mt: 2,
-        backgroundColor: 'background.default',
         borderRadius: 1,
         border: '1px solid',
         borderColor: 'divider',
-        fontFamily: '',
         overflowX: 'auto',
         overflowY: 'visible',
-        '& .katex-display': {
+        fontFamily: 'var(--font-stix-two-math), Times, serif',
+        textAlign: 'center',
+        '& math': {
+          fontSize: '1.1em',
+          display: 'block',
           margin: '0.5em 0',
-          overflow: 'visible',
-          whiteSpace: 'nowrap',
         },
       }}
     >
-      <div ref={ref} />
+      <div dangerouslySetInnerHTML={{ __html: mathML }} />
     </Paper>
   );
 };
@@ -202,7 +197,7 @@ export const DescriptionCard = ({ title, children, formula }) => {
           {descriptiveContent}
 
           {/* Then the formula */}
-          {formula && <MathFormula formula={formula} />}
+          {formula && <MathFormula>{formula}</MathFormula>}
 
           {/* Then the legend */}
           {legendElement}
@@ -223,14 +218,24 @@ export const ParameterSlider = ({
   formatValue = (v) => v.toLocaleString(),
   helperText,
   unit = '',
-  logarithmic = false,
   marks = [],
   color = 'primary',
+  logarithmic = false,
+  debounceDelay = 150, // Configurable debounce delay
 }) => {
   const theme = useTheme();
 
+  // Use slider debounce hook for immediate visual feedback with debounced state updates
+  const [displayValue, handleSliderChange] = useSliderDebounce(
+    value,
+    onChange,
+    debounceDelay
+  );
+
   // Get color from theme based on color prop
   const getSliderColor = () => {
+    const chartColors = getChartColors(theme);
+
     switch (color) {
       case 'secondary':
         return theme.palette.secondary.main;
@@ -241,7 +246,7 @@ export const ParameterSlider = ({
       case 'error':
         return theme.palette.error.main;
       case 'green':
-        return theme.colors.chart[1]; // Green from chart colors
+        return chartColors[1]; // Green from chart colors
       default:
         return theme.palette.primary.main;
     }
@@ -252,9 +257,9 @@ export const ParameterSlider = ({
   // Handle logarithmic scaling
   const getSliderValue = () => {
     if (logarithmic) {
-      return Math.log10(value);
+      return Math.log10(displayValue);
     }
-    return value;
+    return displayValue;
   };
 
   const getSliderMin = () => {
@@ -271,12 +276,12 @@ export const ParameterSlider = ({
     return max;
   };
 
-  const handleSliderChange = (_, newValue) => {
+  const handleSliderChangeWrapper = (_, newValue) => {
     if (logarithmic) {
       const linearValue = Math.pow(10, newValue);
-      onChange(Math.round(linearValue));
+      handleSliderChange(Math.round(linearValue));
     } else {
-      onChange(newValue);
+      handleSliderChange(newValue);
     }
   };
 
@@ -373,7 +378,7 @@ export const ParameterSlider = ({
         >
           <Slider
             value={getSliderValue()}
-            onChange={handleSliderChange}
+            onChange={handleSliderChangeWrapper}
             min={getSliderMin()}
             max={getSliderMax()}
             step={logarithmic ? 0.1 : step}
@@ -398,7 +403,7 @@ export const ParameterSlider = ({
           }}
         >
           <Chip
-            label={`${formatValue(value)}${unit}`}
+            label={`${formatValue(displayValue)}${unit}`}
             size="small"
             variant="outlined"
             sx={{
@@ -597,25 +602,12 @@ export const MetricChip = ({
   />
 );
 
-// Format number as currency
-export const formatCurrency = (value, decimals = 0) => {
-  if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`;
-  if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
-  if (value >= 1e3) return `$${(value / 1e3).toFixed(1)}K`;
-  return `$${value.toFixed(decimals)}`;
-};
-
-// Format basis points as percentage
-export const formatBp = (bp, decimals = 2) =>
-  `${bpToPercent(bp).toFixed(decimals)}%`;
-
-// Format number with appropriate suffixes
-export const formatNumber = (value, decimals = 0) => {
-  if (Math.abs(value) >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
-  if (Math.abs(value) >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
-  if (Math.abs(value) >= 1e3) return `${(value / 1e3).toFixed(1)}K`;
-  return value.toFixed(decimals);
-};
+// Export formatters from utils instead of duplicating them
+export {
+  toDollarsAuto as formatCurrency,
+  formatBasisPoints as formatBp,
+  toFloatAuto as formatNumber,
+} from '../utils/format';
 
 // Formula Legend component
 export const FormulaLegend = ({ items }) => {
@@ -809,3 +801,6 @@ export const SmartLink = ({ to, children, sx = {}, ...props }) => {
     </Box>
   );
 };
+
+// Export chart components
+export { BarChart, LineChart, PieChart, DoughnutChart, ChartsReferenceLine };

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import {
   Tabs,
@@ -14,8 +14,18 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { SocialLinks } from './Footer';
 
+// Static mappings - no need for useMemo since these never change
+const PATH_TO_TAB = {
+  '/': -1, // Homepage has no active tab
+  '/allocation': 0,
+  '/liquidity': 1,
+  '/slippage': 2,
+};
+
+const TAB_TO_PATHS = ['/allocation', '/liquidity', '/slippage'];
+
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="down" ref={ref} {...props} />;
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export const Navigation = () => {
@@ -24,33 +34,18 @@ export const Navigation = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Map paths to tab indices
-  const pathToTab = useMemo(
-    () => ({
-      '/': -1, // Homepage has no active tab
-      '/allocation': 0,
-      '/liquidity': 1,
-      '/slippage': 2,
-    }),
-    []
-  );
-
-  const tabToPaths = useMemo(
-    () => ['/allocation', '/liquidity', '/slippage'],
-    []
-  );
   const activeTab =
-    pathToTab[pathname] !== undefined ? pathToTab[pathname] : -1;
+    PATH_TO_TAB[pathname] !== undefined ? PATH_TO_TAB[pathname] : -1;
 
   const handleTabChange = useCallback(
     (event, newValue) => {
-      // Use router.push for immediate navigation
-      router.push(tabToPaths[newValue]);
+      // Use router.push for navigation
+      router.push(TAB_TO_PATHS[newValue]);
       if (anchorEl) {
         setAnchorEl(null);
       }
     },
-    [router, tabToPaths, anchorEl]
+    [router, anchorEl]
   );
 
   const handleMenuOpen = useCallback((event) => {
@@ -63,10 +58,10 @@ export const Navigation = () => {
 
   const handleMobileTabSelect = useCallback(
     (tabIndex) => {
-      router.push(tabToPaths[tabIndex]);
+      router.push(TAB_TO_PATHS[tabIndex]);
       setAnchorEl(null);
     },
-    [router, tabToPaths]
+    [router]
   );
 
   const handleHomeNavigation = useCallback(() => {

@@ -153,34 +153,6 @@ const fadeInAnimation = keyframes`
 // Instant route loading overlay - appears immediately on navigation
 // Positioned fixed to viewport to ensure it's always visible
 export const RouteLoadingOverlay = ({ message = 'Loading...' }) => {
-  const [showLoader, setShowLoader] = React.useState(false);
-
-  // Prevent body scroll when overlay is shown
-  React.useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    const originalHeight = document.body.style.height;
-
-    // Small delay to avoid flashing for very fast navigation
-    const showTimer = setTimeout(() => {
-      setShowLoader(true);
-    }, 100);
-
-    // Fix body height to current viewport height and prevent scrolling
-    document.body.style.overflow = 'hidden';
-    document.body.style.height = '100vh';
-
-    return () => {
-      clearTimeout(showTimer);
-      // Restore original body styling when component unmounts
-      document.body.style.overflow = originalOverflow;
-      document.body.style.height = originalHeight;
-    };
-  }, []);
-
-  if (!showLoader) {
-    return null;
-  }
-
   return (
     <Box
       sx={{
@@ -193,7 +165,7 @@ export const RouteLoadingOverlay = ({ message = 'Loading...' }) => {
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000, // High z-index to ensure it's above everything
-        animation: `${fadeInAnimation} 0.2s ease-out`,
+        animation: `${fadeInAnimation} 0.1s ease-out`,
       }}
     >
       {/* Header space - matches the fixed header height */}
