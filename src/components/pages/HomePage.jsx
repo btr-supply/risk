@@ -7,6 +7,7 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import ExpandIcon from '@mui/icons-material/Expand';
 import LaunchIcon from '@mui/icons-material/Launch';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+// No need for COLORS import anymore since we use theme directly
 
 const ModelCard = ({ title, description, icon, route, color }) => {
   const router = useRouter();
@@ -103,6 +104,12 @@ const ModelCard = ({ title, description, icon, route, color }) => {
 export const HomePage = () => {
   const theme = useTheme();
 
+  // Chart colors are now directly in theme
+  const chartColors = theme.colors.chart;
+
+  // Functional colors are now directly in theme
+  const functionalColors = theme.colors.functional;
+
   const modelCards = [
     {
       title: 'Allocation Model',
@@ -110,7 +117,7 @@ export const HomePage = () => {
         'Optimize TVL allocation across multiple DEX liquidity pools using modern portfolio theory, Kelly Criterion, and Risk Parity methodologies.',
       icon: <DataUsageIcon sx={{ fontSize: 48 }} />,
       route: '/allocation',
-      color: theme.colors.chart[0], // Blue
+      color: chartColors[0], // Blue
     },
     {
       title: 'Liquidity Model',
@@ -118,7 +125,7 @@ export const HomePage = () => {
         'Manage protocol cash reserves and security buffers using Basel III regulations and optimal cash holdings theory.',
       icon: <WaterDropIcon sx={{ fontSize: 48 }} />,
       route: '/liquidity',
-      color: theme.colors.chart[1], // Green
+      color: chartColors[1], // Green
     },
     {
       title: 'Slippage Model',
@@ -126,7 +133,7 @@ export const HomePage = () => {
         'Optimize transaction costs and protect against MEV using dynamic slippage mechanisms and optimal design theory.',
       icon: <ExpandIcon sx={{ fontSize: 48 }} />,
       route: '/slippage',
-      color: theme.colors.chart[2], // Orange
+      color: chartColors[2], // Orange
     },
   ];
 
@@ -177,7 +184,7 @@ export const HomePage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
-                color: theme.colors.functional.link,
+                color: functionalColors.link,
                 textDecoration: 'none',
                 fontWeight: 500,
                 '&:hover': { textDecoration: 'underline' },
@@ -193,7 +200,7 @@ export const HomePage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
-                color: theme.colors.functional.link,
+                color: functionalColors.link,
                 textDecoration: 'none',
                 fontWeight: 500,
                 '&:hover': { textDecoration: 'underline' },

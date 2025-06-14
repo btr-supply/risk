@@ -2,8 +2,6 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import RestoreIcon from '@mui/icons-material/Restore';
-import { LineChart } from '@mui/x-charts';
-import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { useRiskModel } from '../../store';
 import {
   BPS,
@@ -25,7 +23,9 @@ import {
   FormulaLegend,
   SimulationResult,
   SmartLink,
+  LineChart,
 } from '../index.jsx';
+import { toDollarsAuto } from '../../utils/format';
 
 export const LiquidityModel = () => {
   const theme = useTheme();
@@ -107,7 +107,7 @@ export const LiquidityModel = () => {
   const liquidityModelDescription = (
     <DescriptionCard
       title="Methodology"
-      formula={String.raw`r = b + (1-b) \cdot (1 + V \cdot f)^{-e}`}
+      formula="r = b + (1-b) * (1 + T * f)^{-e}"
     >
       <Typography variant="body2" paragraph>
         <strong>Theoretical foundation</strong>: Implements{' '}
@@ -153,7 +153,7 @@ export const LiquidityModel = () => {
         items={[
           { symbol: '<em>r</em>', text: 'target ratio' },
           { symbol: '<em>b</em>', text: 'min ratio' },
-          { symbol: '<em>V</em>', text: 'vault TVL' },
+          { symbol: '<em>T</em>', text: 'vault TVL' },
           { symbol: '<em>f</em>', text: 'TVL factor' },
           { symbol: '<em>e</em>', text: 'exponent' },
         ]}
@@ -185,7 +185,7 @@ export const LiquidityModel = () => {
   const liquidityBufferDescription = (
     <DescriptionCard
       title="Methodology"
-      formula={String.raw`T_l = r \cdot (1-o_l) \quad \text{where} \quad T_h = r \cdot (1+o_h)`}
+      formula="{| t_l = r * (1-o_l);; t_h = r * (1+o_h)::|"
     >
       <Typography variant="body2" paragraph>
         <strong>Theoretical foundation</strong>: The dual-threshold system
@@ -218,8 +218,8 @@ export const LiquidityModel = () => {
       </Typography>
       <FormulaLegend
         items={[
-          { symbol: '<em>T<sub>l</sub></em>', text: 'low trigger threshold' },
-          { symbol: '<em>T<sub>h</sub></em>', text: 'high trigger threshold' },
+          { symbol: '<em>t<sub>l</sub></em>', text: 'low trigger threshold' },
+          { symbol: '<em>t<sub>h</sub></em>', text: 'high trigger threshold' },
           { symbol: '<em>r</em>', text: 'target ratio' },
           { symbol: '<em>o<sub>l</sub></em>', text: 'low offset' },
           { symbol: '<em>o<sub>h</sub></em>', text: 'high offset' },
@@ -275,9 +275,9 @@ export const LiquidityModel = () => {
             ]}
             highlighted="target"
             colors={{
-              low: theme.palette.secondary.main,
+              low: theme.palette.warning.main, // Orange for consistency
               target: theme.palette.primary.main,
-              high: theme.palette.success.main,
+              high: theme.palette.warning.main, // Orange for consistency
             }}
           />
         </Box>
@@ -285,70 +285,104 @@ export const LiquidityModel = () => {
     >
       <ChartContainer>
         <LineChart
-          series={[
-            {
-              data: liquidityCurveData.map((d) => d.low),
-              label: 'Low Trigger (%)',
-              color: theme.palette.secondary.main,
-              curve: 'monotoneX',
-              showMark: ({ index }) =>
-                Math.abs(
-                  liquidityCurveData[index].tvl - simulation.liquidityTvl
-                ) <
-                simulation.liquidityTvl * 0.1,
-            },
-            {
-              data: liquidityCurveData.map((d) => d.target),
-              label: 'Target Ratio (%)',
-              color: theme.palette.primary.main,
-              curve: 'monotoneX',
-              showMark: ({ index }) =>
-                Math.abs(
-                  liquidityCurveData[index].tvl - simulation.liquidityTvl
-                ) <
-                simulation.liquidityTvl * 0.1,
-            },
-            {
-              data: liquidityCurveData.map((d) => d.high),
-              label: 'High Trigger (%)',
-              color: theme.palette.secondary.main,
-              curve: 'monotoneX',
-              showMark: ({ index }) =>
-                Math.abs(
-                  liquidityCurveData[index].tvl - simulation.liquidityTvl
-                ) <
-                simulation.liquidityTvl * 0.1,
-            },
-          ]}
-          xAxis={[
-            {
-              data: liquidityCurveData.map((d) => d.tvl),
-              label: 'Vault TVL (USD)',
-              scaleType: 'log',
-              valueFormatter: (value) => formatCurrency(value, 0),
-            },
-          ]}
-          yAxis={[{ min: 0, max: 50, display: false }]}
-          slotProps={{
-            legend: { position: { vertical: 'top', horizontal: 'middle' } },
+          data={{
+            labels: liquidityCurveData.map((d) => d.tvl), // Use raw TVL values instead of formatted strings
+            datasets: [
+              {
+                label: 'Low Trigger (%)',
+                data: liquidityCurveData.map((d) => d.low),
+                borderColor: theme.palette.warning.main, // Orange color
+                backgroundColor: `${theme.palette.warning.main}20`,
+                borderDash: [8, 4], // Dashed line pattern
+                tension: 0.4, // Smooth curve
+                fill: false,
+                pointRadius: 0, // No data points by default
+                pointHoverRadius: 6, // Show on hover
+                borderWidth: 2,
+              },
+              {
+                label: 'Target Ratio (%)',
+                data: liquidityCurveData.map((d) => d.target),
+                borderColor: theme.palette.primary.main,
+                backgroundColor: `${theme.palette.primary.main}20`,
+                tension: 0.4, // Smooth curve
+                fill: false,
+                pointRadius: 0, // No data points by default
+                pointHoverRadius: 6, // Show on hover
+                borderWidth: 2,
+              },
+              {
+                label: 'High Trigger (%)',
+                data: liquidityCurveData.map((d) => d.high),
+                borderColor: theme.palette.warning.main, // Orange color
+                backgroundColor: `${theme.palette.warning.main}20`,
+                borderDash: [8, 4], // Dashed line pattern
+                tension: 0.4, // Smooth curve
+                fill: false,
+                pointRadius: 0, // No data points by default
+                pointHoverRadius: 6, // Show on hover
+                borderWidth: 2,
+              },
+            ],
           }}
-          tooltip={{ trigger: 'axis' }}
+          options={{
+            scales: {
+              x: {
+                type: 'logarithmic',
+                title: {
+                  display: true,
+                  text: 'Vault TVL (USD)',
+                },
+                ticks: {
+                  maxRotation: 0, // No rotation for x-axis labels
+                  minRotation: 0,
+                  maxTicksLimit: 8, // Limit number of ticks for automatic spacing
+                  callback: function (value) {
+                    return toDollarsAuto(value); // Use auto dollar formatter
+                  },
+                },
+              },
+              y: {
+                min: 0,
+                max: 50,
+                display: true, // Make y-axis visible
+                title: {
+                  display: true,
+                  text: 'Liquidity Ratio (%)',
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+              },
+              tooltip: {
+                callbacks: {
+                  title: function (context) {
+                    return `TVL: ${toDollarsAuto(context[0].parsed.x)}`;
+                  },
+                },
+              },
+            },
+          }}
+          referenceLines={[
+            {
+              x: simulation.liquidityTvl,
+              label: `${formatCurrency(simulation.liquidityTvl)}`,
+              lineStyle: {
+                stroke: theme.palette.secondary.main, // Use green for current TVL reference
+                strokeDasharray: '4 3',
+                strokeWidth: 2,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.palette.secondary.main,
+              },
+            },
+          ]}
           height={650}
-          margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
-        >
-          <ChartsReferenceLine
-            x={simulation.liquidityTvl}
-            label={`${formatCurrency(simulation.liquidityTvl)}`}
-            lineStyle={{
-              stroke: theme.palette.success.main,
-              strokeDasharray: '4 3',
-            }}
-            labelStyle={{
-              fontSize: '12px',
-              fill: theme.palette.success.main,
-            }}
-          />
-        </LineChart>
+        />
       </ChartContainer>
     </SimulationCard>
   );

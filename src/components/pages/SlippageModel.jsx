@@ -2,8 +2,6 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import RestoreIcon from '@mui/icons-material/Restore';
-import { LineChart } from '@mui/x-charts/LineChart';
-import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { useRiskModel } from '../../store';
 import {
   BPS,
@@ -25,6 +23,7 @@ import {
   formatCurrency,
   FormulaLegend,
   SimulationResult,
+  LineChart,
 } from '../index.jsx';
 
 export const SlippageModel = () => {
@@ -88,7 +87,7 @@ export const SlippageModel = () => {
   const slippageModelDescription = (
     <DescriptionCard
       title="Methodology"
-      formula={String.raw`r_{vault} = \frac{b_0}{b_0 + b_1} \quad r_{target} = \text{optimal ratio} \quad \delta = f(r_{vault}, r_{target}, \text{transaction})`}
+      formula='r_v = b_0/{b_0 + b_1} quad "where" quad delta = f(r_v, r_t, r_n)'
     >
       <Typography variant="body2" paragraph>
         <strong>Core Concept</strong>: The BTR dynamic slippage model aligns
@@ -144,11 +143,11 @@ export const SlippageModel = () => {
       <FormulaLegend
         items={[
           {
-            symbol: '<em>r<sub>vault</sub></em>',
+            symbol: '<em>r<sub>v</sub></em>',
             text: 'current vault token0 ratio (0-100%)',
           },
           {
-            symbol: '<em>r<sub>target</sub></em>',
+            symbol: '<em>r<sub>t</sub></em>',
             text: 'target vault token0 ratio (0-100%)',
           },
           { symbol: '<em>b<sub>0</sub></em>', text: 'token0 balance in vault' },
@@ -199,7 +198,7 @@ export const SlippageModel = () => {
   const ratioDiff0Description = (
     <DescriptionCard
       title="Methodology"
-      formula={String.raw`\delta = |r_{vault} - r_{target}| - |r_{new} - r_{target}| \quad \text{where} \quad r_{new} = \frac{b_0 \pm \Delta_0}{(b_0 \pm \Delta_0) + (b_1 \pm \Delta_1)}`}
+      formula='delta = abs{r_{v} - r_{t}} - abs{r_{n} - r_{t}} quad "where" quad r_{n} = {b_{0} + Delta_{0}}/{(b_{0} + Delta_{0}) + (b_{1} + Delta_{1})} '
     >
       <Typography variant="body2" paragraph>
         <strong>Theoretical Foundation</strong>: The BTR dynamic slippage model
@@ -261,10 +260,14 @@ export const SlippageModel = () => {
             text: 'current vault ratio before transaction',
           },
           {
-            symbol: '<em>r<sub>new</sub></em>',
+            symbol: '<em>r<sub>n</sub></em>',
             text: 'vault ratio after transaction',
           },
-          { symbol: '<em>r<sub>target</sub></em>', text: 'target vault ratio' },
+          { symbol: '<em>r<sub>t</sub></em>', text: 'target vault ratio' },
+          {
+            symbol: '<em>r<sub>v</sub></em>',
+            text: 'vault ratio after transaction',
+          },
           {
             symbol: '<em>Δ<sub>0</sub></em>',
             text: 'user token0 amount (+ deposit, - withdrawal)',
@@ -390,136 +393,152 @@ export const SlippageModel = () => {
         </Box>
       }
     >
-      <Box sx={{ width: '100%', height: 450 }}>
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          minHeight: 280,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <LineChart
-          series={[
-            {
-              data: ratioDiff0CurveData.map((d) => d.depositRatioDiff0),
-              label: 'Deposit RatioDiff0 (%)',
-              color: theme.colors.chart[1], // Green color
-              curve: 'monotoneX',
-              showMark: ({ index }) =>
-                Math.abs(
-                  ratioDiff0CurveData[index].userRatio0 -
-                    bpToPercent(ratioDiff0Simulation.userRatio0)
-                ) < 1,
-            },
-            {
-              data: ratioDiff0CurveData.map((d) => d.withdrawalRatioDiff0),
-              label: 'Withdrawal RatioDiff0 (%)',
-              color: theme.colors.chart[2], // Orange color
-              curve: 'monotoneX',
-              showMark: ({ index }) =>
-                Math.abs(
-                  ratioDiff0CurveData[index].userRatio0 -
-                    bpToPercent(ratioDiff0Simulation.userRatio0)
-                ) < 1,
-            },
-          ]}
-          margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
-          xAxis={[
-            {
-              data: ratioDiff0CurveData.map((d) => d.userRatio0),
-              label: 'User Transaction Ratio0 (%)',
-              scaleType: 'linear',
-              valueFormatter: (value) => `${value.toFixed(0)}%`,
-            },
-          ]}
-          yAxis={[
-            {
-              min: -60,
-              max: 60,
-            },
-          ]}
-          height={420}
-          tooltip={{ trigger: 'axis' }}
-          slotProps={{
-            legend: { position: { vertical: 'top', horizontal: 'middle' } },
-            axisHighlight: { x: 'line' },
+          data={{
+            labels: ratioDiff0CurveData.map((d) => d.userRatio0),
+            datasets: [
+              {
+                label: 'Deposit RatioDiff0 (%)',
+                data: ratioDiff0CurveData.map((d) => d.depositRatioDiff0),
+                borderColor: theme.colors.chart[1], // Green color
+                backgroundColor: `${theme.colors.chart[1]}20`,
+                tension: 0.4, // Smooth curve
+                fill: false,
+                pointRadius: 0, // No data points by default
+                pointHoverRadius: 6, // Show on hover
+                borderWidth: 2,
+              },
+              {
+                label: 'Withdrawal RatioDiff0 (%)',
+                data: ratioDiff0CurveData.map((d) => d.withdrawalRatioDiff0),
+                borderColor: theme.colors.chart[2], // Orange color
+                backgroundColor: `${theme.colors.chart[2]}20`,
+                tension: 0.4, // Smooth curve
+                fill: false,
+                pointRadius: 0, // No data points by default
+                pointHoverRadius: 6, // Show on hover
+                borderWidth: 2,
+              },
+            ],
           }}
-        >
-          {/* Horizontal reference lines for risk zones */}
-          <ChartsReferenceLine
-            y={10}
-            label="+10% Rewarding"
-            lineStyle={{
-              stroke: theme.colors.washedOff.green,
-              strokeDasharray: '4 3',
-              strokeWidth: 1,
-            }}
-            labelStyle={{
-              fontSize: '12px',
-              fill: theme.colors.washedOff.green,
-            }}
-          />
-          <ChartsReferenceLine
-            y={-10}
-            label="-10% Penalizing"
-            lineStyle={{
-              stroke: theme.colors.washedOff.orange,
-              strokeDasharray: '4 3',
-              strokeWidth: 1,
-            }}
-            labelStyle={{
-              fontSize: '12px',
-              fill: theme.colors.washedOff.orange,
-            }}
-          />
-          <ChartsReferenceLine
-            y={-30}
-            label="-30% Warning"
-            lineStyle={{
-              stroke: theme.colors.washedOff.warning,
-              strokeDasharray: '4 3',
-              strokeWidth: 1,
-            }}
-            labelStyle={{
-              fontSize: '12px',
-              fill: theme.colors.washedOff.warning,
-            }}
-          />
-          <ChartsReferenceLine
-            y={-50}
-            label="-50% Danger"
-            lineStyle={{
-              stroke: theme.colors.washedOff.danger,
-              strokeDasharray: '4 3',
-              strokeWidth: 1,
-            }}
-            labelStyle={{
-              fontSize: '12px',
-              fill: theme.colors.washedOff.danger,
-            }}
-          />
-
-          {/* Vertical reference line at 50% */}
-          <ChartsReferenceLine
-            x={50}
-            label="50%"
-            lineStyle={{
-              strokeDasharray: '4 3',
-              strokeWidth: 1,
-            }}
-            labelStyle={{
-              fontSize: '14px',
-            }}
-          />
-
-          {/* Current level reference line */}
-          <ChartsReferenceLine
-            x={bpToPercent(ratioDiff0Simulation.userRatio0)}
-            label={`${bpToPercent(ratioDiff0Simulation.userRatio0).toFixed(0)}%`}
-            lineStyle={{
-              stroke: theme.colors.chart[1], // Green
-              strokeDasharray: '4 3',
-              strokeWidth: 2,
-            }}
-            labelStyle={{
-              fontSize: '12px',
-              fill: theme.colors.chart[1],
-            }}
-          />
-        </LineChart>
+          options={{
+            maintainAspectRatio: false, // Allow chart to fill container
+            responsive: true,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'User Ratio0 (%)',
+                },
+                ticks: {
+                  callback: function (value) {
+                    return Math.round(value) + '%'; // Fix rounding errors
+                  },
+                },
+              },
+              y: {
+                min: -70, // Cap y-axis to -70
+                max: 70, // Cap y-axis to +70
+                title: {
+                  display: true,
+                  text: 'RatioDiff0 (%)',
+                },
+              },
+            },
+          }}
+          referenceLines={[
+            // Horizontal reference lines for risk zones
+            {
+              y: 10,
+              label: '+10% Rewarding',
+              lineStyle: {
+                stroke: theme.colors.washedOff.green,
+                strokeDasharray: '4 3',
+                strokeWidth: 1,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.colors.washedOff.green,
+              },
+            },
+            {
+              y: -10,
+              label: '-10% Penalizing',
+              lineStyle: {
+                stroke: theme.colors.washedOff.orange,
+                strokeDasharray: '4 3',
+                strokeWidth: 1,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.colors.washedOff.orange,
+              },
+            },
+            {
+              y: -30,
+              label: '-30% Warning',
+              lineStyle: {
+                stroke: theme.colors.washedOff.orange,
+                strokeDasharray: '4 3',
+                strokeWidth: 1,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.colors.washedOff.orange,
+              },
+            },
+            {
+              y: -50,
+              label: '-50% Danger',
+              lineStyle: {
+                stroke: theme.colors.washedOff.red,
+                strokeDasharray: '4 3',
+                strokeWidth: 1,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.colors.washedOff.red,
+              },
+            },
+            // Vertical reference line at 50%
+            {
+              x: 50,
+              label: '50%',
+              lineStyle: {
+                stroke: theme.palette.text.primary, // White
+                strokeDasharray: '4 3',
+                strokeWidth: 1,
+              },
+              labelStyle: {
+                fontSize: '14px',
+                fill: theme.palette.text.primary, // White
+              },
+            },
+            // Current level reference line
+            {
+              x: bpToPercent(ratioDiff0Simulation.userRatio0),
+              label: `${bpToPercent(ratioDiff0Simulation.userRatio0).toFixed(0)}%`,
+              lineStyle: {
+                stroke: theme.colors.chart[1], // Green
+                strokeDasharray: '4 3',
+                strokeWidth: 2,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.colors.chart[1],
+              },
+            },
+          ]}
+        />
       </Box>
     </SimulationCard>
   );
@@ -536,7 +555,7 @@ export const SlippageModel = () => {
   const dynamicSlippageDescription = (
     <DescriptionCard
       title="Methodology"
-      formula={String.raw`s(x,a) = \begin{cases} 1-(1-x)^k & \text{if } a \leq 0.5 \\ x^k & \text{if } a > 0.5 \end{cases} \quad \text{where} \quad k = 10^{|a-0.5|/0.25}`}
+      formula='s(x,a) = {| 1-(1-x)^k, quad "if" quad a <= 0.5;; x^k quad "if" quad a > 0.5::| quad "where" quad k = 10^e quad and quad e=abs{a-0.5}/0.25 quad'
     >
       <Typography variant="body2" paragraph>
         <strong>Three-Stage Calculation</strong>: The slippage calculation
@@ -640,99 +659,112 @@ export const SlippageModel = () => {
           }}
         />
         <LineChart
-          series={[
-            {
-              data: slippageCurveData.map((d) => d.slippage),
-              label: 'Slippage (%)',
-              color: theme.palette.primary.main, // Primary blue
-              curve: 'monotoneX',
-              showMark: ({ index }) =>
-                Math.abs(
-                  slippageCurveData[index].ratioDiff0 -
-                    bpToPercent(simulation.slippageRatioDiff0)
-                ) < 1,
+          data={{
+            datasets: [
+              {
+                label: 'Slippage (%)',
+                data: slippageCurveData.map((d) => ({
+                  x: d.ratioDiff0,
+                  y: d.slippage,
+                })),
+                borderColor: theme.palette.primary.main, // Primary blue
+                backgroundColor: `${theme.palette.primary.main}20`,
+                tension: 0.4, // Smooth curve
+                fill: false,
+                pointRadius: 0, // No data points by default
+                pointHoverRadius: 6, // Show on hover
+                borderWidth: 2,
+              },
+            ],
+          }}
+          options={{
+            scales: {
+              x: {
+                type: 'linear', // Explicitly set as linear scale
+                min: -100, // Force x-axis range
+                max: 100, // Force x-axis range
+                title: {
+                  display: true,
+                  text: 'ratioDiff0 (%)',
+                },
+                ticks: {
+                  callback: function (value) {
+                    return Math.round(value) + '%'; // Fix rounding errors
+                  },
+                },
+              },
+              y: {
+                min: (() => {
+                  const minVal = bpToPercent(
+                    Math.min(
+                      slippageModel.minSlippageBp,
+                      slippageModel.maxSlippageBp
+                    )
+                  );
+                  const maxVal = bpToPercent(
+                    Math.max(
+                      slippageModel.minSlippageBp,
+                      slippageModel.maxSlippageBp
+                    )
+                  );
+                  const range = maxVal - minVal;
+                  return minVal - range * 0.1;
+                })(),
+                max: (() => {
+                  const minVal = bpToPercent(
+                    Math.min(
+                      slippageModel.minSlippageBp,
+                      slippageModel.maxSlippageBp
+                    )
+                  );
+                  const maxVal = bpToPercent(
+                    Math.max(
+                      slippageModel.minSlippageBp,
+                      slippageModel.maxSlippageBp
+                    )
+                  );
+                  const range = maxVal - minVal;
+                  return maxVal + range * 0.1;
+                })(),
+                title: {
+                  display: true,
+                  text: 'Slippage (%)',
+                },
+              },
             },
-          ]}
-          xAxis={[
+          }}
+          referenceLines={[
+            // Current level reference line - fix broken positioning
             {
-              data: slippageCurveData.map((d) => d.ratioDiff0),
-              label: 'ratioDiff0 (%)',
-              scaleType: 'linear',
-              valueFormatter: (value) => `${value.toFixed(0)}%`,
+              x: bpToPercent(simulation.slippageRatioDiff0),
+              label: `${bpToPercent(simulation.slippageRatioDiff0).toFixed(0)}%`,
+              lineStyle: {
+                stroke: theme.colors.chart[1], // Green
+                strokeDasharray: '4 3',
+                strokeWidth: 2,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.colors.chart[1],
+              },
             },
-          ]}
-          yAxis={[
+            // Neutral point reference line at 0%
             {
-              min: (() => {
-                const minVal = bpToPercent(
-                  Math.min(
-                    slippageModel.minSlippageBp,
-                    slippageModel.maxSlippageBp
-                  )
-                );
-                const maxVal = bpToPercent(
-                  Math.max(
-                    slippageModel.minSlippageBp,
-                    slippageModel.maxSlippageBp
-                  )
-                );
-                const range = maxVal - minVal;
-                return minVal - range * 0.1;
-              })(),
-              max: (() => {
-                const minVal = bpToPercent(
-                  Math.min(
-                    slippageModel.minSlippageBp,
-                    slippageModel.maxSlippageBp
-                  )
-                );
-                const maxVal = bpToPercent(
-                  Math.max(
-                    slippageModel.minSlippageBp,
-                    slippageModel.maxSlippageBp
-                  )
-                );
-                const range = maxVal - minVal;
-                return maxVal + range * 0.1;
-              })(),
+              x: 0,
+              label: 'No diff',
+              lineStyle: {
+                stroke: theme.palette.text.primary, // White
+                strokeDasharray: '4 3',
+                strokeWidth: 1,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.palette.text.primary, // White
+              },
             },
           ]}
           height={420}
-          margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
-          tooltip={{ trigger: 'axis' }}
-          slotProps={{
-            legend: { hidden: true },
-            axisHighlight: { x: 'line' },
-          }}
-        >
-          {/* Current level reference line */}
-          <ChartsReferenceLine
-            x={bpToPercent(simulation.slippageRatioDiff0)}
-            label={`${bpToPercent(simulation.slippageRatioDiff0).toFixed(0)}%`}
-            lineStyle={{
-              stroke: theme.colors.chart[1], // Green
-              strokeDasharray: '4 3',
-              strokeWidth: 2,
-            }}
-            labelStyle={{
-              fontSize: '12px',
-              fill: theme.colors.chart[1],
-            }}
-          />
-
-          {/* Neutral point reference line at 0% */}
-          <ChartsReferenceLine
-            x={0}
-            label="No diff"
-            lineStyle={{
-              strokeDasharray: '4 3',
-              strokeWidth: 1,
-            }}
-            labelStyle={{
-              fontSize: '12px',
-            }}
-          />
-        </LineChart>
+        />
       </Box>
     </SimulationCard>
   );

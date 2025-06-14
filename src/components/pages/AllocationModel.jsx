@@ -18,8 +18,6 @@ import { useTheme } from '@mui/material/styles';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import RestoreIcon from '@mui/icons-material/Restore';
-import { BarChart, LineChart, PieChart } from '@mui/x-charts';
-import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { useRiskModel } from '../../store';
 import {
   BPS,
@@ -44,6 +42,9 @@ import {
   FormulaLegend,
   SimulationResult,
   SmartLink,
+  BarChart,
+  LineChart,
+  DoughnutChart,
 } from '../index.jsx';
 
 export const AllocationModel = () => {
@@ -140,7 +141,8 @@ export const AllocationModel = () => {
   const allocationModelDescription = (
     <DescriptionCard
       title="Methodology"
-      formula={String.raw`a_i = \frac{w_i \cdot T}{10000} \quad \text{where} \quad w_i = \frac{c_i^p}{\sum_{j} c_j^p} \cdot 10000`}
+      formula={`a_i = {w_i * T}/10000 quad "where" quad w_i = c_i^p/{sum_j c_j^p} * 10000
+`}
     >
       <Typography variant="body2" paragraph>
         <strong>Theoretical foundation</strong>: BTR implements a{' '}
@@ -208,10 +210,7 @@ export const AllocationModel = () => {
   const finalCScore = calculateCScore(individualScores);
 
   const cScoreParams = (
-    <DescriptionCard
-      title="Methodology"
-      formula={String.raw`c = \sqrt[3]{t \cdot l \cdot p} = (t \cdot l \cdot p)^{1/3}`}
-    >
+    <DescriptionCard title="Methodology" formula="c = root{t * l * p}{3}">
       <Typography variant="body2" paragraph>
         <strong>Theoretical foundation</strong>: The C-Score implements{' '}
         <strong>geometric mean optimization theory</strong> from Kelly Criterion
@@ -334,7 +333,7 @@ export const AllocationModel = () => {
                 <Box
                   sx={{
                     height: 4,
-                    backgroundColor: '#21262d',
+                    backgroundColor: theme.colors.functional.surfaceVariant,
                     borderRadius: 2,
                     position: 'relative',
                     overflow: 'hidden',
@@ -382,60 +381,108 @@ export const AllocationModel = () => {
       }
     >
       <ChartContainer>
-        <Box sx={{ display: 'flex', gap: 2, width: '100%', height: '100%' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            width: '100%',
+            height: '100%',
+            alignItems: 'flex-end', // Align charts to bottom
+          }}
+        >
           {/* Main Scores Chart */}
-          <Box sx={{ flex: '2 1 70%', height: '100%' }}>
+          <Box
+            sx={{
+              flex: '1 1 0',
+              minWidth: 0,
+              width: 'calc(50% - 8px)',
+              height: '100%',
+            }}
+          >
             <BarChart
-              series={[
-                {
-                  data: [
-                    bpToPercent(trust),
-                    bpToPercent(liquidity),
-                    bpToPercent(perfScore),
-                  ],
-                },
-              ]}
-              colors={[
-                theme.colors.chart[0], // Trust - Apple blue
-                theme.colors.chart[1], // Liquidity - Apple green
-                theme.colors.chart[2], // Performance - Apple orange
-              ]}
-              xAxis={[
-                {
-                  data: ['Trust', 'Liquidity', 'Performance'],
-                  scaleType: 'band',
-                },
-              ]}
-              yAxis={[{ min: 0, max: 100 }]}
-              height={440}
-              margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
-              slotProps={{
-                legend: { hidden: true },
+              data={{
+                labels: ['Trust', 'Liq', 'Perf'],
+                datasets: [
+                  {
+                    data: [
+                      bpToPercent(trust),
+                      bpToPercent(liquidity),
+                      bpToPercent(perfScore),
+                    ],
+                    backgroundColor: [
+                      theme.colors.chart[0], // Trust - Blue
+                      theme.colors.chart[0], // Liquidity - Blue
+                      theme.colors.chart[0], // Performance - Blue
+                    ],
+                  },
+                ],
               }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    ticks: {
+                      maxRotation: 0,
+                      minRotation: 0,
+                    },
+                  },
+                  y: {
+                    min: 0,
+                    max: 100,
+                  },
+                },
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+              }}
+              height={440}
             />
           </Box>
 
-          {/* C-Score Chart */}
-          <Box sx={{ flex: '1 1 30%', height: '100%' }}>
+          {/* C-Score Chart - Equal size for mobile responsiveness */}
+          <Box
+            sx={{
+              flex: '1 1 0',
+              minWidth: 0,
+              width: 'calc(50% - 8px)',
+              height: '100%',
+            }}
+          >
             <BarChart
-              series={[
-                {
-                  data: [bpToPercent(finalCScore)],
-                  color: theme.colors.chart[1], // Green color
-                },
-              ]}
-              xAxis={[
-                {
-                  data: ['C-Score'],
-                  scaleType: 'band',
-                },
-              ]}
-              yAxis={[{ min: 0, max: 100, display: false }]}
-              height={440}
-              margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
-              slotProps={{
-                legend: { hidden: true },
+              data={{
+                labels: ['C-Score'],
+                datasets: [
+                  {
+                    data: [bpToPercent(finalCScore)],
+                    backgroundColor: [theme.colors.chart[1]], // Green color for C-Score chart
+                  },
+                ],
               }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    ticks: {
+                      maxRotation: 0,
+                      minRotation: 0,
+                    },
+                  },
+                  y: {
+                    min: 0,
+                    max: 100,
+                  },
+                },
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+              }}
+              height={440}
             />
           </Box>
         </Box>
@@ -452,10 +499,13 @@ export const AllocationModel = () => {
     weightModel.maxBp
   );
 
+  // Memoize the current pool count for reference line to avoid lag
+  const currentPoolCount = simulation.maxWeightPoolCount;
+
   const maxWeightDescription = (
     <DescriptionCard
       title="Methodology"
-      formula={String.raw`w_m = w_0 + e^{-n \cdot d} \quad \text{where} \quad w_e = \min(w_m, w_a)`}
+      formula='w_e = min(w_m, w_a) quad "where" quad w_m = w_0 + e^{-n * d}'
     >
       <Typography variant="body2" paragraph>
         <strong>Theoretical foundation</strong>: The exponential decay function
@@ -604,43 +654,70 @@ export const AllocationModel = () => {
     >
       <ChartContainer>
         <LineChart
-          series={[
+          data={{
+            labels: maxWeightData.map((d) => d.components),
+            datasets: [
+              {
+                label: 'Max Weight (%)',
+                data: maxWeightData.map((d) => d.maxWeight),
+                borderColor: theme.palette.primary.main,
+                backgroundColor: `${theme.palette.primary.main}20`,
+                tension: 0.4, // Smooth curve
+                fill: false,
+                pointRadius: 0, // No data points by default
+                pointHoverRadius: 6, // Show on hover
+                pointBackgroundColor: theme.palette.primary.main,
+                pointBorderColor: '#FFFFFF',
+                pointHoverBorderWidth: 2,
+                borderWidth: 2,
+                hoverBorderWidth: 3,
+              },
+            ],
+          }}
+          options={{
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Number of Pools',
+                },
+              },
+              y: {
+                min: 0,
+                max: 100,
+                title: {
+                  display: true,
+                  text: 'Max Weight (%)',
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `Max Weight: ${context.parsed.y.toFixed(2)}%`;
+                  },
+                },
+              },
+            },
+          }}
+          referenceLines={[
             {
-              data: maxWeightData.map((d) => d.maxWeight),
-              label: 'Max Weight (%)',
-              color: theme.palette.primary.main, // Primary blue
-              showMark: ({ index }) =>
-                maxWeightData[index].components ===
-                simulation.maxWeightPoolCount,
+              x: currentPoolCount,
+              label: `${currentPoolCount} pools`,
+              lineStyle: {
+                stroke: theme.colors.chart[1], // Green
+                strokeDasharray: '4 3',
+                strokeWidth: 2,
+              },
+              labelStyle: {
+                fontSize: '12px',
+                fill: theme.colors.chart[1],
+              },
             },
           ]}
-          xAxis={[
-            {
-              data: maxWeightData.map((d) => d.components),
-              label: 'Number of Pools',
-              scaleType: 'point',
-            },
-          ]}
-          yAxis={[{ min: 0, max: 100 }]}
           height={370}
-          margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
-          slotProps={{ legend: { hidden: true } }}
-        >
-          {/* Current level reference line */}
-          <ChartsReferenceLine
-            x={simulation.maxWeightPoolCount}
-            label={`${simulation.maxWeightPoolCount} pools`}
-            lineStyle={{
-              stroke: theme.colors.chart[1], // Green
-              strokeDasharray: '4 3',
-              strokeWidth: 2,
-            }}
-            labelStyle={{
-              fontSize: '12px',
-              fill: theme.colors.chart[1],
-            }}
-          />
-        </LineChart>
+        />
       </ChartContainer>
     </SimulationCard>
   );
@@ -671,7 +748,7 @@ export const AllocationModel = () => {
   const vaultAllocationDescription = (
     <DescriptionCard
       title="Methodology"
-      formula={String.raw`w_i = \frac{c_i^p}{\sum_j c_j^p} \cdot 10000 \quad \text{where} \quad w_f = \min(w_i, w_m)`}
+      formula='w_f = min(w_i, w_m) quad "where" quad w_i = {c_i^p}/{sum_j c_j^p} * 10000'
     >
       <Typography variant="body2" paragraph>
         <strong>Theoretical foundation</strong>: Implements{' '}
@@ -908,29 +985,33 @@ export const AllocationModel = () => {
     >
       {calculatedTargetWeights.length > 0 ? (
         <ChartContainer>
-          <PieChart
-            series={[
-              {
-                data: calculatedTargetWeights.map((weight, index) => ({
-                  id: index,
-                  value: bpToPercent(weight),
-                  label: `Pool ${simulation.pools[index].id}`,
-                  color: theme.chartColors[index % theme.chartColors.length],
-                })),
-                innerRadius: 70,
-                outerRadius: 130,
-                paddingAngle: 2,
-                cornerRadius: 3,
-              },
-            ]}
-            slotProps={{ legend: { hidden: true } }}
-            height={300}
-            margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
-            sx={{
-              '& .MuiChartsLegend-root': {
-                display: 'none',
+          <DoughnutChart
+            data={{
+              labels: simulation.pools.map((pool) => `Pool ${pool.id}`),
+              datasets: [
+                {
+                  data: calculatedTargetWeights.map((weight) =>
+                    bpToPercent(weight)
+                  ),
+                  backgroundColor: simulation.pools.map(
+                    (_, index) =>
+                      theme.chartColors[index % theme.chartColors.length]
+                  ),
+                },
+              ],
+            }}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: false,
+                },
               },
             }}
+            height={320}
+            cutout="50%"
+            spacing={10}
           />
         </ChartContainer>
       ) : (
