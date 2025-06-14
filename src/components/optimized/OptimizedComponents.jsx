@@ -1,30 +1,76 @@
 import React, { memo, useMemo } from 'react';
 import { CardContent, Typography, Slider, Box, Chip } from '@mui/material';
-import SchoolIcon from '@mui/icons-material/School';
-import SettingsIcon from '@mui/icons-material/Settings';
-import GamepadIcon from '@mui/icons-material/Gamepad';
 import { useTheme } from '@mui/material/styles';
 import { BaseCard, CardTitle } from '../ui';
 import { MathFormula } from '../index';
+import { useSliderDebounce } from '../../hooks/useDebounce';
+import { getTitleIcon } from '../../utils/componentUtils';
 
-// Memoized helper function for icons
-const getTitleIcon = memo((title) => {
-  switch (title) {
-    case 'Methodology':
-      return <SchoolIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
-    case 'Parameters':
-      return <SettingsIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
-    case 'Simulation':
-      return <GamepadIcon sx={{ mr: 1, fontSize: '1.25rem' }} />;
-    default:
-      return null;
-  }
+// Theme factory for slider styles - moved outside component for better performance
+const createSliderStyles = (theme, color) => ({
+  color:
+    color === 'primary'
+      ? theme.palette.primary.main
+      : color === 'secondary'
+        ? theme.palette.secondary.main
+        : color,
+  height: 8,
+  '& .MuiSlider-track': {
+    border: 'none',
+    height: 8,
+  },
+  '& .MuiSlider-rail': {
+    height: 8,
+    opacity: 0.3,
+    backgroundColor: theme.palette.grey[600],
+  },
+  '& .MuiSlider-thumb': {
+    height: 20,
+    width: 20,
+    backgroundColor: 'currentColor',
+    border: '2px solid currentColor',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+    '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+      boxShadow: '0 3px 12px rgba(0,0,0,0.25)',
+    },
+  },
+  '& .MuiSlider-valueLabel': {
+    lineHeight: 1.2,
+    fontSize: 12,
+    background: 'unset',
+    padding: 0,
+    width: 42,
+    height: 42,
+    borderRadius: '50% 50% 50% 0',
+    backgroundColor: 'currentColor',
+    transformOrigin: 'bottom left',
+    transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+    '&::before': { display: 'none' },
+    '&.MuiSlider-valueLabelOpen': {
+      transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
+    },
+    '& > *': {
+      transform: 'rotate(45deg)',
+    },
+  },
+  '& .MuiSlider-mark': {
+    backgroundColor: theme.palette.grey[500],
+    height: 12,
+    width: 2,
+    '&.MuiSlider-markActive': {
+      backgroundColor: 'currentColor',
+    },
+  },
+  '& .MuiSlider-markLabel': {
+    fontSize: '0.75rem',
+    color: theme.palette.text.secondary,
+  },
 });
-getTitleIcon.displayName = 'GetTitleIcon';
 
 // Optimized ParameterCard with memoization
 export const OptimizedParameterCard = memo(({ title, children, action }) => {
-  const titleIcon = useMemo(() => getTitleIcon(title), [title]);
+  // Direct call to getTitleIcon - no useMemo needed for simple function calls
+  const titleIcon = getTitleIcon(title);
 
   return (
     <BaseCard
@@ -56,7 +102,8 @@ export const OptimizedParameterCard = memo(({ title, children, action }) => {
 
 // Optimized DescriptionCard with memoization
 export const OptimizedDescriptionCard = memo(({ title, children, formula }) => {
-  const titleIcon = useMemo(() => getTitleIcon(title), [title]);
+  // Direct call to getTitleIcon
+  const titleIcon = getTitleIcon(title);
 
   const { descriptiveContent, legendElement } = useMemo(() => {
     const allChildrenArray = React.Children.toArray(children);
@@ -89,7 +136,7 @@ export const OptimizedDescriptionCard = memo(({ title, children, formula }) => {
         <CardTitle icon={titleIcon}>{title}</CardTitle>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {descriptiveContent}
-          {formula && <MathFormula formula={formula} />}
+          {formula && <MathFormula>{formula}</MathFormula>}
           {legendElement}
         </Box>
       </CardContent>
@@ -99,11 +146,9 @@ export const OptimizedDescriptionCard = memo(({ title, children, formula }) => {
 
 // Optimized MetricChip with memoization
 export const OptimizedMetricChip = memo(
-  ({ label, value, color = 'primary', formatValue = (v) => v }) => {
-    const formattedValue = useMemo(
-      () => formatValue(value),
-      [value, formatValue]
-    );
+  ({ label, value, color = 'primary', formatValue }) => {
+    // Only memoize if formatValue is a function, otherwise format directly
+    const formattedValue = formatValue ? formatValue(value) : value;
 
     return (
       <Chip
@@ -122,7 +167,7 @@ export const OptimizedMetricChip = memo(
   }
 );
 
-// Optimized ParameterSlider with memoization and reduced re-renders
+// Optimized ParameterSlider with immediate visual feedback and debounced state updates
 export const OptimizedParameterSlider = memo(
   ({
     label,
@@ -134,79 +179,24 @@ export const OptimizedParameterSlider = memo(
     formatValue = (v) => v.toLocaleString(),
     helperText,
     unit = '',
-
     marks = [],
     color = 'primary',
+    debounceDelay = 150, // Configurable debounce delay
   }) => {
     const theme = useTheme();
 
-    const sliderStyles = useMemo(
-      () => ({
-        color:
-          color === 'primary'
-            ? theme.palette.primary.main
-            : color === 'secondary'
-              ? theme.palette.secondary.main
-              : color,
-        height: 8,
-        '& .MuiSlider-track': {
-          border: 'none',
-          height: 8,
-        },
-        '& .MuiSlider-rail': {
-          height: 8,
-          opacity: 0.3,
-          backgroundColor: theme.palette.grey[600],
-        },
-        '& .MuiSlider-thumb': {
-          height: 20,
-          width: 20,
-          backgroundColor: 'currentColor',
-          border: '2px solid currentColor',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
-            boxShadow: '0 3px 12px rgba(0,0,0,0.25)',
-          },
-        },
-        '& .MuiSlider-valueLabel': {
-          lineHeight: 1.2,
-          fontSize: 12,
-          background: 'unset',
-          padding: 0,
-          width: 42,
-          height: 42,
-          borderRadius: '50% 50% 50% 0',
-          backgroundColor: 'currentColor',
-          transformOrigin: 'bottom left',
-          transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
-          '&::before': { display: 'none' },
-          '&.MuiSlider-valueLabelOpen': {
-            transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
-          },
-          '& > *': {
-            transform: 'rotate(45deg)',
-          },
-        },
-        '& .MuiSlider-mark': {
-          backgroundColor: theme.palette.grey[500],
-          height: 12,
-          width: 2,
-          '&.MuiSlider-markActive': {
-            backgroundColor: 'currentColor',
-          },
-        },
-        '& .MuiSlider-markLabel': {
-          fontSize: '0.75rem',
-          color: theme.palette.text.secondary,
-        },
-      }),
-      [theme, color]
+    // Use slider debounce hook for immediate visual feedback with debounced state updates
+    const [displayValue, handleSliderChange] = useSliderDebounce(
+      value,
+      onChange,
+      debounceDelay
     );
 
-    const formattedValue = useMemo(
-      () => formatValue(value),
-      [value, formatValue]
-    );
+    // Use theme factory instead of complex useMemo
+    const sliderStyles = createSliderStyles(theme, color);
+
+    // Simple format call - no memoization needed for basic formatting
+    const formattedValue = formatValue(displayValue);
 
     return (
       <Box sx={{ mb: 2 }}>
@@ -236,8 +226,8 @@ export const OptimizedParameterSlider = memo(
         </Box>
 
         <Slider
-          value={value}
-          onChange={(_, newValue) => onChange(newValue)}
+          value={displayValue}
+          onChange={(_, newValue) => handleSliderChange(newValue)}
           min={min}
           max={max}
           step={step}
@@ -251,11 +241,10 @@ export const OptimizedParameterSlider = memo(
           <Typography
             variant="caption"
             sx={{
-              display: 'block',
-              mt: 1,
               color: 'text.secondary',
-              lineHeight: 1.3,
               fontSize: '0.75rem',
+              mt: 0.5,
+              display: 'block',
             }}
           >
             {helperText}

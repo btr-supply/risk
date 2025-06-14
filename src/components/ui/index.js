@@ -6,8 +6,10 @@ export {
   MuiTypography,
 } from './Typography';
 export {
-  MemoizedChartContainer,
-  MemoizedBarChart,
-  MemoizedLineChart,
-  MemoizedPieChart,
+  ChartContainer,
+  BarChart,
+  LineChart,
+  PieChart,
+  DoughnutChart,
+  ChartsReferenceLine,
 } from './ChartComponents';
