@@ -2,20 +2,17 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { ContentAreaLoader } from '../../src/components/Loader';
-import { withMinLoadTime } from '../../src/utils/loading';
+import { RouteLoadingOverlay } from '../../src/components/Loader';
 
-// Load the AllocationModel component with content area loading only
+// Load the AllocationModel component with immediate loading feedback
 const AllocationModel = dynamic(
   () =>
-    withMinLoadTime(
-      import('../../src/components/pages/AllocationModel').then((mod) => ({
-        default: mod.AllocationModel,
-      }))
-    ),
+    import('../../src/components/pages/AllocationModel').then((mod) => ({
+      default: mod.AllocationModel,
+    })),
   {
     ssr: false,
-    loading: () => <ContentAreaLoader message="Loading..." />,
+    loading: () => <RouteLoadingOverlay />,
   }
 );
 

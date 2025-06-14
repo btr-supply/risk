@@ -5,12 +5,12 @@ import dynamic from 'next/dynamic';
 import { ContentAreaLoader } from '../src/components/Loader';
 import { withMinLoadTime } from '../src/utils/loading';
 
-// Load the HomePage component with content area loading only
+// Load the HomePage component with anti-flash loading
 const HomePage = dynamic(
   () =>
     withMinLoadTime(
       import('../src/components/pages/HomePage').then((mod) => ({
-        default: mod.HomePage,
+        default: mod.default,
       }))
     ),
   {

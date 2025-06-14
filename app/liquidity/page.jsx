@@ -2,20 +2,17 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { ContentAreaLoader } from '../../src/components/Loader';
-import { withMinLoadTime } from '../../src/utils/loading';
+import { RouteLoadingOverlay } from '../../src/components/Loader';
 
-// Load the LiquidityModel component with content area loading only
+// Load the LiquidityModel component with immediate loading feedback
 const LiquidityModel = dynamic(
   () =>
-    withMinLoadTime(
-      import('../../src/components/pages/LiquidityModel').then((mod) => ({
-        default: mod.LiquidityModel,
-      }))
-    ),
+    import('../../src/components/pages/LiquidityModel').then((mod) => ({
+      default: mod.LiquidityModel,
+    })),
   {
     ssr: false,
-    loading: () => <ContentAreaLoader message="Loading..." />,
+    loading: () => <RouteLoadingOverlay />,
   }
 );
 
