@@ -10,7 +10,7 @@ import {
   calculateRatioDiff0,
   validation,
   calculateSlippage,
-  bpToPercent,
+  bpformatPercent,
   defaultSlippageModel,
 } from '../../models';
 import {
@@ -20,7 +20,7 @@ import {
   ParameterSlider,
   SimulationCard,
   formatBp,
-  formatCurrency,
+  formatDollarsAuto,
   FormulaLegend,
   SimulationResult,
   LineChart,
@@ -306,7 +306,7 @@ export const SlippageModel = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <ParameterSlider
             label="Target Ratio0 (%)"
-            value={bpToPercent(ratioDiff0Simulation.targetRatio0)}
+            value={bpformatPercent(ratioDiff0Simulation.targetRatio0)}
             onChange={(v) =>
               updateRatioDiff0Simulation({ targetRatio0: v * 100 })
             }
@@ -325,14 +325,14 @@ export const SlippageModel = () => {
             }
             min={5000}
             max={1000000000}
-            formatValue={formatCurrency}
+            formatValue={formatDollarsAuto}
             helperText="Total value locked in vault including both token0 and token1 balances across cash positions and active liquidity provider positions. Affects impact magnitude of user transactions on ratios."
             logarithmic={true}
             color="green"
           />
           <ParameterSlider
             label="Vault Ratio0 (%)"
-            value={bpToPercent(ratioDiff0Simulation.vaultRatio0)}
+            value={bpformatPercent(ratioDiff0Simulation.vaultRatio0)}
             onChange={(v) =>
               updateRatioDiff0Simulation({ vaultRatio0: v * 100 })
             }
@@ -351,14 +351,14 @@ export const SlippageModel = () => {
             }
             min={100}
             max={100000000}
-            formatValue={formatCurrency}
+            formatValue={formatDollarsAuto}
             helperText="Total transaction size in USD value representing combined value of token0 and token1 amounts in user deposit or withdrawal. Larger transactions have proportionally greater impact on vault ratios."
             logarithmic={true}
-            color="green"
+            color="secondary"
           />
           <ParameterSlider
             label="User Transaction Ratio0 (%)"
-            value={bpToPercent(ratioDiff0Simulation.userRatio0)}
+            value={bpformatPercent(ratioDiff0Simulation.userRatio0)}
             onChange={(v) =>
               updateRatioDiff0Simulation({ userRatio0: v * 100 })
             }
@@ -367,11 +367,11 @@ export const SlippageModel = () => {
             step={1}
             formatValue={(v) => `${v.toFixed(0)}%`}
             helperText="Proportion of token0 in user's transaction determining transaction composition. Key factor influencing whether transaction moves vault ratio closer to or further from target balance."
-            color="green"
+            color="secondary"
           />
           <Box sx={{ mt: 1 }}>
             <SimulationResult
-              prefix={`ratio0: ${bpToPercent(ratioDiff0Simulation.userRatio0).toFixed(0)}% →`}
+              prefix={`ratio0: ${bpformatPercent(ratioDiff0Simulation.userRatio0).toFixed(0)}% →`}
               values={[
                 {
                   key: 'deposit',
@@ -403,6 +403,7 @@ export const SlippageModel = () => {
         }}
       >
         <LineChart
+          height={400}
           data={{
             labels: ratioDiff0CurveData.map((d) => d.userRatio0),
             datasets: [
@@ -525,8 +526,8 @@ export const SlippageModel = () => {
             },
             // Current level reference line
             {
-              x: bpToPercent(ratioDiff0Simulation.userRatio0),
-              label: `${bpToPercent(ratioDiff0Simulation.userRatio0).toFixed(0)}%`,
+              x: bpformatPercent(ratioDiff0Simulation.userRatio0),
+              label: `${bpformatPercent(ratioDiff0Simulation.userRatio0).toFixed(0)}%`,
               lineStyle: {
                 stroke: theme.colors.chart[1], // Green
                 strokeDasharray: '4 3',
@@ -628,7 +629,7 @@ export const SlippageModel = () => {
           />
           <ParameterSlider
             label="ratioDiff0 (%)"
-            value={bpToPercent(simulation.slippageRatioDiff0)}
+            value={bpformatPercent(simulation.slippageRatioDiff0)}
             onChange={(v) => {
               updateSlippageRatioDiff0(v * 100);
             }}
@@ -637,7 +638,7 @@ export const SlippageModel = () => {
             step={1}
             formatValue={(v) => `${v.toFixed(0)}%`}
             helperText="Protocol health metric measuring how user transaction affects vault ratio versus target. Positive values indicate beneficial transactions (reduced slippage), negative values indicate harmful transactions (increased slippage)."
-            color="green"
+            color="secondary"
           />
         </Box>
       }
@@ -659,6 +660,7 @@ export const SlippageModel = () => {
           }}
         />
         <LineChart
+          height={450}
           data={{
             datasets: [
               {
@@ -695,13 +697,13 @@ export const SlippageModel = () => {
               },
               y: {
                 min: (() => {
-                  const minVal = bpToPercent(
+                  const minVal = bpformatPercent(
                     Math.min(
                       slippageModel.minSlippageBp,
                       slippageModel.maxSlippageBp
                     )
                   );
-                  const maxVal = bpToPercent(
+                  const maxVal = bpformatPercent(
                     Math.max(
                       slippageModel.minSlippageBp,
                       slippageModel.maxSlippageBp
@@ -711,13 +713,13 @@ export const SlippageModel = () => {
                   return minVal - range * 0.1;
                 })(),
                 max: (() => {
-                  const minVal = bpToPercent(
+                  const minVal = bpformatPercent(
                     Math.min(
                       slippageModel.minSlippageBp,
                       slippageModel.maxSlippageBp
                     )
                   );
-                  const maxVal = bpToPercent(
+                  const maxVal = bpformatPercent(
                     Math.max(
                       slippageModel.minSlippageBp,
                       slippageModel.maxSlippageBp
@@ -736,8 +738,8 @@ export const SlippageModel = () => {
           referenceLines={[
             // Current level reference line - fix broken positioning
             {
-              x: bpToPercent(simulation.slippageRatioDiff0),
-              label: `${bpToPercent(simulation.slippageRatioDiff0).toFixed(0)}%`,
+              x: bpformatPercent(simulation.slippageRatioDiff0),
+              label: `${bpformatPercent(simulation.slippageRatioDiff0).toFixed(0)}%`,
               lineStyle: {
                 stroke: theme.colors.chart[1], // Green
                 strokeDasharray: '4 3',
@@ -763,7 +765,6 @@ export const SlippageModel = () => {
               },
             },
           ]}
-          height={420}
         />
       </Box>
     </SimulationCard>

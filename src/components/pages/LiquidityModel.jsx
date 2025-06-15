@@ -19,13 +19,12 @@ import {
   SimulationCard,
   ChartContainer,
   formatBp,
-  formatCurrency,
+  formatDollarsAuto,
   FormulaLegend,
   SimulationResult,
   SmartLink,
   LineChart,
 } from '../index.jsx';
-import { toDollarsAuto } from '../../utils/format';
 
 export const LiquidityModel = () => {
   const theme = useTheme();
@@ -249,13 +248,13 @@ export const LiquidityModel = () => {
             onChange={updateLiquidityTvl}
             min={1000}
             max={1000000000}
-            formatValue={(v) => formatCurrency(v, 0)}
+            formatValue={(v) => formatDollarsAuto(v, 0)}
             helperText="Total value locked in vault determining liquidity buffer requirements through exponential decay formula. Demonstrates how larger vaults achieve operational efficiency with proportionally lower buffer ratios."
             logarithmic={true}
-            color="green"
+            color="secondary"
           />
           <SimulationResult
-            prefix={`For TVL = ${formatCurrency(simulation.liquidityTvl)}:`}
+            prefix={`For TVL = ${formatDollarsAuto(simulation.liquidityTvl)}:`}
             values={[
               {
                 key: 'low',
@@ -285,6 +284,7 @@ export const LiquidityModel = () => {
     >
       <ChartContainer>
         <LineChart
+          height={600}
           data={{
             labels: liquidityCurveData.map((d) => d.tvl), // Use raw TVL values instead of formatted strings
             datasets: [
@@ -338,7 +338,7 @@ export const LiquidityModel = () => {
                   minRotation: 0,
                   maxTicksLimit: 8, // Limit number of ticks for automatic spacing
                   callback: function (value) {
-                    return toDollarsAuto(value); // Use auto dollar formatter
+                    return formatDollarsAuto(value); // Use auto dollar formatter
                   },
                 },
               },
@@ -360,7 +360,7 @@ export const LiquidityModel = () => {
               tooltip: {
                 callbacks: {
                   title: function (context) {
-                    return `TVL: ${toDollarsAuto(context[0].parsed.x)}`;
+                    return `TVL: ${formatDollarsAuto(context[0].parsed.x)}`;
                   },
                 },
               },
@@ -369,7 +369,7 @@ export const LiquidityModel = () => {
           referenceLines={[
             {
               x: simulation.liquidityTvl,
-              label: `${formatCurrency(simulation.liquidityTvl)}`,
+              label: `${formatDollarsAuto(simulation.liquidityTvl)}`,
               lineStyle: {
                 stroke: theme.palette.secondary.main, // Use green for current TVL reference
                 strokeDasharray: '4 3',
@@ -381,7 +381,6 @@ export const LiquidityModel = () => {
               },
             },
           ]}
-          height={650}
         />
       </ChartContainer>
     </SimulationCard>

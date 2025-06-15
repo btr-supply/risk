@@ -12,7 +12,6 @@ import {
   TableRow,
   Paper,
   Button,
-  Chip,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -27,7 +26,7 @@ import {
   targetAllocations,
   validation,
   generateMaxWeightCurveData,
-  bpToPercent,
+  bpformatPercent,
   defaultWeightModel,
 } from '../../models';
 import {
@@ -38,7 +37,7 @@ import {
   SimulationCard,
   ChartContainer,
   formatBp,
-  formatCurrency,
+  formatDollarsAuto,
   FormulaLegend,
   SimulationResult,
   SmartLink,
@@ -310,72 +309,16 @@ export const AllocationModel = () => {
 
           {/* Read-only C-Score Display */}
           <Box sx={{ mt: 2 }}>
-            <Typography
-              variant="body1"
-              sx={{
-                fontWeight: 600,
-                fontSize: '1.125rem',
-                color: 'text.primary',
-                mb: 0.5,
-              }}
-            >
-              C-Score
-            </Typography>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ fontSize: '0.95rem', display: 'block', mb: 1 }}
-            >
-              Composite geometric mean of the above scores
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Box sx={{ flex: 1, pr: 1 }}>
-                <Box
-                  sx={{
-                    height: 4,
-                    backgroundColor: theme.colors.functional.surfaceVariant,
-                    borderRadius: 2,
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <Box
-                    sx={{
-                      height: '100%',
-                      width: `${bpToPercent(finalCScore)}%`,
-                      backgroundColor: theme.colors.chart[1], // Green highlight
-                      borderRadius: 2,
-                      transition: 'width 0.3s ease',
-                    }}
-                  />
-                </Box>
-              </Box>
-              <Box
-                sx={{
-                  minWidth: '85px',
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  height: '32px',
-                }}
-              >
-                <Chip
-                  label={formatBp(finalCScore)}
-                  size="small"
-                  variant="outlined"
-                  sx={{
-                    fontFamily: 'monospace',
-                    fontWeight: 600,
-                    fontSize: '0.875rem',
-                    width: '100%',
-                    height: '24px',
-                    borderColor: theme.colors.chart[1],
-                    color: theme.colors.chart[1],
-                    backgroundColor: `${theme.colors.chart[1]}15`,
-                  }}
-                />
-              </Box>
-            </Box>
+            <ParameterSlider
+              label="C-Score"
+              helperText="Composite geometric mean of the above scores"
+              value={bpformatPercent(finalCScore)}
+              min={0}
+              max={100}
+              formatValue={(v) => formatBp(v * 100)} // Convert percentage back to basis points for display
+              color="secondary" // Green color to match chart
+              readOnly={true}
+            />
           </Box>
         </Box>
       }
@@ -400,14 +343,15 @@ export const AllocationModel = () => {
             }}
           >
             <BarChart
+              height={400}
               data={{
                 labels: ['Trust', 'Liq', 'Perf'],
                 datasets: [
                   {
                     data: [
-                      bpToPercent(trust),
-                      bpToPercent(liquidity),
-                      bpToPercent(perfScore),
+                      bpformatPercent(trust),
+                      bpformatPercent(liquidity),
+                      bpformatPercent(perfScore),
                     ],
                     backgroundColor: [
                       theme.colors.chart[0], // Trust - Blue
@@ -438,7 +382,6 @@ export const AllocationModel = () => {
                   },
                 },
               }}
-              height={440}
             />
           </Box>
 
@@ -452,11 +395,12 @@ export const AllocationModel = () => {
             }}
           >
             <BarChart
+              height={400}
               data={{
                 labels: ['C-Score'],
                 datasets: [
                   {
-                    data: [bpToPercent(finalCScore)],
+                    data: [bpformatPercent(finalCScore)],
                     backgroundColor: [theme.colors.chart[1]], // Green color for C-Score chart
                   },
                 ],
@@ -482,7 +426,6 @@ export const AllocationModel = () => {
                   },
                 },
               }}
-              height={440}
             />
           </Box>
         </Box>
@@ -635,7 +578,7 @@ export const AllocationModel = () => {
             max={20}
             step={1}
             helperText="Simulates vault composition with varying pool counts to demonstrate dynamic maximum weight calculations. Shows how diversification requirements automatically adjust based on liquidity pool allocation complexity and scale."
-            color="green"
+            color="secondary"
           />
           <Box sx={{ mt: 1 }}>
             <SimulationResult
@@ -654,6 +597,7 @@ export const AllocationModel = () => {
     >
       <ChartContainer>
         <LineChart
+          height={300}
           data={{
             labels: maxWeightData.map((d) => d.components),
             datasets: [
@@ -716,7 +660,6 @@ export const AllocationModel = () => {
               },
             },
           ]}
-          height={370}
         />
       </ChartContainer>
     </SimulationCard>
@@ -864,41 +807,83 @@ export const AllocationModel = () => {
             onChange={updateVaultTvl}
             min={1000}
             max={1000000000}
-            formatValue={formatCurrency}
+            formatValue={formatDollarsAuto}
             helperText="Total value locked in vault determining absolute allocation amounts for each pool. Demonstrates how percentage weights translate to actual dollar allocations across liquidity pool components."
             logarithmic={true}
-            color="green"
+            color="secondary"
           />
           <TableContainer
             component={Paper}
-            sx={{ maxHeight: 240, border: '1px solid', borderColor: 'divider' }}
+            sx={{
+              maxHeight: 240,
+              border: '1px solid',
+              borderColor: 'divider',
+              backgroundColor: 'transparent',
+            }}
           >
             <Table size="small" stickyHeader>
               <TableHead>
-                <TableRow>
+                <TableRow sx={{ backgroundColor: 'grey.800' }}>
                   <TableCell
-                    sx={{ fontWeight: 600, fontSize: '0.875rem', py: 0.5 }}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: '0.875rem',
+                      py: 0.5,
+                      backgroundColor: 'grey.800',
+                      borderBottom: '1px solid',
+                      borderBottomColor: 'divider',
+                    }}
                   >
                     Name
                   </TableCell>
                   <TableCell
-                    sx={{ fontWeight: 600, fontSize: '0.875rem', py: 0.5 }}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: '0.875rem',
+                      py: 0.5,
+                      backgroundColor: 'grey.800',
+                      borderBottom: '1px solid',
+                      borderBottomColor: 'divider',
+                    }}
                   >
                     C-Score
                   </TableCell>
                   <TableCell
-                    sx={{ fontWeight: 600, fontSize: '0.875rem', py: 0.5 }}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: '0.875rem',
+                      py: 0.5,
+                      backgroundColor: 'grey.800',
+                      borderBottom: '1px solid',
+                      borderBottomColor: 'divider',
+                    }}
                   >
                     Allocation
                   </TableCell>
                   <TableCell
-                    sx={{ width: '40px', padding: '4px 2px' }}
+                    sx={{
+                      width: '40px',
+                      padding: '4px 2px',
+                      backgroundColor: 'grey.800',
+                      borderBottom: '1px solid',
+                      borderBottomColor: 'divider',
+                    }}
                   ></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {simulation.pools.map((pool, index) => (
-                  <TableRow key={pool.id} sx={{ '& td': { py: 0.5 } }}>
+                  <TableRow
+                    key={pool.id}
+                    sx={{
+                      '& td': {
+                        py: 0.5,
+                        backgroundColor: 'transparent',
+                        borderBottom: '1px solid',
+                        borderBottomColor: 'divider',
+                      },
+                    }}
+                  >
                     <TableCell sx={{ minWidth: '80px' }}>
                       <Typography
                         variant="body2"
@@ -938,7 +923,7 @@ export const AllocationModel = () => {
                           }}
                         >
                           {calculatedAllocations[index]
-                            ? formatCurrency(calculatedAllocations[index])
+                            ? formatDollarsAuto(calculatedAllocations[index])
                             : '$0'}
                         </Typography>
                         <Typography
@@ -986,12 +971,13 @@ export const AllocationModel = () => {
       {calculatedTargetWeights.length > 0 ? (
         <ChartContainer>
           <DoughnutChart
+            height={300}
             data={{
               labels: simulation.pools.map((pool) => `Pool ${pool.id}`),
               datasets: [
                 {
                   data: calculatedTargetWeights.map((weight) =>
-                    bpToPercent(weight)
+                    bpformatPercent(weight)
                   ),
                   backgroundColor: simulation.pools.map(
                     (_, index) =>
@@ -1009,9 +995,8 @@ export const AllocationModel = () => {
                 },
               },
             }}
-            height={320}
             cutout="50%"
-            spacing={10}
+            spacing={3}
           />
         </ChartContainer>
       ) : (
