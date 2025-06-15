@@ -4,7 +4,7 @@
 repos:
   # Standard pre-commit hooks for general file maintenance
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
         exclude: \.md$
@@ -22,6 +22,29 @@ repos:
     hooks:
       - id: optimize-assets
         args: [--asset-dir, ./public, --mode, lossless]
+
+  # Naming conventions enforcement
+  - repo: https://github.com/pde-rent/naming-pre-commit
+    rev: v1.0.0
+    hooks:
+      # Check branch names at commit time
+      - id: check-naming
+        name: Check Branch Naming Convention
+        description: Enforce branch naming conventions
+        stages: [pre-commit]
+        args:
+          - --check-branch
+          - --branch-pattern
+          - '^(feat|fix|refac|ops|docs)/'
+      # Check commit messages at push time
+      - id: check-naming
+        name: Check Commit Message Convention
+        description: Enforce commit message conventions
+        stages: [pre-push]
+        args:
+          - --check-push
+          - --commit-pattern
+          - '^\[(feat|fix|refac|ops|docs)\] '
 
   # Local hooks for project-specific tools using Bun
   - repo: local
