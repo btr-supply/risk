@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import {
-  Tabs,
-  Tab,
   IconButton,
   Dialog,
   Slide,
@@ -15,38 +13,58 @@ import CloseIcon from '@mui/icons-material/Close';
 import { SocialLinks } from './Footer';
 import { useNavigateWithLoading } from '../hooks/useRouterLoading';
 
-// Static mappings - no need for useMemo since these never change
-const PATH_TO_TAB = {
-  '/': -1, // Homepage has no active tab
-  '/allocation': 0,
-  '/liquidity': 1,
-  '/slippage': 2,
-};
-
-const TAB_TO_PATHS = ['/allocation', '/liquidity', '/slippage'];
+// Navigation data
+const NAVIGATION_LINKS = [
+  { label: 'Allocation', path: '/allocation' },
+  { label: 'Liquidity', path: '/liquidity' },
+  { label: 'Slippage', path: '/slippage' },
+];
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+// Utility function to check if a path is active
+const isActivePath = (pathname, targetPath) => {
+  return pathname === targetPath;
+};
+
+// Reusable NavLink component
+const NavLink = ({
+  label,
+  path,
+  onClick,
+  isMobile = false,
+  isActive = false,
+}) => (
+  <Typography
+    variant={isMobile ? 'h2' : 'body1'}
+    onClick={() => onClick(path)}
+    sx={{
+      fontWeight: 700,
+      fontSize: isMobile ? '3rem' : '1.3rem',
+      fontStyle: 'italic',
+      textTransform: 'uppercase',
+      letterSpacing: isMobile ? 'normal' : '0.02em',
+      color: isActive ? '#FFFFFF' : '#636366', // Pure white for active, darker grey for inactive
+      cursor: 'pointer',
+      transition: 'color 0.3s ease',
+      px: isMobile ? 0 : 2,
+      py: isMobile ? 0 : 1,
+      '&:hover': {
+        color: 'primary.main',
+      },
+    }}
+  >
+    {label}
+  </Typography>
+);
 
 export const Navigation = () => {
   const pathname = usePathname();
   const [anchorEl, setAnchorEl] = useState(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigateWithLoading = useNavigateWithLoading();
-
-  const activeTab =
-    PATH_TO_TAB[pathname] !== undefined ? PATH_TO_TAB[pathname] : -1;
-
-  const handleTabChange = useCallback(
-    (event, newValue) => {
-      navigateWithLoading(TAB_TO_PATHS[newValue]);
-      if (anchorEl) {
-        setAnchorEl(null);
-      }
-    },
-    [navigateWithLoading, anchorEl]
-  );
 
   const handleMenuOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
@@ -56,10 +74,17 @@ export const Navigation = () => {
     setAnchorEl(null);
   }, []);
 
-  const handleMobileTabSelect = useCallback(
-    (tabIndex) => {
-      navigateWithLoading(TAB_TO_PATHS[tabIndex]);
+  const handleMobileNavigation = useCallback(
+    (path) => {
+      navigateWithLoading(path);
       setAnchorEl(null);
+    },
+    [navigateWithLoading]
+  );
+
+  const handleDesktopNavigation = useCallback(
+    (path) => {
+      navigateWithLoading(path);
     },
     [navigateWithLoading]
   );
@@ -77,15 +102,11 @@ export const Navigation = () => {
           color="inherit"
           aria-label="menu"
           onClick={handleMenuOpen}
-          sx={{
-            mr: 1,
-            p: 1,
-          }}
+          sx={{ mr: 1, p: 1 }}
         >
           <MenuIcon sx={{ fontSize: '2rem' }} />
         </IconButton>
 
-        {/* Full Screen Mobile Navigation Overlay */}
         <Dialog
           fullScreen
           open={Boolean(anchorEl)}
@@ -99,15 +120,7 @@ export const Navigation = () => {
             },
           }}
         >
-          {/* Close button */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 16,
-              right: 16,
-              zIndex: 1,
-            }}
-          >
+          <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 1 }}>
             <IconButton
               onClick={handleMenuClose}
               sx={{
@@ -126,7 +139,6 @@ export const Navigation = () => {
             </IconButton>
           </Box>
 
-          {/* Navigation Items */}
           <Box
             sx={{
               flex: 1,
@@ -138,84 +150,26 @@ export const Navigation = () => {
               px: 4,
             }}
           >
-            <Typography
-              variant="h2"
+            <NavLink
+              label="Home"
+              path="/"
               onClick={handleHomeNavigation}
-              sx={{
-                fontWeight: 700,
-                fontSize: '3rem',
-                fontStyle: 'italic',
-                textTransform: 'uppercase',
-                color: 'text.primary',
-                cursor: 'pointer',
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: 'primary.main',
-                },
-              }}
-            >
-              Home
-            </Typography>
+              isMobile={true}
+              isActive={isActivePath(pathname, '/')}
+            />
 
-            <Typography
-              variant="h2"
-              onClick={() => handleMobileTabSelect(0)}
-              sx={{
-                fontWeight: 700,
-                fontSize: '3rem',
-                fontStyle: 'italic',
-                textTransform: 'uppercase',
-                color: 'text.primary',
-                cursor: 'pointer',
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: 'primary.main',
-                },
-              }}
-            >
-              Allocation
-            </Typography>
-
-            <Typography
-              variant="h2"
-              onClick={() => handleMobileTabSelect(1)}
-              sx={{
-                fontWeight: 700,
-                fontSize: '3rem',
-                fontStyle: 'italic',
-                textTransform: 'uppercase',
-                color: 'text.primary',
-                cursor: 'pointer',
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: 'primary.main',
-                },
-              }}
-            >
-              Liquidity
-            </Typography>
-
-            <Typography
-              variant="h2"
-              onClick={() => handleMobileTabSelect(2)}
-              sx={{
-                fontWeight: 700,
-                fontSize: '3rem',
-                fontStyle: 'italic',
-                textTransform: 'uppercase',
-                color: 'text.primary',
-                cursor: 'pointer',
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: 'primary.main',
-                },
-              }}
-            >
-              Slippage
-            </Typography>
+            {NAVIGATION_LINKS.map((link) => (
+              <NavLink
+                key={link.path}
+                label={link.label}
+                path={link.path}
+                onClick={handleMobileNavigation}
+                isMobile={true}
+                isActive={isActivePath(pathname, link.path)}
+              />
+            ))}
           </Box>
 
-          {/* Social Links at Bottom */}
           <Box
             sx={{
               pb: 6,
@@ -232,35 +186,17 @@ export const Navigation = () => {
   }
 
   return (
-    /* Desktop Navigation */
-    <Tabs
-      value={activeTab === -1 ? false : activeTab}
-      onChange={handleTabChange}
-      textColor="inherit"
-      TabIndicatorProps={{
-        sx: {
-          display: 'none',
-        },
-      }}
-      sx={{
-        '& .MuiTab-root': {
-          textTransform: 'uppercase',
-          fontSize: '1.3rem',
-          fontWeight: 700,
-          minWidth: 'auto',
-          px: 2,
-          m: 0,
-          mr: 1,
-          letterSpacing: '0.02em',
-          '&.Mui-selected': {
-            color: 'primary.main',
-          },
-        },
-      }}
-    >
-      <Tab label="Allocation" />
-      <Tab label="Liquidity" />
-      <Tab label="Slippage" />
-    </Tabs>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 1 }}>
+      {NAVIGATION_LINKS.map((link) => (
+        <NavLink
+          key={link.path}
+          label={link.label}
+          path={link.path}
+          onClick={handleDesktopNavigation}
+          isMobile={false}
+          isActive={isActivePath(pathname, link.path)}
+        />
+      ))}
+    </Box>
   );
 };
