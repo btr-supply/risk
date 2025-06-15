@@ -21,6 +21,7 @@ const initialState = {
   weightModel: { ...defaultWeightModel },
   liquidityModel: { ...defaultLiquidityModel },
   slippageModel: { ...defaultSlippageModel },
+
   simulation: {
     cScores: {
       trust: 7500,
