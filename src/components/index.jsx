@@ -12,7 +12,6 @@ import {
 // KaTeX removed - using native MathML instead
 import { bpToPercent } from '../models.js';
 import { useTheme } from '@mui/material/styles';
-import { useRouter } from 'next/navigation';
 import {
   BarChart,
   LineChart,
@@ -22,6 +21,7 @@ import {
 } from './ui/ChartComponents';
 import { useSliderDebounce } from '../hooks/useDebounce';
 import { getTitleIcon } from '../utils/componentUtils';
+import { useNavigateWithLoading } from '../hooks/useRouterLoading';
 // No need for COLORS import anymore since we use theme directly
 
 // Utility function to safely get chart colors
@@ -755,7 +755,7 @@ export const SimulationResult = ({
 // Smart Link component for internal navigation and anchors
 export const SmartLink = ({ to, children, sx = {}, ...props }) => {
   const theme = useTheme();
-  const router = useRouter();
+  const navigateWithLoading = useNavigateWithLoading();
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -772,7 +772,7 @@ export const SmartLink = ({ to, children, sx = {}, ...props }) => {
     // Handle navigation to other pages with optional anchors
     if (to.includes('#')) {
       const [path, anchor] = to.split('#');
-      router.push(path);
+      navigateWithLoading(path);
       // Wait for navigation to complete, then scroll to anchor
       setTimeout(() => {
         const element = document.getElementById(anchor);
@@ -781,7 +781,7 @@ export const SmartLink = ({ to, children, sx = {}, ...props }) => {
         }
       }, 100);
     } else {
-      router.push(to);
+      navigateWithLoading(to);
     }
   };
 
