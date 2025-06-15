@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import Link from 'next/link';
+import { useNavigateWithLoading } from '../src/hooks/useRouterLoading';
 
 export default function NotFound() {
+  const navigateWithLoading = useNavigateWithLoading();
+
   return (
     <Box
       sx={{
@@ -48,8 +50,7 @@ export default function NotFound() {
 
       {/* Home button styled like navbar links */}
       <Button
-        component={Link}
-        href="/"
+        onClick={() => navigateWithLoading('/')}
         variant="outlined"
         sx={{
           textTransform: 'uppercase',
