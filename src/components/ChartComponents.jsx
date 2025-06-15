@@ -316,7 +316,7 @@ export const ChartContainer = memo(({ children, height = '100%', sx = {} }) => (
     sx={{
       width: '100%',
       height,
-      minHeight: '300px',
+      minHeight: '50px',
       position: 'relative',
       display: 'flex',
       alignItems: 'center',
@@ -324,7 +324,7 @@ export const ChartContainer = memo(({ children, height = '100%', sx = {} }) => (
       padding: '0px',
       '& > div': {
         width: '100% !important',
-        height: '100% !important',
+        // height: '100% !important', // breaks the dynamic chart sizing
       },
       '& canvas': {
         width: '100% !important',
@@ -339,7 +339,7 @@ export const ChartContainer = memo(({ children, height = '100%', sx = {} }) => (
 
 // Pure Chart.js Bar Chart component with proper theming
 export const BarChart = memo(
-  ({ data, options = {}, height = 400, referenceLines = [], ...props }) => {
+  ({ data, options = {}, height = '100%', referenceLines = [], ...props }) => {
     const chartRef = useRef(null);
     const theme = useTheme();
     const themeColors = getThemeColors(theme);
@@ -375,7 +375,7 @@ export const BarChart = memo(
 
 // Pure Chart.js Line Chart component with proper theming
 export const LineChart = memo(
-  ({ data, options = {}, height = 400, referenceLines = [], ...props }) => {
+  ({ data, options = {}, height = '100%', referenceLines = [], ...props }) => {
     const chartRef = useRef(null);
     const theme = useTheme();
     const themeColors = getThemeColors(theme);
@@ -411,7 +411,7 @@ export const LineChart = memo(
 
 // Pure Chart.js Pie Chart component with proper theming
 export const PieChart = memo(
-  ({ data, options = {}, height = 400, referenceLines = [], ...props }) => {
+  ({ data, options = {}, height = '100%', referenceLines = [], ...props }) => {
     const chartRef = useRef(null);
     const theme = useTheme();
     const themeColors = getThemeColors(theme);
@@ -450,7 +450,7 @@ export const DoughnutChart = memo(
   ({
     data,
     options = {},
-    height = 400,
+    height = '100%',
     cutout = '60%',
     spacing = 8, // Increased default gap between slices
     borderWidth = 0, // Default to no border

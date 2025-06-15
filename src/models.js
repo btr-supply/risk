@@ -61,7 +61,7 @@ export const validation = {
 // Utility functions
 export const toWad = (bp) => (bp * WAD) / BPS;
 export const toBp = (wad) => (wad * BPS) / WAD;
-export const bpToPercent = (bp) => bp / 100;
+export const bpformatPercent = (bp) => bp / 100;
 export const percentToBp = (percent) => percent * 100;
 
 // Math utilities (simplified versions of LibMaths functions)
@@ -524,9 +524,9 @@ export const generateLiquidityCurveData = (
 
     data.push({
       tvl,
-      target: bpToPercent(target),
-      low: bpToPercent(triggers.lowTrigger),
-      high: bpToPercent(triggers.highTrigger),
+      target: bpformatPercent(target),
+      low: bpformatPercent(triggers.lowTrigger),
+      high: bpformatPercent(triggers.highTrigger),
     });
   }
   return data;
@@ -550,8 +550,8 @@ export const generateSlippageCurveData = (model, points = 200) => {
     );
 
     data.push({
-      ratioDiff0: bpToPercent(ratioDiff0Bp),
-      slippage: bpToPercent(slippage),
+      ratioDiff0: bpformatPercent(ratioDiff0Bp),
+      slippage: bpformatPercent(slippage),
     });
   }
   return data;
@@ -574,7 +574,7 @@ export const generateMaxWeightCurveData = (model, maxComponents = 20) => {
     );
     data.push({
       components,
-      maxWeight: bpToPercent(maxWeight),
+      maxWeight: bpformatPercent(maxWeight),
     });
   }
   return data;
@@ -690,9 +690,9 @@ export const generateRatioDiff0CurveDataBoth = (params, points = 101) => {
     );
 
     data.push({
-      userRatio0: bpToPercent(userRatio0),
-      depositRatioDiff0: bpToPercent(depositRatioDiff0),
-      withdrawalRatioDiff0: bpToPercent(withdrawalRatioDiff0),
+      userRatio0: bpformatPercent(userRatio0),
+      depositRatioDiff0: bpformatPercent(depositRatioDiff0),
+      withdrawalRatioDiff0: bpformatPercent(withdrawalRatioDiff0),
     });
   }
 

@@ -9,7 +9,11 @@ import {
   generateSlippageCurveData,
   generateRatioDiff0CurveDataBoth,
 } from '../models';
-import { toDollarsAuto, toPercent, toFloatAuto } from '../utils/format';
+import {
+  formatDollarsAuto,
+  formatPercent,
+  formatFloatAuto,
+} from '../utils/format';
 
 // Memoized calculation hooks to prevent unnecessary recalculations
 export const useCalculatedCScore = () => {
@@ -135,9 +139,9 @@ export const useRatioDiff0CurveData = () => {
 export const useFormatters = () => {
   // Return static formatter functions using the sophisticated auto formatters
   return {
-    currency: toDollarsAuto,
-    percentage: (bp, decimals = 2) => toPercent(bp / 10000, decimals), // Convert BP to percentage
-    number: toFloatAuto,
+    currency: formatDollarsAuto,
+    percentage: (bp, decimals = 2) => formatPercent(bp / 10000, decimals), // Convert BP to percentage
+    number: formatFloatAuto,
     basisPoints: (bp) => `${bp} bp`,
   };
 };

@@ -80,6 +80,7 @@ repos:
         entry: bun run build
         language: system
         pass_filenames: false
+        stages: [pre-push]
 
 # Global configuration
 fail_fast: false

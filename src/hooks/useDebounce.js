@@ -20,7 +20,7 @@ export const useDebounce = (callback, delay = PERFORMANCE.DEBOUNCE_DELAY) => {
 };
 
 // Hook for sliders that need immediate visual feedback with debounced state updates
-export const useSliderDebounce = (
+export const useStateDebounce = (
   value,
   onChange,
   delay = PERFORMANCE.THROTTLE_DELAY

@@ -244,7 +244,7 @@ export const theme = createTheme({
             background: colors.grey900,
           },
           scrollbarWidth: 'thin',
-          scrollbarColor: colors.grey700,
+          scrollbarColor: `${colors.grey700} ${colors.grey900}`,
         },
         '*::-webkit-scrollbar': {
           width: '8px',
@@ -258,7 +258,7 @@ export const theme = createTheme({
           background: colors.grey700,
           borderRadius: '4px',
           '&:hover': {
-            background: colors.grey700,
+            background: colors.grey500,
           },
         },
         '*::-webkit-scrollbar-corner': {
@@ -353,43 +353,11 @@ export const theme = createTheme({
     MuiSlider: {
       styleOverrides: {
         root: {
-          height: 4,
-        },
-        thumb: {
-          width: 16,
-          height: 16,
-          backgroundColor: colors.blue,
-          border: `2px solid ${colors.blue}`,
-          boxShadow: 'none',
-          '&:hover': {
-            boxShadow: `0 0 0 8px rgba(0, 122, 255, 0.16)`,
+          // Let ParameterSlider component handle its own styling
+          // Only provide minimal defaults for other slider usage
+          '& .MuiSlider-rail': {
+            backgroundColor: colors.grey600,
           },
-          '&:before': {
-            display: 'none',
-          },
-        },
-        track: {
-          height: 4,
-          borderRadius: 2,
-          backgroundColor: colors.blue,
-        },
-        rail: {
-          height: 4,
-          borderRadius: 2,
-          backgroundColor: `${colors.grey600} !important`,
-          '&.MuiSlider-rail': {
-            backgroundColor: `${colors.grey600} !important`,
-          },
-          '&:before': {
-            backgroundColor: `${colors.grey600} !important`,
-          },
-        },
-        valueLabel: {
-          backgroundColor: colors.grey900,
-          borderRadius: 6,
-          fontSize: '0.75rem',
-          fontWeight: 500,
-          color: colors.white,
         },
       },
     },
@@ -582,6 +550,201 @@ export const CHARTS = {
     minPoints: 10,
     defaultPoints: 100,
   },
+};
+
+// =====  COMPONENT STYLING UTILITIES =====
+// Common styling patterns consolidated to eliminate duplication across components
+
+// =====  COMPREHENSIVE SPACING SYSTEM =====
+// All padding, margin, and spacing values centralized for consistency
+
+export const SPACING = {
+  // Base unit spacing (MUI units)
+  xs: 0.5, // 4px
+  sm: 1, // 8px
+  md: 1.5, // 12px
+  lg: 2, // 16px
+  xl: 2.5, // 20px
+  xxl: 3, // 24px
+  xxxl: 4, // 32px
+  huge: 5, // 40px
+
+  // Component-specific spacing
+  card: {
+    padding: 2.5, // Internal card content padding
+    margin: 2, // Between cards
+    headerMargin: 2.5, // Below card headers
+  },
+
+  section: {
+    margin: 5, // Between major sections
+    titleMargin: 3, // Below section titles
+    padding: { xs: 2, sm: 3, md: 4 }, // Section container padding
+  },
+
+  button: {
+    padding: '8px 16px', // Standard button padding
+    margin: 1, // Between buttons
+    groupGap: 1.5, // In button groups
+  },
+
+  form: {
+    fieldSpacing: 2, // Between form fields
+    groupSpacing: 3, // Between form groups
+    labelMargin: 1, // Below labels
+  },
+
+  layout: {
+    container: { xs: 2, sm: 3, md: 4 }, // Container padding
+    itemGap: 1.5, // General item spacing
+    gridGap: 2, // Grid item spacing
+    listItemGap: 1, // List item spacing
+  },
+
+  chart: {
+    padding: 2, // Chart container padding
+    margin: 2, // Between charts
+    legendGap: 1.5, // Chart legend spacing
+  },
+
+  // Legacy compatibility - keep existing names
+  cardPadding: 2.5,
+  sectionMargin: 2.5,
+  itemGap: 1.5,
+  borderRadius: 1,
+};
+
+// Common SX patterns - reusable across components
+export const COMMON_SX = {
+  // Card content layout - used by multiple card types
+  cardContent: {
+    p: SPACING.card.padding,
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  // Card header with title and action - common pattern
+  cardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    mb: SPACING.card.headerMargin,
+  },
+
+  // Full height card - common pattern
+  fullHeightCard: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  // Common paper/container styling
+  paperContainer: {
+    borderRadius: SPACING.borderRadius,
+    border: '1px solid',
+    borderColor: 'divider',
+    bgcolor: 'background.paper',
+  },
+
+  // Monospace text styling - repeated pattern
+  monospace: {
+    fontFamily: 'monospace',
+    fontWeight: 600,
+  },
+
+  // Chart container centering - repeated pattern
+  chartCenter: {
+    width: '100%',
+    flexGrow: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Responsive text patterns
+  responsiveText: {
+    small: {
+      fontSize: { xs: '0.65rem', sm: '0.75rem' },
+    },
+    mono: {
+      fontFamily: 'monospace',
+      fontSize: { xs: '0.65rem', sm: '0.75rem' },
+    },
+  },
+};
+
+// Utility functions for common patterns
+export const createFlexColumnSx = (gap = SPACING.layout.itemGap) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap,
+});
+
+// Additional spacing utilities
+export const createFlexRowSx = (gap = SPACING.layout.itemGap) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  gap,
+});
+
+export const createGridSx = (gap = SPACING.layout.gridGap) => ({
+  display: 'grid',
+  gap,
+});
+
+export const createButtonGroupSx = (gap = SPACING.button.groupGap) => ({
+  display: 'flex',
+  gap,
+  alignItems: 'center',
+});
+
+export const createFormGroupSx = (spacing = SPACING.form.fieldSpacing) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: spacing,
+});
+
+// Create consistent card variant styles
+export const createCardVariantSx = (variant = 'default', customSx = {}) => {
+  const baseCard = {
+    ...COMMON_SX.paperContainer,
+    ...COMMON_SX.fullHeightCard,
+  };
+
+  const variants = {
+    parameter: baseCard,
+    simulation: {
+      ...baseCard,
+      '& .MuiCardContent-root': {
+        ...COMMON_SX.cardContent,
+      },
+    },
+    description: baseCard,
+  };
+
+  return {
+    ...(variants[variant] || variants.default),
+    ...customSx,
+  };
+};
+
+// Create consistent content wrapper styles
+export const createContentWrapperSx = (variant = 'default') => {
+  const base = {
+    ...COMMON_SX.cardContent,
+  };
+
+  const variants = {
+    simulation: {
+      ...base,
+      ...COMMON_SX.chartCenter,
+    },
+    parameter: base,
+    description: base,
+  };
+
+  return variants[variant] || base;
 };
 
 // Export theme as default

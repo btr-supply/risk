@@ -107,7 +107,7 @@ export function toUS(n = 0, minDigits = 2, maxDigits = 2) {
   });
 }
 
-export function toPercent(
+export function formatPercent(
   n = 0,
   scale = 2,
   signed = false,
@@ -127,7 +127,12 @@ export function toPercent(
   );
 }
 
-export function toFloat(n = 0, signed = true, minDigits = 2, maxDigits = 2) {
+export function formatFloat(
+  n = 0,
+  signed = true,
+  minDigits = 2,
+  maxDigits = 2
+) {
   const sign = n < 0 ? '-' : signed ? '+' : '';
   return sign + toUS(Math.abs(n), minDigits, maxDigits);
 }
@@ -136,22 +141,22 @@ export const COMPACT_FORMATTER = Intl.NumberFormat('en', {
   notation: 'compact',
 });
 
-export function toFloatCompact(n = 0, signed = true) {
+export function formatFloatCompact(n = 0, signed = true) {
   const sign = n < 0 ? '-' : signed ? '+' : '';
   return sign + COMPACT_FORMATTER.format(Math.abs(n));
 }
 
-export function toFloatAuto(n = 0, signed = true, precision = 4) {
+export function formatFloatAuto(n = 0, signed = true, precision = 4) {
   if (Math.abs(n) > 5_000_000) {
-    return toFloatCompact(n, signed);
+    return formatFloatCompact(n, signed);
   } else if (n != 0.0 && Math.abs(n) < 0.001) {
     precision = Math.min(precision, getDigits(n) + 2);
     return round(n, precision).toExponential();
   }
-  return toFloat(n, signed, Math.min(2, precision), precision);
+  return formatFloat(n, signed, Math.min(2, precision), precision);
 }
 
-export function toCurrencyCompact(
+export function formatCurrencyCompact(
   n = 0,
   currency = Currency.USD,
   signed = false
@@ -160,17 +165,17 @@ export function toCurrencyCompact(
   return sign + SYMBOL_BY_ISO[currency] + COMPACT_FORMATTER.format(Math.abs(n));
 }
 
-export function toDollarsCompact(n = 0, signed = false) {
-  return toCurrencyCompact(n, Currency.USD, signed);
+export function formatDollarsCompact(n = 0, signed = false) {
+  return formatCurrencyCompact(n, Currency.USD, signed);
 }
 
-export function toFloatNoTrailing(n = 0, signed = true, maxDigits = 3) {
-  return toFloat(n, signed, 0, maxDigits);
+export function formatFloatNoTrailing(n = 0, signed = true, maxDigits = 3) {
+  return formatFloat(n, signed, 0, maxDigits);
 }
 
-export function toDollarsNoTrailing(n = 0, signed = false, maxDigits = 3) {
+export function formatDollarsNoTrailing(n = 0, signed = false, maxDigits = 3) {
   const sign = n < 0 ? '-' : signed ? '+' : '';
-  return sign + '$' + toFloatNoTrailing(n, false, maxDigits);
+  return sign + '$' + formatFloatNoTrailing(n, false, maxDigits);
 }
 
 export const precisionByCurrency = {
@@ -185,7 +190,7 @@ export const precisionByCurrency = {
   [Currency.JPY]: 4,
 };
 
-export function toCurrencyAuto(
+export function formatDollarsAutoAuto(
   n = 0,
   currency = Currency.USD,
   signed = false,
@@ -200,15 +205,15 @@ export function toCurrencyAuto(
         : ((unsigned >= 8_000 ? 0 : precisionByCurrency?.[currency]) ?? 4);
   }
   return (
-    sign + SYMBOL_BY_ISO[currency] + toFloatAuto(unsigned, false, precision)
+    sign + SYMBOL_BY_ISO[currency] + formatFloatAuto(unsigned, false, precision)
   );
 }
 
-export function toDollarsAuto(n = 0, signed = false) {
-  return toCurrencyAuto(n, Currency.USD, signed);
+export function formatDollarsAuto(n = 0, signed = false) {
+  return formatDollarsAutoAuto(n, Currency.USD, signed);
 }
 
-export function toChrono(ms = 0) {
+export function formatChrono(ms = 0) {
   if (!ms || ms < 0) return '0ms';
 
   const seconds = ms / 1000;
@@ -236,7 +241,7 @@ export function toChrono(ms = 0) {
   return `${round(seconds / 31536000, 2)}y`;
 }
 
-export function humanizeSize(bytes) {
+export function formatBytes(bytes) {
   if (bytes === 0) return '0 B';
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
@@ -247,7 +252,7 @@ export function formatLatency(ms) {
   return ms >= 1000 ? '1s+' : `${ms}ms`;
 }
 
-export function toDurationAuto(n = 0, unit = 'ms') {
+export function formatDuration(n = 0, unit = 'ms') {
   if (!n) {
     return '--';
   }
@@ -271,13 +276,13 @@ export function toDurationAuto(n = 0, unit = 'ms') {
 
 // Default formatters mapping
 export const DEFAULT_FORMATTER_BY_TYPE = {
-  [FormatterType.NUMBER]: (v) => toFloatAuto(v),
+  [FormatterType.NUMBER]: (v) => formatFloatAuto(v),
   'number:raw': (v) => v.toString(),
-  [FormatterType.COMPACT]: (v) => toFloatCompact(v),
-  [FormatterType.CURRENCY]: (v) => toDollarsAuto(v),
-  [FormatterType.CURRENCY_COMPACT]: (v) => toDollarsCompact(v),
-  [FormatterType.PERCENT]: (v) => toPercent(v),
-  [FormatterType.CHRONO]: (v) => toChrono(v),
+  [FormatterType.COMPACT]: (v) => formatFloatCompact(v),
+  [FormatterType.CURRENCY]: (v) => formatDollarsAuto(v),
+  [FormatterType.CURRENCY_COMPACT]: (v) => formatDollarsCompact(v),
+  [FormatterType.PERCENT]: (v) => formatPercent(v),
+  [FormatterType.CHRONO]: (v) => formatChrono(v),
   [FormatterType.STRING]: (v) => v.toString(),
   [FormatterType.SLUG]: (v) => slugify(v),
   [FormatterType.UNSLUG]: (v) => unslug(v),
@@ -292,24 +297,24 @@ export { round, getDigits, truncateTrailingZeroes };
 // ===== BTR-SPECIFIC FORMATTERS =====
 
 // Additional BTR-specific formatters using the base utilities
-export const formatBasisPoints = (bp, decimals = 2) =>
-  toPercent(bp / 10000, decimals);
+export const formatBp = (bp, decimals = 2) =>
+  formatPercent(bp / 10000, decimals);
 export const formatRatio = (ratio, decimals = 4) =>
-  toFloatAuto(ratio, false, decimals);
-export const formatAllocation = (allocation) => toDollarsAuto(allocation);
-export const formatWeight = (weight) => toPercent(weight / 10000, 2);
+  formatFloatAuto(ratio, false, decimals);
+export const formatAllocation = (allocation) => formatDollarsAuto(allocation);
+export const formatWeight = (weight) => formatPercent(weight / 10000, 2);
 
 // Chart-specific formatters
 export const formatChartValue = (value, type = 'currency') => {
   switch (type) {
     case 'currency':
-      return toDollarsAuto(value);
+      return formatDollarsAuto(value);
     case 'percentage':
-      return toPercent(value);
+      return formatPercent(value);
     case 'basis-points':
-      return formatBasisPoints(value);
+      return formatBp(value);
     case 'number':
-      return toFloatAuto(value);
+      return formatFloatAuto(value);
     default:
       return value?.toString() || '';
   }
@@ -330,12 +335,3 @@ export const getCachedFormatter = (type) => {
   formatterCache.set(type, formatter);
   return formatter;
 };
-
-// ===== LEGACY COMPATIBILITY =====
-
-// Legacy compatibility - these should be gradually replaced with the auto formatters
-export const formatCurrency = toDollarsAuto;
-export const formatNumber = toFloatAuto;
-export const formatPercentage = toPercent;
-
-// Theme colors are now directly accessible in the consolidated theme structure
