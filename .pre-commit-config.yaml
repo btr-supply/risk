@@ -29,7 +29,7 @@ repos:
     hooks:
       # Check branch names at commit time
       - id: check-naming
-        name: Check Branch Naming Convention
+        name: check branch name
         description: Enforce branch naming conventions
         stages: [pre-commit]
         args:
@@ -38,7 +38,7 @@ repos:
           - '^(feat|fix|refac|ops|docs)/'
       # Check commit messages after commit message is written
       - id: check-naming
-        name: Check Commit Message Convention
+        name: check commit message
         description: Enforce commit message conventions
         stages: [commit-msg]
         args:
@@ -51,7 +51,7 @@ repos:
     hooks:
       # Oxlint - Fast JavaScript linter
       - id: oxlint
-        name: Oxlint
+        name: oxlint
         entry: bun run lint:fix
         language: system
         files: \.(js|jsx)$
@@ -59,7 +59,7 @@ repos:
 
       # Next.js ESLint
       - id: next-lint
-        name: Next.js ESLint
+        name: next.js elsint
         entry: bash -c 'bunx next lint --fix'
         language: system
         files: \.(js|jsx)$
@@ -67,7 +67,7 @@ repos:
 
       # Prettier formatting
       - id: prettier
-        name: Prettier
+        name: prettier format
         entry: bun run format
         language: system
         files: \.(js|jsx|json|yaml|yml|md)$
@@ -75,7 +75,7 @@ repos:
 
       # Build verification - ensure project builds successfully
       - id: build-check
-        name: Build Check
+        name: validate build
         entry: bun run build
         language: system
         pass_filenames: false
