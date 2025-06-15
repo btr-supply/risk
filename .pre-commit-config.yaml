@@ -21,6 +21,7 @@ repos:
     rev: v1.0.3
     hooks:
       - id: optimize-assets
+        name: optimize raster/vector images
         args: [--asset-dir, ./public, --mode, lossless]
 
   # Naming conventions enforcement
