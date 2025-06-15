@@ -34,7 +34,7 @@ const BTRLogo = ({ onClick }) => (
       variant="h6"
       component="div"
       sx={{
-        ml: 2.5,
+        ml: 2,
         fontWeight: 800,
         fontSize: { xs: '2rem', sm: '2.9rem' },
         fontStyle: 'italic',
@@ -51,10 +51,10 @@ const BTRLogo = ({ onClick }) => (
         fontWeight: 400,
         fontSize: { xs: '2rem', sm: '2.9rem' },
         fontStyle: 'italic',
-        color: 'text.tertiary',
+        color: theme.palette.grey[600],
       }}
     >
-      RISK
+      RISK-UI
     </Typography>
   </Box>
 );

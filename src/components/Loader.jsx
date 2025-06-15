@@ -72,7 +72,7 @@ const BTRLoadingLogo = ({ size = '4rem' }) => (
   </Box>
 );
 
-// Minimal Page Loader that preserves header visibility
+// Full viewport Page Loader that stays under the header
 export const PageLoader = () => {
   const isLoading = useLoadingStore((state) => state.isLoading);
 
@@ -82,11 +82,11 @@ export const PageLoader = () => {
     <Box
       sx={{
         position: 'fixed',
-        top: '80px', // Leave space for header
+        top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        zIndex: (theme) => theme.zIndex.drawer + 1,
+        zIndex: (theme) => theme.zIndex.appBar - 1, // Stay under header
         backgroundColor: 'background.default',
         display: 'flex',
         flexDirection: 'column',

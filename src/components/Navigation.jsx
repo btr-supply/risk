@@ -250,6 +250,7 @@ export const Navigation = () => {
           minWidth: 'auto',
           px: 2,
           m: 0,
+          mr: 1,
           letterSpacing: '0.02em',
           '&.Mui-selected': {
             color: 'primary.main',
