@@ -36,13 +36,13 @@ repos:
           - --check-branch
           - --branch-pattern
           - '^(feat|fix|refac|ops|docs)/'
-      # Check commit messages at push time
+      # Check commit messages after commit message is written
       - id: check-naming
         name: Check Commit Message Convention
         description: Enforce commit message conventions
-        stages: [pre-push]
+        stages: [commit-msg]
         args:
-          - --check-push
+          - --check-commit
           - --commit-pattern
           - '^\[(feat|fix|refac|ops|docs)\] '
 
