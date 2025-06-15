@@ -16,6 +16,13 @@ repos:
       - id: mixed-line-ending
         args: ['--fix=lf']
 
+  # Asset optimization for images in public directory
+  - repo: https://github.com/pde-rent/opt-pre-commit
+    rev: v1.0.3
+    hooks:
+      - id: optimize-assets
+        args: [--asset-dir, ./public, --mode, lossless]
+
   # Local hooks for project-specific tools using Bun
   - repo: local
     hooks:
