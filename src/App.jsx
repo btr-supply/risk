@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   ThemeProvider,
   CssBaseline,
@@ -8,11 +8,15 @@ import {
   Container,
   Card,
 } from '@mui/material';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { theme } from './constants';
 import Footer from './components/Footer';
 import { Navigation } from './components/Navigation';
-import { RouteLoadingOverlay } from './components/Loader';
+import { PageLoader } from './components/Loader';
+import {
+  useRouterLoading,
+  useNavigateWithLoading,
+} from './hooks/useRouterLoading';
 
 // BTR Logo component
 const BTRLogo = ({ onClick }) => (
@@ -56,8 +60,11 @@ const BTRLogo = ({ onClick }) => (
 );
 
 function AppContent({ children }) {
-  const router = useRouter();
   const pathname = usePathname();
+  const navigateWithLoading = useNavigateWithLoading();
+
+  // Initialize router loading
+  useRouterLoading();
 
   // Reset scroll position on route change
   useEffect(() => {
@@ -111,7 +118,7 @@ function AppContent({ children }) {
                 borderBottom: 0,
               }}
             >
-              <BTRLogo onClick={() => router.push('/')} />
+              <BTRLogo onClick={() => navigateWithLoading('/')} />
               <Box sx={{ flexGrow: 1 }} />
               <Navigation />
             </Toolbar>
@@ -134,23 +141,24 @@ function AppContent({ children }) {
           maxHeight: 'none',
         }}
       >
-        <Suspense fallback={<RouteLoadingOverlay />}>
-          <Box
-            key={`content-${pathname}`}
-            sx={{
-              height: 'auto',
-              minHeight: 'auto',
-              // Ensure content doesn't inherit fixed heights
-              flex: 'none',
-            }}
-          >
-            {children}
-          </Box>
-        </Suspense>
+        <Box
+          key={`content-${pathname}`}
+          sx={{
+            height: 'auto',
+            minHeight: 'auto',
+            // Ensure content doesn't inherit fixed heights
+            flex: 'none',
+          }}
+        >
+          {children}
+        </Box>
       </Container>
 
       {/* Footer - normal positioning at bottom of content */}
       <Footer />
+
+      {/* Page Loader */}
+      <PageLoader />
     </Box>
   );
 }
