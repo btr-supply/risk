@@ -3,7 +3,7 @@ const nextConfig = {
   // Enable static export for better performance
   output: 'export',
   distDir: './dist',
-  trailingSlash: true,
+  trailingSlash: false,
 
   // Optimize bundle splitting
   webpack: (config, { dev, isServer }) => {
