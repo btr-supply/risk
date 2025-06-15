@@ -40,11 +40,11 @@ BTR Risk is a React 19.1.0 financial risk modeling application built with Materi
 ## Development Rules
 
 ### Performance Optimization
-- ALWAYS use React.memo() for components with stable props
-- Use useMemo() for expensive calculations (mathematical models, chart data)
+- Always assess the use of React.memo() for components with stable props
+- Always assess useMemo() for expensive calculations (mathematical models, chart data)
 - Use useCallback() for event handlers passed to child components
-- Implement lazy loading with React.lazy() for route components
-- Throttle rapid state updates (sliders, form inputs) with 100ms delay
+- Implement lazy loading with React.lazy() eg. for route components
+- Debounce rapid state updates (sliders, form inputs) with 100ms delay
 
 ### Component Reusability
 - Create custom UI abstractions in `src/components/ui/`

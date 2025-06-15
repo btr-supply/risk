@@ -379,10 +379,10 @@ import { BaseCard } from './components/ui';
 
 #### 2. Performance Optimization
 
-- **Memoization**: Use `React.memo()` for components that receive stable props
-- **Computed Values**: Use `useMemo()` for expensive calculations
+- **Memoization**: Assess the use of `React.memo()` for components that receive stable props
+- **Computed Values**: Assess the use of `useMemo()` for expensive calculations
 - **Callback Stability**: Use `useCallback()` for event handlers passed to children
-- **Lazy Loading**: Use `React.lazy()` for route-based code splitting
+- **Lazy Loading**: Use `React.lazy()` where relevant, eg. route-based code splitting
 
 ```jsx
 // ✅ Good - Memoized component
@@ -414,19 +414,14 @@ const cardStyles = createCardSx(theme, { height: '100%' });
 #### 4. State Management
 
 - **Centralized State**: Use Context API with useReducer for shared state
-- **Throttled Updates**: Throttle rapid state updates (sliders, inputs)
+- **Debounced Updates**: Debounce rapid state updates (sliders, inputs)
 - **Computed State**: Derive state using memoized calculations
 - **Stable Callbacks**: Use useCallback for action creators
-
-```jsx
-// ✅ Good - Throttled updates for better performance
-const throttledUpdate = useCallback(throttle(updateValue, 100), [updateValue]);
-```
 
 #### 5. Bundle Optimization
 
 - **Code Splitting**: Split routes using `React.lazy()`
-- **Tree Shaking**: Import only needed MUI components
+- **Tree Shaking**: Import only needed MUI components for tree shaking
 - **Chunk Strategy**: Separate vendor libraries in build configuration
 
 ```jsx
