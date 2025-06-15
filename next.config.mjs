@@ -106,7 +106,7 @@ const nextConfig = {
 
   // Generate build ID for better caching
   generateBuildId: async () => {
-    return 'btr-risk-' + Date.now();
+    return 'btr-risk-ui-' + Date.now();
   },
 
   // Environment variables
