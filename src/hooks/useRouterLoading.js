@@ -1,16 +1,15 @@
 import { useEffect, useCallback } from 'react';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useLoadingStore } from '../store/useLoadingStore';
 
 export const useRouterLoading = () => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const setLoading = useLoadingStore((state) => state.setLoading);
 
   useEffect(() => {
     // Clear loading when route changes
     setLoading(false);
-  }, [pathname, searchParams, setLoading]);
+  }, [pathname, setLoading]);
 };
 
 // Custom hook for consistent navigation with loading

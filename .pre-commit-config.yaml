@@ -1,5 +1,6 @@
 # Pre-commit configuration for BTR Risk
 # See https://pre-commit.com for more information
+# All checks run on every commit for maximum safety and simplicity
 repos:
   # Standard pre-commit hooks for general file maintenance
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -25,7 +26,6 @@ repos:
         language: system
         files: \.(js|jsx)$
         pass_filenames: false
-        always_run: false
 
       # Next.js ESLint
       - id: next-lint
@@ -34,7 +34,6 @@ repos:
         language: system
         files: \.(js|jsx)$
         pass_filenames: false
-        always_run: false
 
       # Prettier formatting
       - id: prettier
@@ -43,7 +42,6 @@ repos:
         language: system
         files: \.(js|jsx|json|yaml|yml|md)$
         pass_filenames: false
-        always_run: false
 
       # Build verification - ensure project builds successfully
       - id: build-check
@@ -51,8 +49,6 @@ repos:
         entry: bun run build
         language: system
         pass_filenames: false
-        always_run: true
-        stages: [pre-push]
 
 # Global configuration
 fail_fast: false
