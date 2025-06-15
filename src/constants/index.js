@@ -409,11 +409,14 @@ export const theme = createTheme({
           fontSize: '0.875rem',
           minHeight: 48,
           padding: '8px 16px',
-          color: colors.grey300,
+          color: colors.grey500, // A darker grey for inactive tabs
+          transition: 'color 0.2s ease-in-out',
+
           '&.Mui-selected': {
-            color: colors.white,
+            color: `${colors.white} !important`, // Ensure active is white
             fontWeight: 700,
           },
+
           '&:hover': {
             color: colors.white,
           },
