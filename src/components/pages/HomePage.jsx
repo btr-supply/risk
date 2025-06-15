@@ -1,16 +1,15 @@
 import React from 'react';
 import { Box, Typography, Card, CardContent, Link } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useRouter } from 'next/navigation';
 import DataUsageIcon from '@mui/icons-material/DataUsage';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import ExpandIcon from '@mui/icons-material/Expand';
 import LaunchIcon from '@mui/icons-material/Launch';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-// No need for COLORS import anymore since we use theme directly
+import { useNavigateWithLoading } from '../../hooks/useRouterLoading';
 
 const ModelCard = ({ title, description, icon, route, color }) => {
-  const router = useRouter();
+  const navigateWithLoading = useNavigateWithLoading();
 
   return (
     <Card
@@ -33,7 +32,7 @@ const ModelCard = ({ title, description, icon, route, color }) => {
           },
         },
       }}
-      onClick={() => router.push(route)}
+      onClick={() => navigateWithLoading(route)}
     >
       {/* Arrow in top right */}
       <Box
