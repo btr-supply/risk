@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   Tabs,
   Tab,
@@ -13,6 +13,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { SocialLinks } from './Footer';
+import { useNavigateWithLoading } from '../hooks/useRouterLoading';
 
 // Static mappings - no need for useMemo since these never change
 const PATH_TO_TAB = {
@@ -29,23 +30,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export const Navigation = () => {
-  const router = useRouter();
   const pathname = usePathname();
   const [anchorEl, setAnchorEl] = useState(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const navigateWithLoading = useNavigateWithLoading();
 
   const activeTab =
     PATH_TO_TAB[pathname] !== undefined ? PATH_TO_TAB[pathname] : -1;
 
   const handleTabChange = useCallback(
     (event, newValue) => {
-      // Use router.push for navigation
-      router.push(TAB_TO_PATHS[newValue]);
+      navigateWithLoading(TAB_TO_PATHS[newValue]);
       if (anchorEl) {
         setAnchorEl(null);
       }
     },
-    [router, anchorEl]
+    [navigateWithLoading, anchorEl]
   );
 
   const handleMenuOpen = useCallback((event) => {
@@ -58,16 +58,16 @@ export const Navigation = () => {
 
   const handleMobileTabSelect = useCallback(
     (tabIndex) => {
-      router.push(TAB_TO_PATHS[tabIndex]);
+      navigateWithLoading(TAB_TO_PATHS[tabIndex]);
       setAnchorEl(null);
     },
-    [router]
+    [navigateWithLoading]
   );
 
   const handleHomeNavigation = useCallback(() => {
-    router.push('/');
+    navigateWithLoading('/');
     handleMenuClose();
-  }, [router, handleMenuClose]);
+  }, [navigateWithLoading, handleMenuClose]);
 
   if (isMobile) {
     return (
