@@ -18,6 +18,9 @@ const nextConfig = {
   distDir: './dist',
   trailingSlash: false,
 
+  experimental: {
+  },
+
   // Turbopack for development
   turbopack: {
     resolveAlias: aliases,
@@ -31,8 +34,6 @@ const nextConfig = {
       'chart.js',
       'react-chartjs-2',
     ],
-    // Reduce aggressive preloading to prevent console warnings
-    optimisticClientCache: false,
     // Enable modern features for smaller bundles
     esmExternals: true,
     // CSS optimization disabled due to critters dependency issue
@@ -52,10 +53,13 @@ const nextConfig = {
       ),
     };
 
-    // Target modern browsers for smaller bundles (ES6+) - client side only
+    // Target very modern browsers for smallest bundles (ES2022+) - client side only
     if (!dev && !isServer) {
-      config.target = ['web', 'es6'];
+      config.target = ['web', 'es2022'];
     }
+
+
+
 
     // Enable source maps in webpack for production
     if (!dev && !isServer) {
@@ -200,6 +204,8 @@ const nextConfig = {
     // Enable React compiler optimizations for smaller bundles
     reactRemoveProperties: process.env.NODE_ENV === 'production',
   },
+
+
 };
 
 export default nextConfig;
