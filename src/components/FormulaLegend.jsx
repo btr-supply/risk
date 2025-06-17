@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { SPACING } from '../constants';
+import { SPACING } from '@constants';
 
 export const FormulaLegend = ({ items }) => {
   if (!items || items.length === 0) return null;

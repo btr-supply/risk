@@ -12,7 +12,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
+    "build:production": "NODE_ENV=production next build",
+    "build:modern": "NODE_ENV=production MODERN_BUILD=true next build",
     "start": "next start",
+    "serve": "bunx serve -p 3000 -s ./dist",
+    "serve:prod": "bun run build && bunx serve -p 3000 -s ./dist",
     "export": "next build",
     "lint": "oxlint . --format=unix && next lint",
     "lint:fix": "oxlint --fix",
@@ -20,8 +24,13 @@
     "format:check": "prettier --check .",
     "check:all": "bun run lint && bun run format",
     "bundle:size": "bun scripts/bundle-size.js",
+    "bundle:analyze": "bun scripts/bundle-analyze.js",
     "verify:sourcemaps": "bun scripts/verify-sourcemaps.js",
+    "optimize:build": "bun run build:modern && bun run bundle:analyze",
     "build:verify": "bun run build && bun run verify:sourcemaps",
+    "performance:check": "bun scripts/performance-check.js",
+    "lighthouse:audit": "lhci autorun",
+    "lighthouse:build-and-audit": "bun run build && bun run lighthouse:audit",
     "pre-commit": "uv tool run pre-commit run --all-files",
     "pre-commit:install": "uv tool run pre-commit install && uv tool run pre-commit install --hook-type pre-push"
   },
@@ -40,11 +49,15 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.0",
+    "@lhci/utils": "^0.15.0",
     "bun": "^1.2.16",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.3.3",
+    "http-server": "^14.1.1",
     "oxlint": "^1.1.0",
     "prettier": "^3.5.3",
+    "terser-webpack-plugin": "^5.3.14",
     "webpack-bundle-analyzer": "^4.10.2"
   }
 }

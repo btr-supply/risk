@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { keyframes } from '@mui/system';
-import { useLoadingStore } from '../store/useLoadingStore';
+import { useLoadingStore } from '@store/useLoadingStore';
 
 // BTR Logo Animation - reveals white text from left to right with skewed clipping to match italic text
 const fillAnimation = keyframes`

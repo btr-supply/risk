@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import RestoreIcon from '@mui/icons-material/Restore';
-import { useRiskModel } from '../../store';
+import { useRiskModel } from '@store';
 import {
   BPS,
   generateLiquidityCurveData,
@@ -10,7 +10,7 @@ import {
   targetLiquidityRatioBp,
   liquidityTriggers,
   defaultLiquidityModel,
-} from '../../models';
+} from '@/models';
 import {
   Section,
   ParameterCard,
@@ -24,7 +24,7 @@ import {
   SimulationResult,
   SmartLink,
   LineChart,
-} from '../index.jsx';
+} from '@components';
 
 export const LiquidityModel = () => {
   const theme = useTheme();

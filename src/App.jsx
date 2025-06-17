@@ -9,14 +9,14 @@ import {
   Card,
 } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import { theme } from './constants';
-import Footer from './components/Footer';
-import { Navigation } from './components/Navigation';
-import { PageLoader } from './components/Loader';
+import { theme } from '@constants';
+import Footer from '@components/Footer';
+import { Navigation } from '@components/Navigation';
+import { PageLoader } from '@components/Loader';
 import {
   useRouterLoading,
   useNavigateWithLoading,
-} from './hooks/useRouterLoading';
+} from '@hooks/useRouterLoading';
 
 // BTR Logo component
 const BTRLogo = ({ onClick }) => (

@@ -4,13 +4,13 @@ import BaseCard from './BaseCard';
 import { CardTitle } from './Typography';
 import { MathFormula } from './MathFormula';
 import { FormulaLegend } from './FormulaLegend';
-import { getTitleIcon } from '../utils/componentUtils';
+import { getTitleIcon } from '@utils/componentUtils';
 import {
   COMMON_SX,
   SPACING,
   createFlexColumnSx,
   createCardVariantSx,
-} from '../constants';
+} from '@constants';
 
 // Unified Card component - replaces DescriptionCard, ParameterCard, and SimulationCard
 // This eliminates 90+ lines of duplicated code across the three separate components

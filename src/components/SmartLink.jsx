@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useNavigateWithLoading } from '../hooks/useRouterLoading';
+import { useNavigateWithLoading } from '@hooks/useRouterLoading';
 
 // Smart Link component for internal navigation and anchors
 export const SmartLink = ({ to, children, sx = {}, ...props }) => {

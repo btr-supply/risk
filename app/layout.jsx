@@ -2,7 +2,7 @@
 
 import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
-import App from '../src/App';
+import App from '@/App';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -10,15 +10,15 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-const stixTwoMath = localFont({
-  src: '../public/fonts/STIXTwoMath-Regular.woff2',
+const texGyreMath = localFont({
+  src: '../public/fonts/TeXGyreTermesX-Regular.woff2',
   display: 'swap',
-  variable: '--font-stix-two-math',
+  variable: '--font-tex-gyre-math',
 });
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${stixTwoMath.variable}`}>
+    <html lang="en" className={`${inter.variable} ${texGyreMath.variable}`}>
       <head>
         <title>BTR Risk Model</title>
         <meta

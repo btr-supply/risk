@@ -1,5 +1,11 @@
 node_modules/
 dist/
+.vscode
+.cursor
+.idea
+.venv
+.lighthouseci
+.lighthouse-results
 *.log
 .DS_Store
 .env*

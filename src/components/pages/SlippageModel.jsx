@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import RestoreIcon from '@mui/icons-material/Restore';
-import { useRiskModel } from '../../store';
+import { useRiskModel } from '@store';
 import {
   BPS,
   generateSlippageCurveData,
@@ -12,7 +12,7 @@ import {
   calculateSlippage,
   bpformatPercent,
   defaultSlippageModel,
-} from '../../models';
+} from '@/models';
 import {
   Section,
   ParameterCard,
@@ -24,7 +24,7 @@ import {
   FormulaLegend,
   SimulationResult,
   LineChart,
-} from '../index.jsx';
+} from '@components';
 
 export const SlippageModel = () => {
   const theme = useTheme();

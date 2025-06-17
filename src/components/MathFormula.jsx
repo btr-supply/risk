@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper } from '@mui/material';
-import { SPACING, COMMON_SX } from '../constants';
+import { SPACING, COMMON_SX } from '@constants';
 
 // Server-side AsciiMath to MathML component
 export const MathFormula = ({ children, inline = false }) => {
@@ -20,7 +20,7 @@ export const MathFormula = ({ children, inline = false }) => {
     return (
       <span
         dangerouslySetInnerHTML={{ __html: mathML }}
-        style={{ fontFamily: 'var(--font-stix-two-math), Times, serif' }}
+        style={{ fontFamily: 'var(--font-tex-gyre-math), Times, serif' }}
       />
     );
   }
@@ -35,7 +35,7 @@ export const MathFormula = ({ children, inline = false }) => {
         mt: SPACING.lg,
         overflowX: 'auto',
         overflowY: 'visible',
-        fontFamily: 'var(--font-stix-two-math), Times, serif',
+        fontFamily: 'var(--font-tex-gyre-math), Times, serif',
         textAlign: 'center',
         '& math': {
           fontSize: '1.1em',

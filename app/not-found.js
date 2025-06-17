@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { useNavigateWithLoading } from '../src/hooks/useRouterLoading';
+import { useNavigateWithLoading } from '@hooks/useRouterLoading';
 
 export default function NotFound() {
   const navigateWithLoading = useNavigateWithLoading();

@@ -1,15 +1,25 @@
-name = "btr-risk"
-compatibility_date = "2024-01-15"
+# Cloudflare Pages Configuration for BTR Risk UI
+name = "btr-risk-ui"
+compatibility_date = "2024-12-26"
 
 # Required for Pages when using wrangler.toml
 pages_build_output_dir = "./dist"
 
+# Environment variables for optimization
 [env.production]
 name = "btr-risk"
 [env.production.vars]
 NODE_VERSION = "20.10.0"
 BUN_VERSION = "1.2.16"
 NEXT_TELEMETRY_DISABLED = "1"
+NODE_ENV = "production"
+MODERN_BUILD = "true"
+
+# Performance optimizations
+[build.environment_variables]
+NODE_ENV = "production"
+MODERN_BUILD = "true"
+SKIP_PREFLIGHT_CHECK = "true"
 
 [env.preview]
 name = "btr-risk-preview"

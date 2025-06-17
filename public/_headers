@@ -1,3 +1,5 @@
+# _headers
+
 /*                       # GLOBAL SECURITY HEADERS
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
@@ -16,6 +18,13 @@
       https://astrolab.fi https://*.astrolab.fi
       https://btr.markets  https://*.btr.markets
       https://btr.supply   https://*.btr.supply
+      https://debank.com   https://*.debank.com
+      https://rabby.io     https://*.rabby.io
+      https://x.com        https://*.x.com
+      https://de.fi        https://*.de.fi
+      https://defillama.com https://*.defillama.com
+      https://coingecko.com    https://*.coingecko.com
+      https://coinmarketcap.com https://*.coinmarketcap.com
       https://llamarpc.com https://*.llamarpc.com
       https://blastapi.io  https://*.blastapi.io
       https://omniatech.io https://*.omniatech.io
@@ -32,7 +41,6 @@
       https://li.quest     https://*.li.quest
       https://socket.tech  https://*.socket.tech
       https://odos.xyz     https://*.odos.xyz
-      https://coingecko.com    https://*.coingecko.com
       https://kyberswap.com    https://*.kyberswap.com
       https://paraswap.io  https://*.paraswap.io
       https://debridge.io  https://*.debridge.io
@@ -46,69 +54,137 @@
     require-trusted-types-for 'script';
     upgrade-insecure-requests;
 
-/_next/static/*          # Next.js static chunk hashes
-  Cache-Control: public, max-age=31536000, immutable
+# ---- PERFORMANCE OPTIMIZATIONS ----
+  # Enable compression
+  Accept-Encoding: gzip, deflate, br
+  # Preload critical resources
+  X-DNS-Prefetch-Control: on
+  # Optimize loading
+  X-UA-Compatible: IE=edge
 
-/images/*                # Image folder (if you output to /images)
-  Cache-Control: public, max-age=31536000, immutable
+# ---- 7 DAYS CACHE FOR STATIC ASSETS ----
+/*.json                  # Static JSON files (not API responses)
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
 
-/*.css                   # Hashed CSS outside /_next
-  Cache-Control: public, max-age=31536000, immutable
-/*.js                    # Hashed JS (e.g. analytics snippet)
-  Cache-Control: public, max-age=31536000, immutable
+/images/*                # Image folder
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.css                   # CSS files (non-hashed)
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.js                    # JS files (non-hashed)
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
 /*.svg
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
 
-# ---- Extra image formats ----
-/*.png
-  Cache-Control: public, max-age=31536000, immutable
-/*.jpg
-  Cache-Control: public, max-age=31536000, immutable
-/*.jpeg
-  Cache-Control: public, max-age=31536000, immutable
-/*.webp
-  Cache-Control: public, max-age=31536000, immutable
+# ---- FONT OPTIMIZATIONS (24 HOURS) ----
+/*.woff
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.woff2
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.ttf
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.otf
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+# ---- IMAGE FORMATS (24 HOURS) ----
 /*.avif
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.webp
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.png
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.jpg
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
+/*.jpeg
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
 /*.gif
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
 
-# ---- Video formats ----
+# ---- VIDEO FORMATS (24 HOURS) ----
 /*.mp4
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
 /*.webm
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
+
 /*.mov
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
 
-# ---- Lottie animations ----
-/*.json                  # Lottie files are plain JSON
-  Cache-Control: public, max-age=31536000, immutable
-/*.lottie                # If you serve new .lottie ZIP archive format
-  Cache-Control: public, max-age=31536000, immutable
+# ---- LOTTIE ANIMATIONS (24 HOURS) ----
+/*.lottie
+  Cache-Control: public, max-age=604800
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
 
-# ---- Misc performance helpers ----
+# ---- SERVICE WORKER (NO CACHE) ----
 /service-worker.js
   Cache-Control: public, max-age=0, must-revalidate
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
 
-# ---- Source map configuration ----
-/*.map                   # Source-maps – cache for 7 days, allow debugging
+# ---- SOURCE MAPS (KEEP 7 DAYS) ----
+/*.map
   Cache-Control: public, max-age=604800
   X-Content-Type-Options: nosniff
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET
   Access-Control-Allow-Headers: Content-Type
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
 
-/_next/static/chunks/*.map  # Next.js chunk source maps
+# ---- HTML (7 DAYS) ----
+/*.html
   Cache-Control: public, max-age=604800
-  X-Content-Type-Options: nosniff
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET
-  Access-Control-Allow-Headers: Content-Type
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding
 
-/_next/static/js/*.map     # Next.js JS source maps
+/
   Cache-Control: public, max-age=604800
-  X-Content-Type-Options: nosniff
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET
-  Access-Control-Allow-Headers: Content-Type
+  Accept-Encoding: gzip, deflate, br
+  Vary: Accept-Encoding

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Box } from '@mui/material';
-import { SPACING } from '../constants';
+import { SPACING } from '@constants';
 
 // Section title with consistent styling
 export const SectionTitle = ({ children, sx = {}, ...props }) => (

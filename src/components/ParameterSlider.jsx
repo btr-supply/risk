@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Box, Typography, Slider, Chip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useStateDebounce } from '../hooks/useDebounce';
+import { useStateDebounce } from '@hooks/useDebounce';
 
 // Color system using existing MUI theme palette
 const getSliderColorScheme = (theme, color) => {

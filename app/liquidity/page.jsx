@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { LiquidityModel } from '../../src/components/pages/LiquidityModel';
+import { LiquidityModel } from '@pages/LiquidityModel';
 
 export default function LiquidityPage() {
   return <LiquidityModel />;

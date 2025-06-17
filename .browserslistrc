@@ -1,0 +1,14 @@
+# Target modern browsers only (ES6+ support) for optimal bundle size
+> 0.3%
+last 2 versions
+not dead
+not ie <= 11
+not op_mini all
+not and_uc > 0
+not chrome < 60
+not firefox < 55
+not safari < 12
+not edge < 79
+not ios_saf < 12
+not android < 81
+not samsung < 10

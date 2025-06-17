@@ -36,7 +36,7 @@ export { ChartContainer } from './ChartComponents';
 export { MetricChip } from './MetricChip';
 
 // Export formatters from utils instead of duplicating them
-export { formatDollarsAuto, formatBp, formatFloatAuto } from '../utils/format';
+export { formatDollarsAuto, formatBp, formatFloatAuto } from '@utils/format';
 
 // Import FormulaLegend from its own file
 export { FormulaLegend } from './FormulaLegend';

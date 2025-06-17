@@ -6,7 +6,7 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import ExpandIcon from '@mui/icons-material/Expand';
 import LaunchIcon from '@mui/icons-material/Launch';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import { useNavigateWithLoading } from '../../hooks/useRouterLoading';
+import { useNavigateWithLoading } from '@hooks/useRouterLoading';
 
 const ModelCard = ({ title, description, icon, route, color }) => {
   const navigateWithLoading = useNavigateWithLoading();

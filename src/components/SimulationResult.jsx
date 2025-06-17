@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { COMMON_SX, SPACING } from '../constants';
+import { COMMON_SX, SPACING } from '@constants';
 
 // Consistent simulation result display
 export const SimulationResult = ({

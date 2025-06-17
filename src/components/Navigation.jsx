@@ -11,7 +11,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { SocialLinks } from './Footer';
-import { useNavigateWithLoading } from '../hooks/useRouterLoading';
+import { useNavigateWithLoading } from '@hooks/useRouterLoading';
 
 // Navigation data
 const NAVIGATION_LINKS = [

@@ -17,7 +17,7 @@ import { useTheme } from '@mui/material/styles';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import RestoreIcon from '@mui/icons-material/Restore';
-import { useRiskModel } from '../../store';
+import { useRiskModel } from '@store';
 import {
   BPS,
   calculateCScore,
@@ -28,7 +28,7 @@ import {
   generateMaxWeightCurveData,
   bpformatPercent,
   defaultWeightModel,
-} from '../../models';
+} from '@/models';
 import {
   Section,
   ParameterCard,
@@ -44,7 +44,7 @@ import {
   BarChart,
   LineChart,
   DoughnutChart,
-} from '../index.jsx';
+} from '@components';
 
 export const AllocationModel = () => {
   const theme = useTheme();
